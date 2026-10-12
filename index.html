@@ -452,7 +452,7 @@ ${EX.map((cx,i)=>`<clipPath id="${id}e${i}"><path d="${eyeP(cx,i).d}"/></clipPat
   if(H.locks)o+=`<path d="${H.locks}" fill="url(#${id}h)" ${hs}/>`;
   if(H.hat)o+=`<path d="M90 140 C84 66 216 66 210 140 C182 126 118 126 90 140Z" fill="${p.accC||'#2f6a52'}" stroke="${L}" stroke-width="2.2"/><path d="M90 140 C118 126 182 126 210 140 L212 156 C182 142 118 142 88 156Z" fill="${mix(p.accC||'#2f6a52','#000000',.25)}" stroke="${L}" stroke-width="2"/>${[0,1,2,3,4,5,6].map(i=>`<path d="M${104+i*16} 100 l0 30" stroke="${mix(p.accC||'#2f6a52','#000000',.18)}" stroke-width="3"/>`).join('')}`;
   o+=`<path d="${H.front}" fill="url(#${id}h)" ${hs}/>`;
-  o+=`<path d="${H.hl}" stroke="${hrH}" stroke-width="4" fill="none" stroke-linecap="round" opacity=".55"/>`;
+  if(H.hl)o+=`<path d="${H.hl}" stroke="${hrH}" stroke-width="4" fill="none" stroke-linecap="round" opacity=".55"/>`;
   if(H.tie)o+=`<ellipse cx="${H.tie[0]}" cy="${H.tie[1]}" rx="10" ry="7" fill="${p.accC||'#ffffff'}" stroke="${L}" stroke-width="2"/>`;
   // accessories
   if(p.acc?.includes('glasses'))o+=EX.map(cx=>`<rect x="${cx-w-6}" y="${EY-15}" width="${w*2+12}" height="28" rx="11" fill="#e8f2ff" fill-opacity=".14" stroke="${p.frame||'#2a2a34'}" stroke-width="3"/>`).join('')+`<path d="M141 186 Q150 180 159 186 M${EX[0]-w-6} 186 L${ex+4} 182 M${EX[1]+w+6} 186 L${300-ex-4} 182" stroke="${p.frame||'#2a2a34'}" stroke-width="2.6" fill="none"/>`;
@@ -2051,8 +2051,12 @@ async function title(){
   setWho(null);newState(pg,name,tr[ti]);
 }
 /* ================= v1.6: music, sfx, patch notes ================= */
-const VER='1.25';
+const VER='1.26';
 const PATCH=[
+ {v:'1.26',d:'13 октября',items:[
+  'Переписка стала живой: персонажи отвечают на то, что ты написал. На «Как прошёл день?» расскажут про день, на мем отреагируют на мем, а не скажут случайное «Угу»',
+  'Одно и то же сообщение больше не приходит несколько дней подряд: персонаж пишет первым не чаще раза в три дня и не повторяется, пока не скажет всё остальное'
+ ]},
  {v:'1.25',d:'13 октября',items:[
   'Новый перенос сохранений между телефоном и браузером: отправь весну себе в Telegram кнопкой «Отправить» или сохрани файлом, а на другом устройстве нажми «Открыть файл» или «Вставить»',
   'Игра узнаёт ту же самую весну и предлагает обновить её слот, а если загружаемое сохранение старее, предупреждает',
@@ -2918,8 +2922,8 @@ function morningMsgs(){
     msgIn('dorm',t,f,1)}
   if(S.cat&&Math.random()<.25){const t=S.cat.st==='home'?pick(['Мне кажется, или кто-то мяукает на четвёртом этаже? 🤔','В коридоре рыжая шерсть. Я ничего не видел{|а}. Я ничего не знаю.','Кто-то оставил миску с водой у 413. Совпадение?']):pick(['У входа опять сидит рыжий котёнок. Кто его кормит? 🐈','Рыжий у входа уже толще меня. Кто-то явно его подкармливает.']);msgIn('dorm',t,'@'+pick(NPC()),1)}
   if(S.fmet.kamila&&classDay(S.day)&&Math.random()<.25){const [w,t]=pick(GROUP_TX);msgIn('group',t.replace('проспал(а)',S.pg==='f'?'проспала':'проспал'),w[0]==='@'?w:w,1)}
-  for(const id of romIds()){const r=S.rel[id];if(!r.met||id===S.partner||r.aff<25)continue;if(Math.random()<Math.min(.4,(r.aff-15)/110))msgIn(id,pick(ROM[id].texts),id,1)}
-  for(const id of frIds()){if(!S.fmet[id]||S.fr[id]<20||id==='beka')continue;if(Math.random()<Math.min(.3,S.fr[id]/220))msgIn(id,pick(FRIEND[id].texts),id,1)}
+  for(const id of romIds()){const r=S.rel[id];if(!r.met||id===S.partner||r.aff<25)continue;if(Math.random()<Math.min(.4,(r.aff-15)/110)){const t=freshText(id,ROM[id].texts);if(t)msgIn(id,t,id,1)}}
+  for(const id of frIds()){if(!S.fmet[id]||S.fr[id]<20||id==='beka')continue;if(Math.random()<Math.min(.3,S.fr[id]/220)){const t=freshText(id,FRIEND[id].texts);if(t)msgIn(id,t,id,1)}}
   if(Math.random()<Math.min(.45,.18*DSTEP())){let t=pick(MOM_TX);if(t.includes('пыль')&&wxOf(S.day).k!=='dust')t=MOM_TX[0];msgIn('mom',t,'mom',1)}
   const n=unreadN()-u0;if(n>0)toast(`💬 Новых сообщений: ${n}`);
 }
@@ -3072,9 +3076,9 @@ function openPhone(o){return new Promise(res=>{
     el.querySelectorAll('[data-app]').forEach(b=>b.onclick=()=>{const k=b.dataset.app;if(k==='gal'){try{showGallery()}catch(e){}return}if(k==='ach'){try{showAch()}catch(e){}return}if(k==='set'){try{showSettings()}catch(e){}return}go(k)});
     el.querySelectorAll('[data-chat]').forEach(b=>b.onclick=()=>go('chat',{id:b.dataset.chat}));
     el.querySelectorAll('[data-r]').forEach(b=>b.onclick=()=>{const id=p.id,x=p.o3[+b.dataset.r],R=ROM[id];S.texted[id]=true;msgOut(id,pick(TONE_TX[x[1]]));
-      let t;if(R.likes.includes(x[1])){aff(id,4);t=pick(R.texts)}else if(R.dis===x[1]){aff(id,-2);t=pick(R.react.bad)}else{aff(id,1);t=pick(R.react.ok)}
+      let q;if(R.likes.includes(x[1])){aff(id,4);q='good'}else if(R.dis===x[1]){aff(id,-2);q='bad'}else{aff(id,1);q='ok'}const t=chatReply(id,x[1],q);
       typing(()=>{msgIn(id,t,id,1);S.unread[id]=0})});
-    el.querySelectorAll('[data-f]').forEach(b=>b.onclick=()=>{const id=p.id;S.texted[id]=true;msgOut(id,FR_OPTS[+b.dataset.f]);fr(id,1);typing(()=>{msgIn(id,pick(FRIEND[id].texts),id,1);S.unread[id]=0})});
+    el.querySelectorAll('[data-f]').forEach(b=>b.onclick=()=>{const id=p.id;S.texted[id]=true;const fi=+b.dataset.f;msgOut(id,FR_OPTS[fi]);fr(id,1);typing(()=>{msgIn(id,frReply(id,fi),id,1);S.unread[id]=0})});
     el.querySelectorAll('[data-m]').forEach(b=>b.onclick=()=>{const k=+b.dataset.m;S.texted.mom=true;msgOut('mom',['Всё хорошо, мам ❤️','Пришлю фото еды 📸','Мам, я занят{|а}'][k]);if(k===0)fam(2);else if(k===1){fam(3);mood(1)}else fam(-1);typing(()=>{msgIn('mom',k===2?'Ну хорошо. Береги себя.':pick(MOM_RE),'mom',1);S.unread.mom=0})});
     el.querySelectorAll('[data-g]').forEach(b=>b.onclick=()=>{const id=p.id;S.texted[id]=true;msgOut(id,['ㅋㅋㅋ 😂','👍','Кто со мной?'][+b.dataset.g]);mood(1);typing(()=>{msgIn(id,pick(['ㅋㅋㅋㅋ','Я!','👍👍','О, живой человек в чате','Плюс','Через пять минут буду']),'@'+pick(NPC()),1);S.unread[id]=0})});
     el.querySelectorAll('[data-date]').forEach(b=>b.onclick=()=>{result={act:'date',id:p.id};close()});
@@ -3710,6 +3714,76 @@ showTransfer=function(){
 {const _ss=showSettings;showSettings=function(){const p=_ss.apply(this,arguments);try{const ws=document.querySelectorAll('.pnwrap');const w=ws[ws.length-1];const b=w&&w.querySelector('.pnb');
   if(b){const x=document.createElement('button');x.type='button';x.className='trb alt trset';x.textContent='Перенос сохранений: телефон ⇄ браузер';x.onclick=()=>{const c=w.querySelector('.pnx');if(c)c.click();setTimeout(()=>showTransfer(),50)};b.appendChild(x)}}catch(e){}return p}}
 {const st=document.createElement('style');st.textContent=`.trrow{display:flex;gap:6px;flex-wrap:wrap}.trrow .trb{flex:1 1 30%;min-width:96px}.trb.on{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent) inset}.trx{display:flex;flex-direction:column;gap:6px}.trset{width:100%;margin-top:12px}`;document.head.appendChild(st)}
+
+/* ================= v1.26: messenger replies that answer what you wrote, no repeated texts ================= */
+// Replies to your message, by the tone you chose. Each character already likes/dislikes certain tones,
+// so the lines below are written in that attitude (warm for liked tones, cool for the disliked one).
+const CHAT_RE={
+ rin:{sweet:['Нормально. Писала сцену в кафе, официант три раза спросил, жива ли я. А твой?','Хорошо. Особенно теперь, когда кто-то спросил 🙂'],
+  fun:['Кот сдаёт экзамен… Я не поняла, но сохранила.','Это смешно? Я пересмотрю ещё раз. Позже.'],
+  smart:['Прочитала. Вторая половина — как готовый монолог. Спасибо.','Я выписала оттуда три цитаты. Одна для тебя.'],
+  bold:['Ты… сразу так. Дай мне подумать над репликой.','Слишком быстрая сцена. Давай без перемотки.']},
+ wei:{sweet:['Отлично! Три часа тренировки, ноги не мои. А у тебя как?','Нормально! Сейчас ем хого, могу прислать фото, будешь завидовать.'],
+  fun:['ХАХА я показал это всей команде, теперь это наш гимн 😂','Кот на экзамене — это я на экономике. Буквально.'],
+  smart:['Ого, длинная. Прочитаю… в выходные. Наверное.','Я понял первый абзац. Это уже успех, да?'],
+  bold:['Я тоже! Вечером в парке? Покажу новое движение.','Скучаешь? Отлично. Значит, я не один такой 😏']},
+ aigerim:{sweet:['Продуктивно. Эссе почти готово. Спасибо, что спросил.','Устала, но теперь немного лучше.'],
+  fun:['…Ладно, это смешно. Но я не смеялась.','Я на паре. Не присылай такое, когда я на паре. Присылай ещё.'],
+  smart:['Прочитала за обедом. Сохранила в заметки. Ты хорошо выбираешь.','Интересная статья. Можно обсудим? Не в чате, вживую.'],
+  bold:['Мы виделись два дня назад. …Но ладно, это приятно слышать.','Не торопи меня, пожалуйста. Я ещё не всё спланировала.']},
+ mira:{sweet:['Сегодня сорок латте и один кот на пенке! А твой как? 🙂','Пахну кофе и красками. Значит, день хороший.'],
+  fun:['АХАХА я показала его всей смене 😂','Сохранила. Нарисую такого же кота на пенке.'],
+  smart:['Ой, много букв. Перескажешь вживую? 😅','Я открыла… и закрыла. Расскажи своими словами, ладно?'],
+  bold:['Заходи в кофейню завтра. Сварю тебе что-нибудь без кофе 😉','Скучаешь? Тогда приходи, я как раз на смене.']},
+ dana:{sweet:['Норм. Пробежка, тренировка, пара. Не раскисай там.','Нормально. Без нежностей, ладно? Но спасибо.'],
+  fun:['ХА. Отправила команде. Тренер тоже ржал.','Ок, это смешно. Засчитано.'],
+  smart:['Прочитаю, когда колено будет болеть и делать будет нечего.','Это надо после тренировки, мозг пока занят мячом.'],
+  bold:['Увидимся. Завтра утром пробежка, не проспи.','Наконец-то кто-то говорит прямо. Да, давай.']},
+ lilia:{sweet:['Нормально. Записала восемь секунд хорошего звука. Это много.','Тихо. Мне нравится, когда тихо.'],
+  fun:['Это должно было быть смешно?','Не мой юмор. Но спасибо, что подумал.'],
+  smart:['Прочитала. Там есть мысль про ритм, которую я искала месяц.','Хорошая статья. Ты умеешь выбирать.'],
+  bold:['…Тоже. Приходи в студию вечером.','Скучаешь? Это честно. Мне нравится честно.']},
+ arman:{sweet:['Хорошо! Починил два бага и один ноутбук соседа. А у тебя?','Нормально. Бабушка написала мне голосовое на полторы минуты. Это рекорд.'],
+  fun:['Ха… Я понял его со второго раза. Смешно.','Кот на экзамене. Это я перед дедлайном.'],
+  smart:['Прочитал два раза. Можно я сделаю по ней приложение? Шучу. Или нет.','Спасибо! Это как раз то, что мне нужно для проекта.'],
+  bold:['Я… тоже. Наверное. Мне нужно время, чтобы это обработать.','Ой. Это очень прямо. Я покраснел, хорошо, что ты не видишь.']},
+ timur:{sweet:['Норм! Тренировка, потом склад. Устал, но жив. Ты как?','Отлично, мы выиграли! Ну, почти. Ничья — тоже победа.'],
+  fun:['АХАХ это я на каждой паре 😂','Сохранил, отправлю пацанам в команду.'],
+  smart:['Брат, это слишком умно для меня до обеда.','Я открыл и сразу захотел спать. Прости 😅'],
+  bold:['Конечно! Кимпаб и баскетбол, завтра?','Скучаешь? Я тоже. Приходи на тренировку, я покажу бросок.']},
+ daniyar:{sweet:['Обычно. Юрфак. Скучно.','Нормально. Не надо так мило, я не умею отвечать на мило.'],
+  fun:['Ну… смешно. Немного.','Сохраню. Никому не скажу, что смеялся.'],
+  smart:['Прочитал. Ты не из тех, кто листает ленту. Это редкость.','Интересно. В конце хорошая мысль. Можно в песню.'],
+  bold:['Прямо. Мне нравится. Приходи вечером в клуб, сыграю.','…Я тоже. Не делай из этого событие.']},
+ sanzhar:{sweet:['Отлично! Испёк сорок круассанов, тридцать девять ровные. А твой?','Хорошо! Пахну корицей. Значит, всё хорошо 🙂'],
+  fun:['ХАХА я чуть не уронил противень 😂','Повешу этот мем над духовкой.'],
+  smart:['Ой… Я понял только картинку. Можно ты объяснишь вживую?','Сложно. Я думаю тестом, а не формулами 😅'],
+  bold:['Приходи завтра утром, я оставлю тебе самую тёплую булочку.','Я тоже! Даже тесто сегодня вышло грустное.']},
+ emma:{sweet:['Хорошо! Сняла целую плёнку. Половина — коты.','Отлично! Выучила новое слово: «피곤해». Это значит «устала».'],
+  fun:['ХАХА покажу соседке, она поймёт 😂','Это я, когда пытаюсь читать вывески!'],
+  smart:['Ой, это на корейском? Нет? Всё равно сложно 😅','Длинная… Расскажешь вкратце?'],
+  bold:['Я тоже! Пойдём гулять на Ханган? Свет вечером красивый.','Скучаешь? Тогда приходи, я сфотографирую тебя на плёнку.']},
+ nari:{sweet:['Норм. Слишком мило, я не знаю, что с этим делать.','Нормально. Стрим через час, если что.'],
+  fun:['ХАХ жиза. Скину чату.','Это я, когда тиммейт ливает.'],
+  smart:['О, годно. Это можно применить к моей тактике.','Прочитала. Ты разбираешься. Уважаю.'],
+  bold:['Приходи в ПК-бан, свободный комп рядом.','Ок. Увидимся. Не опаздывай, я не люблю ждать.']},
+ lucas:{sweet:['Хорошо! Нарисовал три дома и одну очень красивую дверь. А у тебя?','Merci. Теперь мой день стал лучше.'],
+  fun:['Это… шутка? Я не понял, прости.','Хм, корейский юмор. Я ещё учусь.'],
+  smart:['Отличная статья. Там про архитектуру? Нет? Всё равно интересно.','Прочитал. Спасибо, что думаешь обо мне.'],
+  bold:['Я тоже скучаю. Завтра в кафе у окна?','О-ля-ля. Да. Конечно да.']},
+ junso:{sweet:['Спокойно. Пионы распустились. А у тебя как прошёл?','Хорошо. Лучше, раз ты спросила.'],
+  fun:['Ха… Это смешно. Я покажу бабушке.','Кот похож на нашего соседского. Он тоже не сдаёт экзамены.'],
+  smart:['Прочитал между поливом. Там хорошая мысль про терпение.','Спасибо. Это как раз про то, о чём я думал.'],
+  bold:['Ой. Это… слишком быстро для меня.','Я… не знаю, что ответить. Давай увидимся в лавке, хорошо?']}};
+const FR_RE={
+ beka:[['Нормально! Сосед сверху опять что-то уронил. Как дела у тебя?','Отлично! Нашёл в холодильнике чей-то торт. Теперь мой.'],['ХАХА это я на каждой паре 😂','Сохранил. Это теперь наш официальный мем комнаты.'],['Давай! Только если на выходных не будет стирки.','Я за! Ты выбираешь, я плачу. Шучу, наоборот.']],
+ kamila:[['Нормально, только пару опять перенесли.','Хорошо! Сегодня все сдали отчёт вовремя. Почти все.'],['Ахах, скину в чат потока!','Я не смеюсь, я староста. …Ладно, смеюсь.'],['Давай! Только после консультации.','С удовольствием, мне нужен отдых от расписаний.']]};
+function chatReply(id,tone,q){const L=CHAT_RE[id]&&CHAT_RE[id][tone];if(L)return pick(L);const R=ROM[id];return pick(q==='good'?R.react.good:q==='bad'?R.react.bad:R.react.ok)}
+function frReply(id,i){const L=FR_RE[id]&&FR_RE[id][i];return L?pick(L):pick(FRIEND[id].texts)}
+// Spontaneous messages: never the same text twice in a row, go through all before repeating, and at most one every 3 days per person.
+function freshText(id,list){S.txu=S.txu||{};const u=S.txu[id]||(S.txu[id]={i:[],d:-9});if(S.day-u.d<3)return null;
+  let free=list.map((t,i)=>i).filter(i=>!u.i.includes(i));if(!free.length){u.i=u.i.slice(-1);free=list.map((t,i)=>i).filter(i=>!u.i.includes(i))}
+  const k=free[Math.floor(Math.random()*free.length)];u.i.push(k);u.d=S.day;return list[k]}
 
 async function main(){for(;;){const r=await title();await runGame(r==='resume')}}
 main();
