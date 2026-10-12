@@ -2051,8 +2051,13 @@ async function title(){
   setWho(null);newState(pg,name,tr[ti]);
 }
 /* ================= v1.6: music, sfx, patch notes ================= */
-const VER='1.24';
+const VER='1.25';
 const PATCH=[
+ {v:'1.25',d:'13 октября',items:[
+  'Новый перенос сохранений между телефоном и браузером: отправь весну себе в Telegram кнопкой «Отправить» или сохрани файлом, а на другом устройстве нажми «Открыть файл» или «Вставить»',
+  'Игра узнаёт ту же самую весну и предлагает обновить её слот, а если загружаемое сохранение старее, предупреждает',
+  'Перенос теперь открывается и из настроек, в том числе прямо посреди игры: прогресс сохраняется перед отправкой'
+ ]},
  {v:'1.24',d:'13 октября',items:[
   'Ещё 284 озвученные реплики: первое знакомство с каждым романтическим персонажем, приветствия, реакции на твои слова, подарки, свидания и все реплики дней рождения',
   'Перезаписаны реплики Вэя, Доюна, Лукаса и Джунсо из сцен знакомства с семьёй и прошлым: теперь голоса звучат так же, как в остальной игре',
@@ -3645,6 +3650,66 @@ ACH.push({id:'trip',n:'Чемодан готов',d:'Съездить на вы�
 @media (prefers-reduced-motion:reduce){.album .zoomfig img.kb{animation:none}}
 .albbar{position:absolute;left:16px;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));height:4px;border-radius:2px;background:rgba(255,255,255,.2);overflow:hidden}.albbar i{display:block;height:100%;background:#fff;transition:width .4s}
 `;document.head.appendChild(s)})();
+
+/* ================= v1.25: easy save transfer between phone and browser ================= */
+{const _sg=saveGame;saveGame=function(){if(window.__trBlock)return;try{if(S&&!S.uid)S.uid=Date.now().toString(36)+Math.random().toString(36).slice(2,7)}catch(e){}return _sg.apply(this,arguments)}}
+const TR_APP=()=>!!(window.Vesna90&&window.Vesna90.shareText);
+function trSlots(){return [1,2,3].map(n=>{try{return JSON.parse(localStorage.getItem(slotKey(n))||'null')}catch(e){return null}})}
+function trLabel(s){return s&&s.day?`${esc(s.name)}, ${esc(dateOf(s.day))}`:'пусто'}
+function trFile(s){return `vesna90-${String(s&&s.name||'save').replace(/[^\wа-яё-]/gi,'')||'save'}-den${s&&s.day||0}.txt`}
+async function trCopy(t){if(TR_APP()){try{window.Vesna90.copyText(t);return true}catch(e){}}
+  try{await navigator.clipboard.writeText(t);return true}catch(e){}
+  try{const a=document.createElement('textarea');a.value=t;a.style.position='fixed';a.style.opacity='0';document.body.appendChild(a);a.select();const ok=document.execCommand('copy');a.remove();return ok}catch(e){return false}}
+async function trPaste(){if(TR_APP()){try{return window.Vesna90.pasteText()||''}catch(e){}}
+  try{return await navigator.clipboard.readText()}catch(e){return null}}
+async function trShare(t,fname){if(TR_APP()){try{window.Vesna90.shareText(t,fname);return 'ok'}catch(e){}}
+  try{if(navigator.canShare&&window.File){const f=new File([t],fname,{type:'text/plain'});if(navigator.canShare({files:[f]})){await navigator.share({files:[f],title:'Сохранение «90 дней весны»'});return 'ok'}}
+    if(navigator.share){await navigator.share({title:'Сохранение «90 дней весны»',text:t});return 'ok'}}catch(e){if(e&&e.name==='AbortError')return 'cancel'}
+  return 'no'}
+async function trSave(t,fname){if(TR_APP()){try{window.Vesna90.saveText(t,fname);return 'ok'}catch(e){}}
+  try{const dl=window.claude&&window.claude.use?await window.claude.use('downloads'):null;if(dl){try{await dl.save({filename:fname,data:t});return 'ok'}catch(e){return e&&e.code==='declined'?'cancel':'no'}}}catch(e){}
+  try{const u=URL.createObjectURL(new Blob([t],{type:'text/plain'}));const a=document.createElement('a');a.href=u;a.download=fname;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),4000);return 'ok'}catch(e){return 'no'}}
+function trApply(d,n){localStorage.setItem(slotKey(n),JSON.stringify(d.s));
+  if(d.m){const m=loadMeta();for(const k of ['cg','endings','ach','words'])m[k]=Object.assign({},m[k]||{},d.m[k]||{});m.runs=Math.max(m.runs||0,d.m.runs||0);if(d.m.card)m.card=1;saveMeta(m)}}
+showTransfer=function(){
+  try{if(S&&typeof CUR_SLOT!=='undefined'&&CUR_SLOT)saveGame()}catch(e){}
+  let sl=trSlots();
+  const canShare=TR_APP()||!!navigator.share;
+  const body=`<p class="ptip" style="text-align:left">Играешь и на телефоне, и в браузере? Перед сменой устройства отправь сохранение себе, например в «Избранное» Telegram, а на другом устройстве загрузи его. Галерея, достижения и словарик переезжают вместе с ним.</p>
+   <h3 class="trh">1. Отправить с этого устройства</h3><div class="trs">${sl.map((s,i)=>`<button type="button" class="trb" data-exp="${i+1}" ${s&&s.day?'':'disabled'}>Слот ${i+1}: ${trLabel(s)}</button>`).join('')}</div>
+   <div class="trx" id="trExp" hidden><p class="ptip trok" id="trExpMsg"></p><div class="trrow">${canShare?'<button type="button" class="trb alt" data-act="share">Отправить</button>':''}<button type="button" class="trb alt" data-act="copy">Скопировать</button><button type="button" class="trb alt" data-act="file">Файлом</button></div></div>
+   <h3 class="trh">2. Загрузить на этом устройстве</h3>
+   <div class="trrow"><button type="button" class="trb alt" data-act="paste">Вставить</button><button type="button" class="trb alt" data-act="open">Открыть файл</button></div>
+   <input type="file" id="trFileIn" accept=".txt,text/plain" hidden>
+   <textarea class="trt" id="trIn" placeholder="…или вставь код сохранения сюда вручную"></textarea>
+   <p class="ptip" id="trMsg"></p><div class="trs" id="trTo"></div>`;
+  return modal('Перенос сохранений','Телефон ⇄ браузер',body,w=>{
+    const msg=w.querySelector('#trMsg'),inp=w.querySelector('#trIn'),to=w.querySelector('#trTo'),exp=w.querySelector('#trExp'),em=w.querySelector('#trExpMsg');
+    let code='',fname='save.txt',got=null;
+    const say=(el,t,ok)=>{el.textContent=t;el.style.color=ok===false?'var(--bad)':ok?'var(--good)':''};
+    w.querySelectorAll('[data-exp]').forEach(b=>b.onclick=async()=>{w.querySelectorAll('[data-exp]').forEach(x=>x.classList.toggle('on',x===b));const s=sl[+b.dataset.exp-1];
+      code=await packCode({v:VER,s,m:loadMeta()});fname=trFile(s);exp.hidden=false;say(em,`Готово: «${s.name}», ${dateOf(s.day)}. Выбери, как отправить.`,true)});
+    w.querySelector('[data-act="copy"]').onclick=async()=>{const ok=await trCopy(code);say(em,ok?'Код скопирован. Вставь его на другом устройстве.':'Не получилось скопировать. Попробуй «Файлом».',ok)};
+    const shb=w.querySelector('[data-act="share"]');if(shb)shb.onclick=async()=>{const r=await trShare(code,fname);if(r==='no')say(em,'Здесь нельзя поделиться. Нажми «Скопировать» или «Файлом».',false);else if(r==='ok')say(em,'Отправлено. На другом устройстве нажми «Открыть файл» или «Вставить».',true)};
+    w.querySelector('[data-act="file"]').onclick=async()=>{const r=await trSave(code,fname);if(r==='ok')say(em,TR_APP()?`Файл ${fname} сохранён в «Загрузки».`:`Файл ${fname} скачан.`,true);else if(r==='no')say(em,'Не получилось сохранить файл. Нажми «Скопировать».',false)};
+    const show=()=>{to.innerHTML='';got=null;const t=inp.value.trim();if(!t){say(msg,'');return}
+      unpackCode(t).then(d=>{if(!d||!d.s||!d.s.day)throw 0;got=d;sl=trSlots();
+        const same=d.s.uid?sl.findIndex(s=>s&&s.uid===d.s.uid):-1;
+        say(msg,`Нашлась весна «${d.s.name}», ${dateOf(d.s.day)}. Куда загрузить?`,true);
+        to.innerHTML=sl.map((s,i)=>{const n=i+1;let h=`Слот ${n}: ${trLabel(s)}`;if(i===same)h=`Обновить слот ${n}: это та же весна`;else if(s&&s.day)h+=' (заменится)';return `<button type="button" class="trb${i===same?' alt':''}" data-imp="${n}">${h}</button>`}).join('');
+        if(same>=0&&sl[same].day>d.s.day)say(msg,`Осторожно: в слоте ${same+1} эта весна уже дальше (${dateOf(sl[same].day)}), чем в загружаемом сохранении (${dateOf(d.s.day)}).`,false);
+        to.querySelectorAll('[data-imp]').forEach(b=>b.onclick=()=>{const n=+b.dataset.imp,s=sl[n-1];
+          if(s&&s.day&&!(d.s.uid&&s.uid===d.s.uid&&s.day<=d.s.day)&&!confirmOverwrite(b))return;
+          try{trApply(got,n);to.innerHTML='';if(S&&typeof CUR_SLOT!=='undefined'&&CUR_SLOT===n){window.__trBlock=1;say(msg,`Готово! «${got.s.name}» в слоте ${n}. Перезапускаю игру…`,true);setTimeout(()=>location.reload(),1500)}else say(msg,`Готово! «${got.s.name}» в слоте ${n}. Закрой окно и выбери этот слот на главном экране.`,true)}catch(e){say(msg,'Не хватило места для сохранения на этом устройстве.',false)}})
+      }).catch(()=>say(msg,'Код не подошёл. Проверь, что он скопирован целиком: он начинается с V90.',false))};
+    inp.addEventListener('input',show);
+    w.querySelector('[data-act="paste"]').onclick=async()=>{const t=await trPaste();if(t){inp.value=t;show()}else say(msg,'Буфер пуст или недоступен. Вставь код в поле ниже долгим нажатием.',false)};
+    const fi=w.querySelector('#trFileIn');w.querySelector('[data-act="open"]').onclick=()=>fi.click();
+    fi.onchange=()=>{const f=fi.files&&fi.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{inp.value=String(r.result||'');show()};r.readAsText(f);fi.value=''};
+  })};
+{const _ss=showSettings;showSettings=function(){const p=_ss.apply(this,arguments);try{const ws=document.querySelectorAll('.pnwrap');const w=ws[ws.length-1];const b=w&&w.querySelector('.pnb');
+  if(b){const x=document.createElement('button');x.type='button';x.className='trb alt trset';x.textContent='Перенос сохранений: телефон ⇄ браузер';x.onclick=()=>{const c=w.querySelector('.pnx');if(c)c.click();setTimeout(()=>showTransfer(),50)};b.appendChild(x)}}catch(e){}return p}}
+{const st=document.createElement('style');st.textContent=`.trrow{display:flex;gap:6px;flex-wrap:wrap}.trrow .trb{flex:1 1 30%;min-width:96px}.trb.on{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent) inset}.trx{display:flex;flex-direction:column;gap:6px}.trset{width:100%;margin-top:12px}`;document.head.appendChild(st)}
 
 async function main(){for(;;){const r=await title();await runGame(r==='resume')}}
 main();
