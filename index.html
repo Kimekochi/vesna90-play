@@ -840,7 +840,7 @@ const ENDINGS={
  seoul:{t:'Токио, осенний семестр',s:'Учёба и смелость открыли дверь за границу'},
  stage:{t:'На сцене',s:'Творчество стало делом'},
  sport:{t:'Сборная',s:'Форма и характер'},
- business:{t:'Своё дело',s:'400 000 ₩ и больше к концу весны'},
+ business:{t:'Своё дело',s:'750 000 ₩ и больше к концу весны'},
  polyglot:{t:'Переводчик',s:'Языки 80+'},
  chef:{t:'Своя кухня',s:'Кулинария 80+'},
  esports:{t:'Киберспорт',s:'Три победы в турнирах и игры 75+'},
@@ -1878,8 +1878,8 @@ async function endDay(){
   const wd=(S.day-1)%7;
   if(weekTick()){
     await momCall(true);
-    const wk=Math.max(6000,15000-(has('gourmet')?3000:0)-Math.min(S.cooked||0,5)*800);S.cooked=0;const _cf=S.cat&&S.cat.st==='home'?2000:0;money(-wk-_cf);await say(`Конец недели: общага, проезд и еда${_cf?' (и корм для кота)':''} — ${fmt(wk+_cf)}.${wk<15000?' Домашняя еда сэкономила деньги.':''}`);
-    if(has('blogger')){const inc=Math.round(S.subs*1.2);money(inc);await say('Рекламодатели перевели деньги за интеграции.')}
+    const wk=Math.max(9000,20000-(has('gourmet')?3000:0)-Math.min(S.cooked||0,5)*1200);S.cooked=0;const _cf=S.cat&&S.cat.st==='home'?2000:0;money(-wk-_cf);await say(`Конец недели: общага, проезд и еда${_cf?' (и корм для кота)':''} — ${fmt(wk+_cf)}.${wk<20000?' Домашняя еда сэкономила деньги.':''}`);
+    if(has('blogger')){const inc=Math.round(S.subs*0.6);money(inc);await say('Рекламодатели перевели деньги за интеграции.')}
     if(S.money<0){mood(-10);await say('На карте минус. Приходится занимать у Чанмина и есть доширак.',ME(),'s')}
   }
   let dm=-4;if(eq('cloth')?.cozy)dm+=2;if(eq('gadget')?.cozy)dm+=1;if(has('coffee'))dm-=1;if(S.partner)dm+=2;if(S.cat&&S.cat.st==='home')dm+=1;S.mood=clamp(S.mood+dm,0,100);
@@ -1976,7 +1976,7 @@ function computeEnding(){
   if(S.flags.seoul)c.push('seoul');
   if(S.flags.stage&&S.st.art>=70)c.push('stage');
   if(S.flags.sport&&S.st.fit>=70)c.push('sport');
-  if(S.money>=400000)c.push('business');
+  if(S.money>=150000)c.push('business');
   if(S.st.lang>=80)c.push('polyglot');
   if(S.st.cook>=80)c.push('chef');
   if((S.flags.esports||0)>=3&&S.st.game>=75)c.push('esports');
@@ -2051,8 +2051,14 @@ async function title(){
   setWho(null);newState(pg,name,tr[ti]);
 }
 /* ================= v1.6: music, sfx, patch notes ================= */
-const VER='1.28';
+const VER='1.29';
 const PATCH=[
+ {v:'1.29',d:'15 октября',items:[
+  'Новый баланс денег: подработки платят меньше, а неделя в Сеуле обходится дороже (жильё, проезд и еда — 100 000 ₩). Домашняя готовка экономит заметнее. На «Своё дело» теперь нужно 750 000 ₩ к концу весны',
+  'Кнопка «Лечь спать» переехала в общагу: она первая в списке дел комнаты 413',
+  'Длинные списки разбиты на группы: в общаге — «Отдохнуть», «Позаниматься», «Кухня», «Поездки», в университете — «Клубы и курсы», в торговом центре — «Развлечения» и «Красота и курсы»',
+  'Магазин по категориям: сначала выбираешь «Кофе и энергетики», «Подарки», «Одежда», «Аксессуары» или «Гаджеты», потом короткий список, отсортированный по цене'
+ ]},
  {v:'1.28',d:'13 октября',items:[
   'Отношения развиваются медленнее. Между главами истории персонажа должно пройти несколько дней, а признание возможно не раньше конца марта. В профиле видно, сколько ещё ждать',
   'За один день с одним человеком нельзя набрать больше 10 симпатии или дружбы в полную силу: дальше прибавка идёт втрое меньше. Пара за две недели больше не получится',
@@ -2387,7 +2393,7 @@ const ACH=[
  {id:'study',n:'Отличник',d:'Учёба 90+',f:(s)=>s&&s.st.study>=90},
  {id:'master',n:'Мастер на все руки',d:'Четыре навыка 60+',f:(s)=>s&&Object.values(s.st).filter(v=>v>=60).length>=4},
  {id:'chef',n:'Шеф общаги',d:'Приготовить ужин 20 раз',f:(s)=>s&&(s.cooked||0)>=20},
- {id:'rich',n:'Миллионер',d:'1 000 000 ₩ на счету',f:(s)=>s&&s.money>=1000000},
+ {id:'rich',n:'Миллионер',d:'1 000 000 ₩ на счету',f:(s)=>s&&s.money>=200000},
  {id:'blog',n:'Блогер',d:'10 000 подписчиков',f:(s)=>s&&s.subs>=10000},
  {id:'attend',n:'Ни одного прогула',d:'Дожить до лета, не пропустив ни одной пары',f:(s,c)=>c.end&&s.att.total>=20&&s.att.went>=s.att.total},
  {id:'nodebt',n:'Без минуса',d:'Пройти весну, ни разу не уйдя в минус',f:(s,c)=>c.end&&!s.flags.neg},
@@ -3559,7 +3565,7 @@ function showTransfer(){
 function confirmOverwrite(b){if(b.dataset.sure)return true;b.dataset.sure=1;b.textContent='Точно заменить? Нажми ещё раз';return false}
 
 /* ---------- ending hints ---------- */
-const END_HINT={seoul:'Подай заявку на обмен, когда появится объявление, напиши эссе и сдай сессию на 70+',stage:'Удачно выступи на открытом микрофоне и прокачай творчество до 70',sport:'Выиграй городской турнир по стритболу и подними форму до 70',business:'Накопи к концу весны 400 000 ₩',polyglot:'Подними языки до 80',chef:'Подними кулинарию до 80',esports:'Победи в трёх турнирах в ПК-бане и прокачай игры до 75',model:'Стиль 80 и обаяние 55',blogger:'Набери 25 000 подписчиков',grant:'Сдай все три экзамена со средним баллом 85+',friends:'Дружба с соседом по комнате 70+ и со старостой Суа 55+',ordinary:'Просто проживи весну',expelled:'Провали сессию и пересдачи',burnout:'Три раза доведи настроение до нуля'};
+const END_HINT={seoul:'Подай заявку на обмен, когда появится объявление, напиши эссе и сдай сессию на 70+',stage:'Удачно выступи на открытом микрофоне и прокачай творчество до 70',sport:'Выиграй городской турнир по стритболу и подними форму до 70',business:'Накопи к концу весны 750 000 ₩',polyglot:'Подними языки до 80',chef:'Подними кулинарию до 80',esports:'Победи в трёх турнирах в ПК-бане и прокачай игры до 75',model:'Стиль 80 и обаяние 55',blogger:'Набери 25 000 подписчиков',grant:'Сдай все три экзамена со средним баллом 85+',friends:'Дружба с соседом по комнате 70+ и со старостой Суа 55+',ordinary:'Просто проживи весну',expelled:'Провали сессию и пересдачи',burnout:'Три раза доведи настроение до нуля'};
 for(const id of Object.keys(ROM))END_HINT['love_'+id]=`Сблизься с ${INS[id]||CH[id].n}, пройди сюжетную линию и признание, приди на бал вместе`;
 
 /* ---------- photo album at the end ---------- */
@@ -3956,6 +3962,65 @@ function capGain(kind,id,n){if(!(n>0)||!S)return n;S.gain=S.gain||{};const k=kin
   const room=Math.max(0,DAY_CAP-g.s);const full=Math.min(n,room);const rest=n-full;const out=full+(rest>0?Math.max(1,Math.round(rest/3)):0);g.s+=out;return out}
 {const _a=aff;aff=function(id,n){return _a.call(this,id,capGain('a',id,n))}}
 {const _f=fr;fr=function(id,n){return _f.call(this,id,capGain('f',id,n))}}
+
+/* ================= v1.29: economy rebalance, sleep at home, grouped menus, shop by category ================= */
+// --- Pay per shift (internal units; shown ×5). Old: tutor 10000, freelance 14000, barista 7000, courier/admin 8000, shop 6000.
+const PAY={'Репетиторство':6000,'Фриланс-заказ':8500,'Смена баристой':4500,'Подработка курьером':5000,'Подработка админом':5000,'Помочь в лавке':4000};
+let __payTo=null;
+{const _m=money;money=function(n){if(__payTo!=null&&n>0){n=__payTo;__payTo=null}return _m.call(this,n)}}
+
+// --- Groups for long location menus: a title opens a short submenu.
+const LOC_GROUPS={
+ home:[{g:'Отдохнуть',h:'вздремнуть, сосед, уход за собой',ts:['Вздремнуть','Онлайн-катка','Потусить с Чанмином','Потусить с Йерин','Уход за собой и новый образ']},
+       {g:'Позаниматься',h:'дела в комнате',ts:['Заниматься в комнате','Снять видео для блога','Творить для себя']},
+       {g:'Кухня',h:'готовка и еда',ts:['Приготовить ужин','Собрать бэнто в подарок','Заказать доставку']},
+       {g:'Поездки',h:'на выходные',ts:['Поехать в Пусан к маме','Улететь на Чеджу']}],
+ uni:[{g:'Клубы и курсы',h:'дебаты, языки, твой клуб',ts:['Клуб дебатов','Языковой клуб','Курсы японского','Встреча клуба']}],
+ mall:[{g:'Развлечения',h:'кино, караоке, автоматы',ts:['Кино с друзьями','Караоке с друзьями','Игровые автоматы','Гулять по витринам','Чимчильбан']},
+       {g:'Красота и курсы',h:'салон, мастер-класс',ts:['Салон: новая стрижка','Кулинарный мастер-класс']}]};
+const actHint=a=>[typeof a.h==='function'?a.h():a.h,a.e?`−${a.e} эн.`:'',a.money?`−${fmt(a.money)}`:''].filter(Boolean).join(' · ');
+function groupActs(key,list){const G=LOC_GROUPS[key];if(!G)return list;const used=new Set();const out=[];
+  for(const a of list){const gi=G.findIndex(g=>g.ts.some(t=>a.t.startsWith(t)));if(gi<0){out.push(a);continue}
+    if(used.has(gi))continue;used.add(gi);const members=list.filter(b=>G[gi].ts.some(t=>b.t.startsWith(t))&&!actAvail(b).hide);if(!members.length)continue;
+    if(members.length<2){out.push(...members);continue}
+    const grp={t:G[gi].g+' ›',h:G[gi].h,free:1,run:async()=>{grp.free=1;
+      const av=members.map(b=>({b,v:actAvail(b)})).filter(x=>!x.v.hide);
+      const i=await ask(G[gi].g+'.',[...av.map(({b,v})=>({t:b.t,h:actHint(b),dis:v.dis,why:v.why})),{t:'Назад',cls:'back'}],{who:null});
+      if(i>=av.length)return;const b=av[i].b;if(b.money)money(-b.money);if(b.e)S.energy-=b.e;await b.run();grp.free=!!b.free}};
+    out.push(grp)}
+  return out}
+
+// --- Sleep lives in the dorm now; it is removed from the "where to go" list.
+const SLEEP_ACT={t:'Лечь спать',free:1,h:()=>S.slot<=3?'закончить день раньше: завтра +1 энергия':'закончить день',run:async()=>{if(S.slot<=3)S.early=1;S.slot=NSLOT}};
+for(const key of Object.keys(LOCS)){const orig=LOCS[key].acts;LOCS[key].acts=function(){let list=orig.apply(this,arguments);
+  list=list.map(a=>PAY[a.t]!=null?Object.assign({},a,{h:'+'+fmt(PAY[a.t]),run:async()=>{__payTo=PAY[a.t];try{return await a.run()}finally{__payTo=null}}}):a);
+  list=groupActs(key,list);if(key==='home')list=[SLEEP_ACT,...list];return list}}
+{const _ask=ask;ask=function(text,opts,o){try{if(Array.isArray(opts)&&/Куда пойдёшь\?$/.test(String(text))&&opts.length&&opts[opts.length-1].t==='Лечь спать')opts=opts.slice(0,-1)}catch(e){}return _ask.call(this,text,opts,o)}}
+
+// --- Shop: pick a category first, then a short list.
+shop=async function(){
+  for(;;){
+    const items=Object.keys(ITEMS).filter(id=>!S.owned.includes(id));
+    const cats=[{k:'cons',t:'Кофе и энергетики',h:'быстро вернуть силы'},{k:'gift',t:'Подарки',h:'для друзей и не только'},
+      ...Object.keys(SLOT_N).map(sl=>({k:'i:'+sl,t:SLOT_N[sl],h:(()=>{const n=items.filter(id=>ITEMS[id].slot===sl).length;return n?`${n} в продаже`:'всё куплено'})(),dis:!items.some(id=>ITEMS[id].slot===sl),why:'Всё уже куплено'}))];
+    const c=await ask(`Торговый центр. На карте ${fmt(S.money)}. Что смотрим?`,[...cats,{t:'Хватит покупок',cls:'back'}],{who:null,scroll:false});
+    if(c===cats.length)return;const K=cats[c].k;
+    for(;;){
+      let opts=[];
+      if(K==='cons')opts=[{t:'Кофе с собой',h:'4 500 ₩ · +2 энергии',k:'c:coffee',p:900},{t:'Энергетик',h:'7 500 ₩ · +4 энергии, настроение −5',k:'c:drink',p:1500}];
+      else if(K==='gift')opts=Object.keys(GIFTS).filter(k=>GIFTS[k].p>0).map(k=>({t:GIFTS[k].n,h:`${fmt(GIFTS[k].p)}${S.gifts[k]?` · в сумке: ${S.gifts[k]}`:''}`,k:'g:'+k,p:GIFTS[k].p}));
+      else{const sl=K.slice(2);opts=Object.keys(ITEMS).filter(id=>!S.owned.includes(id)&&ITEMS[id].slot===sl).sort((a,b)=>ITEMS[a].p-ITEMS[b].p).map(id=>({t:ITEMS[id].n,h:`${fmt(ITEMS[id].p)} · ${ITEMS[id].d}`,k:'i:'+id,p:ITEMS[id].p}))}
+      if(!opts.length)break;
+      opts.forEach(o=>{o.dis=S.money<o.p;o.why='Не хватает денег'});
+      const i=await ask(`${cats[c].t}. На карте ${fmt(S.money)}.`,opts.concat([{t:'Назад',cls:'back'}]),{who:null,scroll:false});
+      if(i===opts.length)break;
+      const o=opts[i];money(-o.p);const [t,k]=o.k.split(':');
+      if(t==='c'){S.cons[k]++;if(k==='coffee')count('coffee');chip(`Куплено: ${o.t}`,'pos')}
+      else if(t==='g'){S.gifts[k]++;chip(`В сумке: ${GIFTS[k].n}`,'pos')}
+      else{S.owned.push(k);if(!S.equip[ITEMS[k].slot])S.equip[ITEMS[k].slot]=k;chip(`Куплено: ${ITEMS[k].n}`,'pos');break}
+    }
+  }
+};
 
 async function main(){for(;;){const r=await title();await runGame(r==='resume')}}
 main();
