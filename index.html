@@ -1675,7 +1675,7 @@ async function locMenu(key){
     if(i<ppl.length){const r=await talkTo(ppl[i]);if(S.slot>=NSLOT||r==='date')return;setScene(key);continue}
     const j=i-ppl.length;if(j===acts.length)return;
     const a=acts[j].a;
-    if(a.money)money(-a.money);if(a.e)S.energy-=a.e;
+    if(a.money){window.__mtag=a.t;money(-a.money);window.__mtag=null}if(a.e)S.energy-=a.e;
     await a.run();
     if(!a.free){const was=S.slot;S.slot++;if(was===NSLOT-1)S.debt=1;await miniEvent(key);if(was===NSLOT-1&&Math.random()<0.3)await nightStore();await checkTraits();return}
     setScene(key);
@@ -1878,8 +1878,8 @@ async function endDay(){
   const wd=(S.day-1)%7;
   if(weekTick()){
     await momCall(true);
-    const wk=Math.max(9000,20000-(has('gourmet')?3000:0)-Math.min(S.cooked||0,5)*1200);S.cooked=0;const _cf=S.cat&&S.cat.st==='home'?2000:0;money(-wk-_cf);await say(`Конец недели: общага, проезд и еда${_cf?' (и корм для кота)':''} — ${fmt(wk+_cf)}.${wk<20000?' Домашняя еда сэкономила деньги.':''}`);
-    if(has('blogger')){const inc=Math.round(S.subs*0.6);money(inc);await say('Рекламодатели перевели деньги за интеграции.')}
+    const wk=Math.max(9000,20000-(has('gourmet')?3000:0)-Math.min(S.cooked||0,5)*1200);S.cooked=0;const _cf=S.cat&&S.cat.st==='home'?2000:0;window.__mtag='Жильё, проезд и еда';money(-wk-_cf);window.__mtag=null;await say(`Конец недели: общага, проезд и еда${_cf?' (и корм для кота)':''} — ${fmt(wk+_cf)}.${wk<20000?' Домашняя еда сэкономила деньги.':''}`);
+    if(has('blogger')){const inc=Math.round(S.subs*0.6);window.__mtag='Реклама в блоге';money(inc);window.__mtag=null;await say('Рекламодатели перевели деньги за интеграции.')}
     if(S.money<0){mood(-10);await say('На карте минус. Приходится занимать у Чанмина и есть доширак.',ME(),'s')}
   }
   let dm=-4;if(eq('cloth')?.cozy)dm+=2;if(eq('gadget')?.cozy)dm+=1;if(has('coffee'))dm-=1;if(S.partner)dm+=2;if(S.cat&&S.cat.st==='home')dm+=1;S.mood=clamp(S.mood+dm,0,100);
@@ -2051,8 +2051,16 @@ async function title(){
   setWho(null);newState(pg,name,tr[ti]);
 }
 /* ================= v1.6: music, sfx, patch notes ================= */
-const VER='1.29';
+const VER='1.30';
 const PATCH=[
+ {v:'1.30',d:'15 октября',items:[
+  'В телефоне новое приложение «Кошелёк»: баланс, доходы и траты за неделю по статьям, последние операции и дата следующего платежа за жильё',
+  'Повышенная стипендия: за рубежный контроль или экзамен на 85+ деканат доплачивает 30 000 ₩, на 95+ — 40 000 ₩',
+  'Повышение на подработке: после 10 смен в одном месте платят на 20% больше, после 25 — на 40%',
+  'Распродажи по выходным: в субботу и воскресенье одна категория в ТЦ дешевле на 30%. Что будет со скидкой, видно в календаре',
+  'В календаре появились платежи за неделю, распродажи и встречи клуба',
+  'Весну больше не пролистать за минуту: лечь спать можно только вечером (или когда совсем нет сил), вздремнуть — раз в день, а день, прожитый впустую, портит настроение. Быстрый текст в настройках остался'
+ ]},
  {v:'1.29',d:'15 октября',items:[
   'Новый баланс денег: подработки платят меньше, а неделя в Сеуле обходится дороже (жильё, проезд и еда — 100 000 ₩). Домашняя готовка экономит заметнее. На «Своё дело» теперь нужно 750 000 ₩ к концу весны',
   'Кнопка «Лечь спать» переехала в общагу: она первая в списке дел комнаты 413',
@@ -3039,7 +3047,7 @@ function openPhone(o){return new Promise(res=>{
     const last=id=>{const L=S.msgs[id];return L&&L.length?L[L.length-1]:null};
     return all.sort((a,b)=>((S.unread[b]?1e6:0)+((last(b)||{}).d||0))-((S.unread[a]?1e6:0)+((last(a)||{}).d||0)))}
   const V={
-   home(){const n=unreadN();const apps=[['msgs','💬','Сообщения',n],['photo','📷','Фото'],['diary','📔','Дневник'],['wx','🌤️','Погода'],['cal','📅','Календарь'],['dict','📖','Словарик',0,S.words.length],...(S.cat&&S.cat.st!=='yard'?[['cat','🐈',S.cat.st==='home'?S.cat.n:'Котик']]:[]),['gal','🖼️','Галерея'],['ach','🏆','Достижения'],['set','⚙️','Настройки']];
+   home(){const n=unreadN();const apps=[['msgs','💬','Сообщения',n],['photo','📷','Фото'],['diary','📔','Дневник'],['wx','🌤️','Погода'],['cal','📅','Календарь'],['wallet','💳','Кошелёк'],['dict','📖','Словарик',0,S.words.length],...(S.cat&&S.cat.st!=='yard'?[['cat','🐈',S.cat.st==='home'?S.cat.n:'Котик']]:[]),['gal','🖼️','Галерея'],['ach','🏆','Достижения'],['set','⚙️','Настройки']];
      const w=wxOf(S.day);
      return `<div class="phhome"><div class="phclock"><b>${PH_TIME[Math.min(S.slot,4)]}</b><span>${esc(dateOf(S.day))}, ${WD[(S.day-1)%7]}</span><span>${WX[w.k].i} ${tmp(w.t)} · ${WX[w.k].n}</span></div>
      <div class="phapps">${apps.map(([k,i,t,b,c])=>`<button type="button" class="papp" data-app="${k}"><span class="pai">${i}${b?`<i>${b>9?'9+':b}</i>`:''}</span><span>${esc(t)}${c?` · ${c}`:''}</span></button>`).join('')}</div>
@@ -3067,9 +3075,18 @@ function openPhone(o){return new Promise(res=>{
      <div class="pmask"><span>😷 Маски KF94: <b>${S.cons.mask}</b><small>спасают от жёлтой пыли</small></span><button type="button" data-mask ${S.money<3000?'disabled':''}>Заказать 5 шт · 3 000 ₩</button></div>
      <p class="ptip small">За весну: солнечных дней ${S.wxLog.sun}, дождливых ${S.wxLog.wet}, пыльных ${S.wxLog.dust}.</p></div>`},
    cal(){const ev=[];for(const d of Object.keys(CAL_N).map(Number))if(d>=S.day&&(d!==75||S.flags.seoulOpen))ev.push([d,CAL_N[d],'📌']);
-     for(const id of Object.keys(BDAY))if(CH[id]&&BDAY[id]>=S.day&&bdKnown(id))ev.push([BDAY[id],'День рождения: '+CH[id].n,'🎂']);
+     for(const id of Object.keys(BDAY))if(CH[id]&&BDAY[id]>=S.day&&bdKnown(id)&&!ev.some(e=>e[0]===BDAY[id]&&e[1].includes(CH[id].n.slice(0,4))))ev.push([BDAY[id],'День рождения: '+CH[id].n,'🎂']);
+     if(MODE()===90){for(let d=S.day;d<=Math.min(90,S.day+13);d++){const wd=(d-1)%7;if(wd===6)ev.push([d,'Платёж за неделю: жильё, проезд, еда','💳']);if(wd===5)ev.push([d,'Распродажа в ТЦ: скидка 30% на '+SALE_N[SALE_CATS[Math.floor((d-1)/7)%SALE_CATS.length]],'🏷️'])}}
+     if(S.club&&typeof CLUBS!=='undefined'&&CLUBS[S.club.id]&&S.clubW!==clubWeek())ev.push([S.day,'На этой неделе встреча: '+CLUBS[S.club.id].n,'🎯']);
      ev.sort((a,b)=>a[0]-b[0]);
-     return top('Календарь')+`<div class="pdict"><div class="pwords">${ev.slice(0,14).map(([d,n,i])=>`<div class="pword"><b>${i}</b><em>${esc(n)}</em><small>${d===S.day?'сегодня':esc(dateOf(d))}${MODE()!==90&&d!==S.day&&!modeSched(MODE()).includes(d)?' · случится в ближайший твой день':''}</small></div>`).join('')||'<p class="pemp">Весна почти закончилась.</p>'}</div></div>`},
+     return top('Календарь')+`<div class="pdict"><div class="pwords">${ev.slice(0,16).map(([d,n,i])=>`<div class="pword"><b>${i}</b><em>${esc(n)}</em><small>${d===S.day?'сегодня':esc(dateOf(d))}${MODE()!==90&&d!==S.day&&!modeSched(MODE()).includes(d)?' · случится в ближайший твой день':''}</small></div>`).join('')||'<p class="pemp">Весна почти закончилась.</p>'}</div></div>`},
+   wallet(){const W=(S.wal||[]);const wk=W.filter(x=>x[0]>S.day-7);const inc=wk.filter(x=>x[1]>0).reduce((a,x)=>a+x[1],0),exp=-wk.filter(x=>x[1]<0).reduce((a,x)=>a+x[1],0);
+     const by={};for(const x of wk){by[x[2]]=(by[x[2]]||0)+x[1]}const cats=Object.entries(by).sort((a,b)=>Math.abs(b[1])-Math.abs(a[1])).slice(0,8);
+     let nb=0;for(let d=S.day;d<=S.day+7;d++){const wd=(d-1)%7;if(wd===6){nb=d;break}}const est=Math.max(9000,20000-(has('gourmet')?3000:0)-Math.min(S.cooked||0,5)*1200)+(S.cat&&S.cat.st==='home'?2000:0);
+     const row=(t,v,sub)=>`<div class="pword"><b style="color:${v>=0?'var(--good)':'var(--bad)'}">${v>=0?'+':'−'}${esc(fmt(Math.abs(v)))}</b><em>${esc(t)}</em>${sub?`<small>${esc(sub)}</small>`:''}</div>`;
+     return top('Кошелёк')+`<div class="pdict"><div class="pwal"><small>На карте</small><b>${esc(fmt(S.money))}</b><span>За 7 дней: <i style="color:var(--good)">+${esc(fmt(inc))}</i> · <i style="color:var(--bad)">−${esc(fmt(exp))}</i></span>${MODE()===90&&nb?`<span>Следующий платёж за жильё и еду: ${esc(dateOf(nb))}, около ${esc(fmt(est))}</span>`:''}</div>
+     <h4 class="pwh">Куда ушло и откуда пришло</h4><div class="pwords">${cats.map(([t,v])=>row(t,v)).join('')||'<p class="pemp">За неделю денег не тратилось.</p>'}</div>
+     <h4 class="pwh">Последние операции</h4><div class="pwords">${W.slice(-12).reverse().map(x=>row(x[2],x[1],dateOf(x[0]))).join('')||'<p class="pemp">Пока пусто.</p>'}</div></div>`},
    photo(){const L=(S.photos||[]).slice().reverse();return top('Фото')+`<div class="pdict">${L.length?`<div class="pgrid">${L.map(p=>`<button type="button" class="pph" data-zoom="${p.k}"><img src="${SRC(BG[p.k])}" alt=""><span>${esc(dateOf(p.d))}</span></button>`).join('')}</div>`:'<p class="pemp">Здесь появятся фото с важных моментов весны.</p>'}</div>`},
    diary(){const L=(S.diary||[]).slice().reverse();return top('Дневник')+`<div class="pdict"><div class="pwords">${L.map(e=>`<div class="pword"><b style="font-size:13px">${esc(dateOf(e.d))}</b><span>${esc(e.w)}</span><small>${esc(e.t)}</small></div>`).join('')||'<p class="pemp">Первая запись появится вечером.</p>'}</div></div>`},
    dict(){const m=loadMeta();const tot=Object.keys(m.words||{}).length;const L=[...S.words].reverse();
@@ -3986,14 +4003,14 @@ function groupActs(key,list){const G=LOC_GROUPS[key];if(!G)return list;const use
     const grp={t:G[gi].g+' ›',h:G[gi].h,free:1,run:async()=>{grp.free=1;
       const av=members.map(b=>({b,v:actAvail(b)})).filter(x=>!x.v.hide);
       const i=await ask(G[gi].g+'.',[...av.map(({b,v})=>({t:b.t,h:actHint(b),dis:v.dis,why:v.why})),{t:'Назад',cls:'back'}],{who:null});
-      if(i>=av.length)return;const b=av[i].b;if(b.money)money(-b.money);if(b.e)S.energy-=b.e;await b.run();grp.free=!!b.free}};
+      if(i>=av.length)return;const b=av[i].b;if(b.money){window.__mtag=b.t;money(-b.money);window.__mtag=null}if(b.e)S.energy-=b.e;await b.run();grp.free=!!b.free}};
     out.push(grp)}
   return out}
 
 // --- Sleep lives in the dorm now; it is removed from the "where to go" list.
 const SLEEP_ACT={t:'Лечь спать',free:1,h:()=>S.slot<=3?'закончить день раньше: завтра +1 энергия':'закончить день',run:async()=>{if(S.slot<=3)S.early=1;S.slot=NSLOT}};
 for(const key of Object.keys(LOCS)){const orig=LOCS[key].acts;LOCS[key].acts=function(){let list=orig.apply(this,arguments);
-  list=list.map(a=>PAY[a.t]!=null?Object.assign({},a,{h:'+'+fmt(PAY[a.t]),run:async()=>{__payTo=PAY[a.t];try{return await a.run()}finally{__payTo=null}}}):a);
+  list=list.map(a=>typeof xformAct==='function'?xformAct(a):a);
   list=groupActs(key,list);if(key==='home')list=[SLEEP_ACT,...list];return list}}
 {const _ask=ask;ask=function(text,opts,o){try{if(Array.isArray(opts)&&/Куда пойдёшь\?$/.test(String(text))&&opts.length&&opts[opts.length-1].t==='Лечь спать')opts=opts.slice(0,-1)}catch(e){}return _ask.call(this,text,opts,o)}}
 
@@ -4021,6 +4038,60 @@ shop=async function(){
     }
   }
 };
+
+/* ================= v1.30: wallet, scholarship, promotions, weekend sales, calendar, no speed-skipping ================= */
+// ---------- wallet: every money change is logged with a label ----------
+window.__mtag=null;
+{const _m=money;money=function(n){const m0=S?S.money:0;const r=_m.apply(this,arguments);try{n=S?S.money-m0:0;if(S&&n){S.wal=S.wal||[];S.wal.push([S.day,Math.round(n),window.__mtag||(n>0?'Прочие доходы':'Прочие траты')]);if(S.wal.length>400)S.wal.splice(0,S.wal.length-400)}}catch(e){}return r}}
+const withTag=(tag,fn)=>async function(){const prev=window.__mtag;window.__mtag=tag;try{return await fn.apply(this,arguments)}finally{window.__mtag=prev}};
+{const _d=date;date=withTag('Свидания',_d)}
+{const _h=hangout;hangout=withTag('Прогулки с друзьями',_h)}
+{const _s=shop;shop=withTag('Покупки',_s)}
+{const _g=giveGift;giveGift=withTag('Подарки',_g)}
+
+// ---------- job promotions: after 10 and 25 shifts in one place pay rises ----------
+const PROMO=[[25,1.4,'старший сотрудник'],[10,1.2,'опытный сотрудник']];
+const promoOf=t=>{const n=(S.shifts&&S.shifts[t])||0;return PROMO.find(p=>n>=p[0])||null};
+function payFor(t){const p=promoOf(t);return Math.round(PAY[t]*(p?p[1]:1))}
+
+// ---------- weekend sales: one shop category is 30% off on Saturday and Sunday ----------
+const SALE_CATS=['gift','i:cloth','i:acc','i:gadget'];
+const saleCat=()=>isWeekend(S.day)?SALE_CATS[Math.floor((S.day-1)/7)%SALE_CATS.length]:null;
+const SALE_N={'gift':'подарки','i:cloth':'одежду','i:acc':'аксессуары','i:gadget':'гаджеты'};
+
+// ---------- actions: labels for the wallet, promotions, nap once a day, sleep only in the evening ----------
+SLEEP_ACT.req=()=>S.slot>=3||S.energy<=1;SLEEP_ACT.reqTxt='Ещё рано: лечь можно вечером или когда совсем нет сил';
+function xformAct(a){
+  if(!a||!a.run)return a;
+  const nap=a.t==='Вздремнуть',isJob=PAY[a.t]!=null;
+  const b=Object.assign({},a,{run:async()=>{const prev=window.__mtag;window.__mtag=isJob?(/^Подработка/.test(a.t)?a.t:'Подработка: '+a.t):a.t;
+    try{if(nap)S.napD=S.day;else S.actD=S.day;
+      if(isJob){S.shifts=S.shifts||{};const before=promoOf(a.t);S.shifts[a.t]=(S.shifts[a.t]||0)+1;__payTo=payFor(a.t);const r=await a.run();const after=promoOf(a.t);
+        if(after&&after!==before){chip('Повышение! Теперь ты '+after[2],'pos');await say(`Начальник смены жмёт руку: «Ты у нас уже ${S.shifts[a.t]} смен. С сегодняшнего дня платим больше». Теперь за смену ${fmt(payFor(a.t))}.`)}return r}
+      return await a.run()}finally{window.__mtag=prev;__payTo=null}}});
+  if(isJob)b.h=()=>{const p=promoOf(a.t);return '+'+fmt(payFor(a.t))+(p?' · '+p[2]:'')};
+  if(nap){b.req=()=>S.napD!==S.day&&(!a.req||a.req());b.reqTxt='Сегодня уже был дневной сон'}
+  return b}
+
+// a day that passes with nothing but naps and sleep costs mood
+{const _t=talkTo;talkTo=async function(){if(S)S.actD=S.day;return _t.apply(this,arguments)}}
+{const _p=phoneMenu;phoneMenu=async function(){const r=await _p.apply(this,arguments);if(S&&r)S.actD=S.day;return r}}
+{const _sd=startDay;startDay=async function(){try{if(S&&S.day>1&&S.idleChk!==S.day&&(S.actD??1)<S.day-1&&!S.over){mood(-6);chip('Вчерашний день прошёл впустую','neg')}if(S)S.idleChk=S.day}catch(e){}
+  const sk=S&&S.skip;const r=await _sd.apply(this,arguments);try{if(S&&(sk||CAL[S.day]||S.slot>=NSLOT))S.actD=S.day}catch(e){}return r}}
+
+// ---------- scholarship for strong exams ----------
+async function scholarship(s,what){if(s<85)return;const amt=s>=95?8000:6000;window.__mtag='Стипендия';money(amt);window.__mtag=null;await say(`${what}: ${s} баллов — деканат начисляет повышенную стипендию, ${fmt(amt)}.`,ME(),'h')}
+{const _fe=finalExam;finalExam=async function(){const n0=S.fin.length;const r=await _fe.apply(this,arguments);try{const f=S.fin[S.fin.length-1];if(S.fin.length>n0&&f)await scholarship(f.s,f.n)}catch(e){}return r}}
+{const _mt=midterm;midterm=async function(){const r=await _mt.apply(this,arguments);try{if(S.mid!=null)await scholarship(S.mid,'Рубежный контроль')}catch(e){}return r}}
+
+// ---------- shop: weekend sale ----------
+{const _sh=shop;shop=async function(){const sc=saleCat();if(sc&&S.saleSeen!==S.day){S.saleSeen=S.day;toast(`Выходные: скидка 30% на ${SALE_N[sc]}`)}
+  window.__sale=sc;try{return await _sh.apply(this,arguments)}finally{window.__sale=null}}}
+{const _ask=ask;ask=function(text,opts,o){try{const sc=window.__sale;if(sc&&Array.isArray(opts)){const t=String(text);
+  const inCat=(sc==='gift'&&/^Подарки\./.test(t))||(sc.startsWith('i:')&&new RegExp('^'+SLOT_N[sc.slice(2)]+'\\.').test(t));
+  if(/Что смотрим\?$/.test(t))opts=opts.map(x=>x&&x.k===sc?Object.assign({},x,{t:x.t+' · −30%'}):x);
+  else if(inCat)opts=opts.map(x=>x&&x.p?Object.assign(x,{p:Math.round(x.p*0.7),h:String(x.h).replace(/^[\d\s ]+₩/,fmt(Math.round(x.p*0.7))+' (скидка)'),dis:S.money<Math.round(x.p*0.7)}):x)}}catch(e){}return _ask.call(this,text,opts,o)}}
+{const st=document.createElement('style');st.textContent=`.pwal{display:flex;flex-direction:column;gap:4px;padding:14px 16px;margin:4px 0 10px;border-radius:16px;background:var(--surface2);border:1px solid var(--line)}.pwal small{color:var(--muted);font-size:12px}.pwal b{font:800 26px var(--f-display)}.pwal span{font-size:13px}.pwal i{font-style:normal;font-weight:700}.pwh{margin:12px 2px 6px;font:700 13px var(--f-body);color:var(--muted);text-transform:uppercase;letter-spacing:.04em}`;document.head.appendChild(st)}
 
 async function main(){for(;;){const r=await title();await runGame(r==='resume')}}
 main();
