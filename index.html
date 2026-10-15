@@ -2021,7 +2021,7 @@ async function ending(){
   <div class="kv"><span>Средний балл <b>${avg||'—'}</b></span>${Object.keys(STAT_N).map(k=>`<span>${STAT_N[k]} <b>${S.st[k]}</b></span>`).join('')}<span>Деньги <b>${fmt(S.money)}</b></span><span>Подписчики <b>${S.subs.toLocaleString('ru-RU')}</b></span></div>
   <div class="kv"><span>Концовок открыто <b>${Object.keys(meta.endings).length}/${Object.keys(ENDINGS).length}</b></span></div></div>`;
   if(S.photos&&S.photos.length){const ab=document.createElement('button');ab.type='button';ab.className='opt';ab.innerHTML='<span class="t">📷 Фотоальбом весны</span><span class="h">'+S.photos.length+' фото за весну</span>';ab.onclick=()=>showAlbum();box.appendChild(ab)}
-  {const pc=document.createElement('button');pc.type='button';pc.className='opt';pc.innerHTML='<span class="t">🌸 Открытка весны</span><span class="h">картинка на память: сохранить или отправить друзьям</span>';pc.onclick=()=>showPostcard();box.appendChild(pc)}
+  {const pc=document.createElement('button');pc.type='button';pc.className='opt';pc.innerHTML='<span class="t">🌸 Итоги весны</span><span class="h">карточка для соцсетей: пара, концовка, деньги, кофе</span>';pc.onclick=()=>showPostcard();box.appendChild(pc)}
   const b=document.createElement('button');b.type='button';b.className='opt next';b.innerHTML='<span class="t">Новая весна</span>';box.appendChild(b);
   renderSide();
   await new Promise(r=>b.addEventListener('click',r));
@@ -2051,8 +2051,19 @@ async function title(){
   setWho(null);newState(pg,name,tr[ti]);
 }
 /* ================= v1.6: music, sfx, patch notes ================= */
-const VER='1.31';
+const VER='1.32';
 const PATCH=[
+ {v:'1.32',d:'15 октября',items:[
+  'Ревность: если ходить на свидания сразу с двумя, они узнают друг о друге. Придётся объясниться, и у выбора будут последствия',
+  'Ссоры: неудачное свидание может закончиться ссорой. Пока не помиритесь, человек не пойдёт гулять и не будет писать. Помириться можно извинением, разговором или подарком',
+  'У Чанмина (Йерин) и Суа теперь полные линии: новые главы, подарки и совместные прогулки, как у остальных друзей',
+  'Погода влияет на дела: в дождь прогулка по набережной отменяется, бегать хуже, а кафе и кино уютнее',
+  'Концовка попадает в галерею, только если в весне было хотя бы 60 активных дней',
+  'Новая концовка «Проспать весну» — для тех, кто почти ничего не делал',
+  'По утрам подсказка «Что сегодня важно»: дни рождения, встречи, клуб, сколько дней до экзаменов',
+  'Откат: игра запоминает утро трёх последних дней. Настройки → «Вернуться на пару дней назад»',
+  'Цели весны: в начале можно выбрать одну-две цели и следить за ними в телефоне, в приложении «Цели»',
+  'Итоги весны: карточка для соцсетей с парой, концовкой, заработком и количеством выпитого кофе']},
  {v:'1.31',d:'15 октября',items:[
   'Теперь можно ответить на то, что тебе написали. Харин зовёт попробовать новый сироп — можно ответить «Обязательно зайду!», пошутить или сказать что-то посмелее, и она ответит именно на это. Так работает с каждым сообщением, которое персонажи присылают первыми',
   'На поздравление с днём рождения в чате теперь приходит ответ'
@@ -3051,7 +3062,7 @@ function openPhone(o){return new Promise(res=>{
     const last=id=>{const L=S.msgs[id];return L&&L.length?L[L.length-1]:null};
     return all.sort((a,b)=>((S.unread[b]?1e6:0)+((last(b)||{}).d||0))-((S.unread[a]?1e6:0)+((last(a)||{}).d||0)))}
   const V={
-   home(){const n=unreadN();const apps=[['msgs','💬','Сообщения',n],['photo','📷','Фото'],['diary','📔','Дневник'],['wx','🌤️','Погода'],['cal','📅','Календарь'],['wallet','💳','Кошелёк'],['dict','📖','Словарик',0,S.words.length],...(S.cat&&S.cat.st!=='yard'?[['cat','🐈',S.cat.st==='home'?S.cat.n:'Котик']]:[]),['gal','🖼️','Галерея'],['ach','🏆','Достижения'],['set','⚙️','Настройки']];
+   home(){const n=unreadN();const apps=[['msgs','💬','Сообщения',n],['photo','📷','Фото'],['diary','📔','Дневник'],['wx','🌤️','Погода'],['cal','📅','Календарь'],['wallet','💳','Кошелёк'],['goals','🎯','Цели',0,(S.goals||[]).length?`${(S.goals||[]).filter(g=>S.goalDone&&S.goalDone[g]).length}/${S.goals.length}`:0],['dict','📖','Словарик',0,S.words.length],...(S.cat&&S.cat.st!=='yard'?[['cat','🐈',S.cat.st==='home'?S.cat.n:'Котик']]:[]),['gal','🖼️','Галерея'],['ach','🏆','Достижения'],['set','⚙️','Настройки']];
      const w=wxOf(S.day);
      return `<div class="phhome"><div class="phclock"><b>${PH_TIME[Math.min(S.slot,4)]}</b><span>${esc(dateOf(S.day))}, ${WD[(S.day-1)%7]}</span><span>${WX[w.k].i} ${tmp(w.t)} · ${WX[w.k].n}</span></div>
      <div class="phapps">${apps.map(([k,i,t,b,c])=>`<button type="button" class="papp" data-app="${k}"><span class="pai">${i}${b?`<i>${b>9?'9+':b}</i>`:''}</span><span>${esc(t)}${c?` · ${c}`:''}</span></button>`).join('')}</div>
@@ -3070,7 +3081,7 @@ function openPhone(o){return new Promise(res=>{
        else if(typeof pendOf==='function'&&pendOf(id)){const L=TX_RE[pendOf(id)];acts=`<p class="phint" style="margin:0 0 6px">Ответить на сообщение:</p><div class="pqr">${L.map((x,i)=>`<button type="button" data-x="${i}">${esc(fx(x[0]))}</button>`).join('')}</div>`}
        else if(rom){const o3=shuffle(MSG_OPTS).slice(0,3);p.o3=p.o3||o3;acts=`<div class="pqr">${p.o3.map((x,i)=>`<button type="button" data-r="${i}">${esc(TONE_LBL[x[1]])}</button>`).join('')}</div>`}
        else acts=`<div class="pqr">${FR_OPTS.map((t,i)=>`<button type="button" data-f="${i}">${esc(fx(t))}</button>`).join('')}</div>`;
-       if(!rom&&FRIEND[id]&&FRIEND[id].__dyn&&o.turn){const can=(S.fr[id]||0)>=30&&S.slot<=3;acts+=`<button type="button" class="pbig" data-hang ${can?'':'disabled'}>🚶 Позвать тусоваться${can?' · займёт этот ход':(S.fr[id]||0)<30?' · нужна дружба 30':' · уже поздно'}</button>`}
+       if(!rom&&FRIEND[id]&&(FRIEND[id].__dyn||(typeof PROF!=='undefined'&&PROF[id]))&&o.turn){const can=(S.fr[id]||0)>=30&&S.slot<=3;acts+=`<button type="button" class="pbig" data-hang ${can?'':'disabled'}>🚶 Позвать тусоваться${can?' · займёт этот ход':(S.fr[id]||0)<30?' · нужна дружба 30':' · уже поздно'}</button>`}
        if(rom){const can=S.rel[id].aff>=30&&S.slot<=3;acts+=o.turn?`<button type="button" class="pbig" data-date ${can?'':'disabled'}>🚶 Позвать гулять${can?' · займёт этот ход':S.rel[id].aff<30?' · нужна симпатия 30':' · уже поздно'}</button>`:`<p class="phint">Позвать гулять можно через «Телефон» в списке мест.</p>`}}
      {const b=S.bd&&S.bd[id];if(b&&!b.done&&b.d===S.day)acts=`<button type="button" class="pbig" data-bd>🎂 Поздравить с днём рождения</button>`+acts}
      return top(chatName(id))+`<div class="pthread">${bub||`<p class="pemp">${grp?'Тишина в чате.':'Сообщений пока нет. Напиши первым!'}</p>`}</div><div class="pacts">${fx(acts)}</div>`},
@@ -3085,6 +3096,7 @@ function openPhone(o){return new Promise(res=>{
      if(S.club&&typeof CLUBS!=='undefined'&&CLUBS[S.club.id]&&S.clubW!==clubWeek())ev.push([S.day,'На этой неделе встреча: '+CLUBS[S.club.id].n,'🎯']);
      ev.sort((a,b)=>a[0]-b[0]);
      return top('Календарь')+`<div class="pdict"><div class="pwords">${ev.slice(0,16).map(([d,n,i])=>`<div class="pword"><b>${i}</b><em>${esc(n)}</em><small>${d===S.day?'сегодня':esc(dateOf(d))}${MODE()!==90&&d!==S.day&&!modeSched(MODE()).includes(d)?' · случится в ближайший твой день':''}</small></div>`).join('')||'<p class="pemp">Весна почти закончилась.</p>'}</div></div>`},
+   goals(){return top('Цели весны')+goalsHtml()},
    wallet(){const W=(S.wal||[]);const wk=W.filter(x=>x[0]>S.day-7);const inc=wk.filter(x=>x[1]>0).reduce((a,x)=>a+x[1],0),exp=-wk.filter(x=>x[1]<0).reduce((a,x)=>a+x[1],0);
      const by={};for(const x of wk){by[x[2]]=(by[x[2]]||0)+x[1]}const cats=Object.entries(by).sort((a,b)=>Math.abs(b[1])-Math.abs(a[1])).slice(0,8);
      let nb=0;for(let d=S.day;d<=S.day+7;d++){const wd=(d-1)%7;if(wd===6){nb=d;break}}const est=Math.max(9000,20000-(has('gourmet')?3000:0)-Math.min(S.cooked||0,5)*1200)+(S.cat&&S.cat.st==='home'?2000:0);
@@ -3123,6 +3135,7 @@ function openPhone(o){return new Promise(res=>{
     el.querySelectorAll('[data-m]').forEach(b=>b.onclick=()=>{const k=+b.dataset.m;S.texted.mom=true;msgOut('mom',['Всё хорошо, мам ❤️','Пришлю фото еды 📸','Мам, я занят{|а}'][k]);if(k===0)fam(2);else if(k===1){fam(3);mood(1)}else fam(-1);typing(()=>{msgIn('mom',k===2?'Ну хорошо. Береги себя.':pick(MOM_RE),'mom',1);S.unread.mom=0})});
     el.querySelectorAll('[data-g]').forEach(b=>b.onclick=()=>{const id=p.id;S.texted[id]=true;msgOut(id,['ㅋㅋㅋ 😂','👍','Кто со мной?'][+b.dataset.g]);mood(1);typing(()=>{msgIn(id,pick(['ㅋㅋㅋㅋ','Я!','👍👍','О, живой человек в чате','Плюс','Через пять минут буду']),'@'+pick(NPC()),1);S.unread[id]=0})});
     el.querySelectorAll('[data-date]').forEach(b=>b.onclick=()=>{result={act:'date',id:p.id};close()});
+    el.querySelectorAll('[data-goalset]').forEach(b=>b.onclick=()=>{result={act:'goals'};close()});
     el.querySelectorAll('[data-hang]').forEach(b=>b.onclick=()=>{result={act:'hang',id:p.id};close()});
     el.querySelectorAll('[data-call]').forEach(b=>b.onclick=()=>{result={act:'call'};close()});
     el.querySelectorAll('[data-mask]').forEach(b=>b.onclick=()=>{if(S.money<3000)return;money(-3000);S.cons.mask+=5;learnWord('미세먼지');render()});
@@ -3144,6 +3157,7 @@ const FR_OPTS=['Как дела? 🙂','[мем] 😂','Пойдём куда-н
 phoneMenu=async function(){const r=await openPhone({turn:1});
   if(r.act==='date'){const id=r.id;setScene('home');await line(id,'b','Давай! Куда пойдём?');await date(id);return 'date'}
   if(r.act==='hang'){await hangout(r.id);return 'date'}
+  if(r.act==='goals'){await pickGoals();return}
   if(r.act==='call'){S.texted.mom=true;await momCall(false)}};
 
 /* ---------- ending: cat line + postcard ---------- */
@@ -3182,7 +3196,7 @@ async function makePostcard(){
   c.fillStyle='#d9467a';c.font=`600 30px ${B}`;c.fillText(sub,W/2,y+2);y+=40;
   const top3=Object.keys(STAT_N).sort((a,b)=>S.st[b]-S.st[a]).slice(0,3).map(k=>[STAT_N[k],S.st[k]]);
   const avg=S.fin.length?Math.round(S.fin.reduce((a,f)=>a+f.s,0)/S.fin.length):null;
-  const tiles=[...top3,['Слов по-корейски',S.words.length],[S.cat&&S.cat.st==='home'?'Кот':'Солнечных дней',S.cat&&S.cat.st==='home'?S.cat.n:(S.wxLog.sun||0)],[avg?'Средний балл':'Дождливых дней',avg||S.wxLog.wet||0]];
+  const tiles=[...top3.slice(0,2),['Заработано',shortW(earned())],['Чашек кофе',coffeeN()],[avg?'Средний балл':'Свиданий',avg||Object.values(S.rel||{}).reduce((a,r)=>a+(r.dates||0),0)],['Активных дней',S.aDays||0]];
   const tw=300,th=nl>1?96:108,gx=30,x0=(W-(tw*3+gx*2))/2;
   tiles.forEach(([k,v],i)=>{const x=x0+(i%3)*(tw+gx),yy=y+Math.floor(i/3)*(th+18);c.fillStyle='rgba(255,255,255,.82)';rr(c,x,yy,tw,th,22);c.fill();c.strokeStyle='rgba(226,85,126,.18)';c.lineWidth=2;c.stroke();
     c.fillStyle='#1d1b2e';c.font=`800 ${String(v).length>6?34:44}px ${D}`;c.fillText(String(v),x+tw/2,yy+th*.52);c.fillStyle='#665f7a';c.font=`500 23px ${B}`;c.fillText(k,x+tw/2,yy+th*.84)});
@@ -3190,9 +3204,9 @@ async function makePostcard(){
   return cv}
 async function showPostcard(){const cv=await makePostcard();const url=cv.toDataURL('image/png');
   try{const m=loadMeta();m.card=1;saveMeta(m);S.flags.card=1;checkAch()}catch(e){}
-  const w=document.createElement('div');w.className='pnwrap';w.setAttribute('role','dialog');w.setAttribute('aria-label','Открытка весны');
+  const w=document.createElement('div');w.className='pnwrap';w.setAttribute('role','dialog');w.setAttribute('aria-label','Итоги весны');
   const canShare=!!(navigator.canShare&&window.File);const app=!!window.Vesna90;
-  w.innerHTML=`<div class="pn pcard"><div class="pnh"><div><small>На память</small><b>Открытка весны</b></div><button type="button" class="pnx" aria-label="Закрыть">✕</button></div><div class="pnb"><img src="${url}" alt="Открытка весны: ${esc(S.name)}"><p class="ptip">${app?'Сохрани в галерею телефона или отправь друзьям.':'Если кнопка не сработает, нажми на картинку правой кнопкой или долгим нажатием и сохрани её.'}</p></div>
+  w.innerHTML=`<div class="pn pcard"><div class="pnh"><div><small>На память</small><b>Итоги весны</b></div><button type="button" class="pnx" aria-label="Закрыть">✕</button></div><div class="pnb"><img src="${url}" alt="Открытка весны: ${esc(S.name)}"><p class="ptip">${app?'Сохрани в галерею телефона или отправь друзьям.':'Если кнопка не сработает, нажми на картинку правой кнопкой или долгим нажатием и сохрани её.'}</p></div>
   <div class="pcb"><button type="button" class="pnok" data-save>Сохранить</button>${canShare||app?'<button type="button" class="pnok alt" data-share>Поделиться</button>':''}</div></div>`;
   document.body.appendChild(w);const prev=window.appBack;const close=()=>{w.remove();window.appBack=prev};window.appBack=()=>{close();return true};
   w.querySelector('.pnx').onclick=close;w.addEventListener('click',e=>{if(e.target===w)close()});
@@ -4237,6 +4251,224 @@ function answerPend(id,k){const t=pendOf(id);if(!t)return;const o=TX_RE[t][k];de
 // birthday: they write back in the chat
 const BD_THX=['Спасибо! Жду вечером 🎉','Ааа, спасибо! До вечера!','Ты запомнил{|а}! Приходи скорее 🎂'];
 const BD_THX_NO=['Спасибо! Жаль, что не получится 🥲','Спасибо, что поздравил{|а}! Отмечу за тебя тоже кусочек торта.'];
+
+/* ================= v1.32: jealousy, quarrels, roommate & Sua lines, weather, active days, oversleep ending, morning hint, rollback, goals, spring summary ================= */
+const v132Init=()=>{if(!S)return;S.qr=S.qr||{};S.lastDate=S.lastDate||{};S.jl=S.jl||{};S.goalDone=S.goalDone||{};
+  if(S.aDays==null)S.aDays=S.day>1?Math.max(0,(S.pd||Math.round((S.day-1)/DSTEP())+1)-1):0};
+{const _ns=newState;newState=function(){const r=_ns.apply(this,arguments);try{S.aDays=0;v132Init()}catch(e){}return r}}
+{const _rg=runGame;runGame=async function(){try{v132Init()}catch(e){}return _rg.apply(this,arguments)}}
+const gx=(id,m,f)=>id==='kamila'?f:id==='beka'?(S&&S.pg==='f'?f:m):GN(id,m,f);
+const wetNow=()=>S&&S.wx?WET(wxOf(S.day).k):false;
+const markReal=()=>{if(S)S.realD=S.day};
+
+/* ---------- 2. quarrels after a bad date ---------- */
+const qOn=id=>!!(S&&S.qr&&S.qr[id]&&!S.qr[id].done);
+const Q_NO=id=>pick(['Давай не сейчас. Мне нужно время после того вечера.',gx(id,'Я пока не готов никуда идти. Ты знаешь почему.','Я пока не готова никуда идти. Ты знаешь почему.'),'Не сегодня. Сначала поговорим.']);
+const Q_COLD=['А, это ты.','Привет. Если ты про тот вечер, я всё ещё думаю.','Ты что-то хотел{|а}?'];
+const Q_OK=id=>pick([gx(id,'Ладно. Я тоже был не прав. Мир?','Ладно. Я тоже была не права. Мир?'),'Хорошо, что ты {пришёл|пришла} первым. Мне этого не хватало.','Спасибо, что не сделал{|а} вид, будто ничего не было. Мир.']);
+function startQuarrel(id){S.qr=S.qr||{};S.qr[id]={d:S.day,tries:0};toast(`💢 Вы поссорились: ${CH[id].n}`,true)}
+{const _a=aff;aff=function(id,n){try{if(window.__dateId===id&&n<0)window.__dateNeg=(window.__dateNeg||0)+1;
+  if(n>0&&qOn(id)&&!window.__qrOK)return 0}catch(e){}return _a.apply(this,arguments)}}
+{const _l=line;line=async function(id,exp,text){try{if(text==='Давай! Куда пойдём?'&&qOn(id)&&S.rel&&S.rel[id]){window.__qrRef=id;return _l.call(this,id,'a',Q_NO(id))}}catch(e){}return _l.apply(this,arguments)}}
+{const _s=say;say=function(text,who,exp){try{if(window.__dateId&&window.__dateNeg&&text==='Вечер получился хорошим.')text='Вечер вышел неловким. Домой вы идёте молча.'}catch(e){}return _s.call(this,text,who,exp)}}
+async function makeUp(id){const q=S.qr[id],R=ROM[id];const gap=S.day-q.d;
+  await line(id,'a',pick(Q_COLD));
+  const gifts=Object.keys(GIFTS).filter(k=>S.gifts[k]);
+  const opts=[{t:'Честно извиниться',h:'сказать, что был{|а} неправ{|а}'},{t:'Спокойно поговорить о том вечере',h:'разобраться, что пошло не так'},{t:'Подарить что-нибудь из сумки',h:gifts.length?'иногда подарок говорит лучше слов':'в сумке пусто',dis:!gifts.length,why:'В сумке пусто'},{t:'Дать время и уйти',cls:'back'}];
+  const i=await ask('Вы в ссоре. Как помиритесь?',opts,{who:id,exp:'a'});
+  if(i===3){await say('Ты киваешь и уходишь. Иногда людям правда нужно время.');return}
+  let ok=false;
+  if(i===2){const k=await ask('Что подаришь?',gifts.map(k=>({t:`${GIFTS[k].n} ×${S.gifts[k]}`})),{who:id,exp:'n'});const g=gifts[k];S.gifts[g]--;ok=R.gLike===g||gap>=2;
+    if(!ok){q.tries++;await line(id,'n','Спасибо. Но подарком тут не отделаться.');return}}
+  else if(gap<1){await line(id,'s',gx(id,'Я пока не готов об этом говорить. Давай завтра.','Я пока не готова об этом говорить. Давай завтра.'));return}
+  else{const fit=i===0?(R.likes.includes('sweet')||R.likes.includes('bold')):(R.likes.includes('smart')||R.likes.includes('fun'));ok=fit||gap>=3||q.tries>=1;
+    if(!ok){q.tries++;await line(id,'n',gx(id,'Я слышу тебя. Но мне нужно ещё немного времени. Подойди позже, ладно?','Я слышу тебя. Но мне нужно ещё немного времени. Подойди позже, ладно?'));return}}
+  q.done=1;window.__qrOK=1;try{aff(id,5)}finally{window.__qrOK=0}mood(6);
+  await line(id,'b',Q_OK(id));toast(`🤝 Вы помирились: ${CH[id].n}`)}
+{const _t=talkTo;talkTo=async function(id){markReal();if(qOn(id)&&S.rel&&S.rel[id]){S.talked[id]=true;S.actD=S.day;S.seen[id]=S.day;return makeUp(id)}return _t.apply(this,arguments)}}
+{const _f=freshText;freshText=function(id){if(qOn(id))return null;return _f.apply(this,arguments)}}
+
+/* ---------- 1. jealousy: two people you are dating find out about each other ---------- */
+async function jealousy(){const J=S.jq;S.jq=null;const a=J.a,b=J.b;if(!S.rel[a]||!S.rel[b]||S.partner)return;
+  S.jl[[a,b].sort().join('+')]=S.day;setScene('cafe','day');
+  await say(`${CH[a].n} пишет с утра: «Можем встретиться? Это важно». В кафе ${gx(a,'он','она')} кладёт телефон на стол. На экране — фото, где вы с ${INS[b]||CH[b].n} вчера вечером.`,a,'s');
+  await line(a,'a',gx(a,'Я думал, у нас что-то начинается. А потом мне скидывают это. Объяснишь?','Я думала, у нас что-то начинается. А потом мне скидывают это. Объяснишь?'));
+  const i=await ask('Что скажешь?',[{t:'Честно: «Вы мне оба нравитесь. Я ещё не решил{|а}»',h:'честность дорого стоит'},{t:`Выбрать ${ACC[a]||CH[a].n}: «С ${INS[b]||CH[b].n} всё. Это была ошибка»`,h:`♥ ${CH[a].n} +, ♥ ${CH[b].n} −−`},{t:`Выбрать ${ACC[b]||CH[b].n}: «Прости. Я с ${INS[b]||CH[b].n}»`,h:`♥ ${CH[a].n} −−`},{t:'Соврать: «Мы просто друзья, это ничего не значит»',h:'рискованно'}],{who:a,exp:'a'});
+  if(i===0){const calm=ROM[a].likes.includes('smart')||ROM[a].likes.includes('bold');aff(a,calm?-2:-6);aff(b,-3);S.flags.honest=1;
+    await line(a,calm?'n':'s',calm?'Спасибо, что не врёшь. Но решай быстрее. Я не буду ждать вечно.':'Честно... Ладно. Только не тяни, хорошо? Это больно.');
+    msgIn(b,'Мне тут рассказали, что ты встречаешься не только со мной. Мы потом поговорим.',b,1);await say(`Вечером ${CH[b].n} тоже всё знает. Ты получаешь короткое сообщение без смайликов.`)}
+  else if(i===1){aff(a,6);aff(b,-14);startQuarrel(b);await line(a,'b','Хорошо. Я тебе верю. Только не заставляй меня пожалеть.');
+    msgIn(b,'Я всё поняла. Не пиши мне пока.'.replace('поняла',gx(b,'понял','поняла')),b,1);await say(`Ты пишешь ${INS[b]||CH[b].n}. Ответ приходит через час и состоит из одного предложения.`)}
+  else if(i===2){aff(a,-15);aff(b,4);await line(a,'s','Понятно. Спасибо, что хотя бы сказал{|а} в лицо.');await say(`${CH[a].n} уходит, не допив кофе. Между вами теперь тишина.`)}
+  else{if(Math.random()<.45){S.flags.lie=(S.flags.lie||0)+1;await line(a,'n','...Ладно. Хочу тебе верить.');await say('Пронесло. Но на душе всё равно неспокойно.')}
+    else{aff(a,-8);startQuarrel(a);await line(a,'a',gx(a,'Я разговаривал с ','Я разговаривала с ')+CH[b].n+'. Это было совсем не «просто по-дружески». Не ври мне.')}}
+  mood(-6);setScene('home')}
+function jealCheck(b){if(S.partner||S.day<8||S.jq)return;const win=10*DSTEP();
+  const c=romIds().filter(a=>a!==b&&S.rel[a].met&&S.rel[a].aff>=35&&S.lastDate[a]&&S.day-S.lastDate[a]<=win&&!qOn(a)&&!(S.jl[[a,b].sort().join('+')]&&S.day-S.jl[[a,b].sort().join('+')]<14*DSTEP()));
+  if(!c.length||Math.random()>.45)return;const a=c.sort((x,y)=>S.rel[y].aff-S.rel[x].aff)[0];S.jq={a,b,d:S.day}}
+
+/* ---------- date wrapper: quarrels, weather, jealousy ---------- */
+{const _d=date;date=async function(id){markReal();
+  if(qOn(id)){if(window.__qrRef!==id)await line(id,'a',Q_NO(id));window.__qrRef=null;return}
+  const n0=S.rel[id]?S.rel[id].dates:0;window.__dateId=id;window.__dateNeg=0;window.__dateBg=null;let r;
+  try{r=await _d.apply(this,arguments)}finally{window.__dateId=null}
+  try{if(S.rel[id]&&S.rel[id].dates>n0){S.lastDate[id]=S.day;const bg=window.__dateBg;
+    if(wetNow()&&(bg==='cafe'||bg==='cinema')){aff(id,3);await say(bg==='cafe'?'За окном льёт, а внутри тепло и пахнет корицей. В дождь кафе кажется самым уютным местом в Сеуле.':'Под дождь в кино особенно уютно: мокрые зонты сохнут у входа, а в зале тепло.',id,'h')}
+    if(window.__dateNeg&&S.day>=5&&Math.random()<.6){await say(`По дороге домой ${CH[id].n} почти не говорит. Кажется, ты задел{|а} что-то важное.`,id,'s');startQuarrel(id)}
+    else if(!S.partner)jealCheck(id);
+    if(S.partner&&S.partner!==id&&Math.random()<.5&&!qOn(S.partner)){const P=S.partner;aff(P,-10);startQuarrel(P);msgIn(P,'Мне сказали, где ты был{|а} вечером. И с кем. Нам надо поговорить.',P,1)}}}catch(e){}
+  window.__dateNeg=0;return r}}
+{const _ss=setScene;setScene=function(key){try{if(window.__dateId&&!window.__dateBg)window.__dateBg=key}catch(e){}return _ss.apply(this,arguments)}}
+
+/* ---------- 8. weather changes activities ---------- */
+const WX_ACT={'Прогуляться':{off:'🌧️ В дождь прогулка по набережной отменяется'},'Снять закат для блога':{off:'🌧️ За тучами заката не видно'},
+  'Пробежка':{bad:'Бежать под дождём тяжело: кроссовки хлюпают, а ветер бьёт в лицо.'},'Стритбол с ребятами':{bad:'Мяч скользит, площадка в лужах. Половина ребят не пришла.'},
+  'Посидеть с книгой и латте':{cozy:'☔ За окном дождь, а в кофейне тепло. Самое уютное утро недели.'},'Кино с друзьями':{cozy:'☔ В дождь в кино особенно уютно.'},'Чимчильбан':{cozy:'☔ После холодного дождя горячий пол чимчильбана — счастье.'},'Языковой обмен за кофе':{cozy:'☔ Из-за дождя в кофейне все сидят дольше и болтают охотнее.'}};
+function wxAct(a){const W=a&&WX_ACT[a.t];if(!W)return a;const b=Object.assign({},a);
+  if(W.off){b.req=()=>{if(wetNow()){b.reqTxt=W.off;return false}b.reqTxt=a.reqTxt;return !a.req||a.req()}}
+  if(W.bad||W.cozy){const h0=a.h;b.h=()=>{const h=typeof h0==='function'?h0():h0;return wetNow()?[h,W.bad?'🌧️ в дождь хуже':'☔ в дождь уютнее'].filter(Boolean).join(' · '):h};
+    b.run=async()=>{const r=await a.run();if(wetNow()){if(W.bad){mood(-7);toast('🌧️ '+W.bad,true)}else{mood(5);toast(W.cozy)}}return r}}
+  return b}
+{const _x=xformAct;xformAct=function(a){const b=wxAct(_x(a));if(b&&b.run&&b!==a&&a.t!=='Вздремнуть'){const r0=b.run;b.run=async()=>{markReal();return r0()}}return b}}
+{const _ask=ask;ask=function(text,opts,o){try{if(/^Куда пойдёте\?/.test(String(text))&&Array.isArray(opts)&&wetNow())opts=opts.map(x=>x&&(x.t===DATES.river.n||x.t===DATES.park.n)?Object.assign({},x,{dis:true,why:'🌧️ В дождь гулять не получится',h:'🌧️ отменено из-за дождя'}):x&&(x.t===DATES.cafe.n||x.t===DATES.cinema.n)?Object.assign({},x,{h:x.h+' · ☔ уютнее в дождь'}):x)}catch(e){}return _ask.call(this,text,opts,o)}}
+
+/* ---------- 4. full lines for the roommate (Чанмин / Йерин) and Суа ---------- */
+const PROF={beka:{likes:['fun','bold'],dis:'smart',fav:'park',gLike:'tickets',gDis:'book'},kamila:{likes:['smart','sweet'],dis:'bold',fav:'cafe',gLike:'book',gDis:'mouse'}};
+Object.assign(FR_HANG,{beka:{good:['Вот это вечер! Записываю в материал для стендапа.','Ха! С тобой даже очередь за попкорном — шоу.'],ok:['Нормально посидели. Как в старые времена.'],bad:['Бро, ты звучишь как наш препод по статистике.']},
+  kamila:{good:['Это лучший вечер за месяц. Напишу о нём колонку. Анонимно, не бойся.','С тобой можно молчать, и это не неловко. Редкость.'],ok:['Было мило. Спасибо, что вытащил{|а} меня.'],bad:['Эм... давай без этого. Я сегодня не в настроении для экстрима.']}});
+FR_RE.beka=FR_RE.beka||[['Живой! Ем рамён над раковиной, как взрослый.'],['АХАХА это я вставлю в выступление'],['Давай! Только ты платишь за кимпаб.']];
+FR_RE.kamila=FR_RE.kamila||[['Сдаю номер журнала. Жива на 40%.'],['Ахах, переслала редакции 😂'],['Да! Только после пар, я староста, мне нельзя прогуливать.']];
+FRIEND.beka.arcs.push(
+ [['bg','home'],['n','Чанмин сидит на полу среди распечаток. На ноутбуке — монтажная программа и надпись «Конкурс короткого метра. Дедлайн: пятница».'],['o','Мне нужен актёр на главную роль. Бесплатный. Талантливый. Живущий в этой комнате.'],
+  ['c','Что скажешь?',[['Согласиться и сыграть всерьёз',10,'l','Дубль один — и ты уже лучше половины курса! Я гений кастинга.','art'],['Помочь со сценарием, а не с ролью',8,'h','Ты переписал{|а} финал, и теперь он смешной и грустный одновременно. Как надо.','study'],['Сказать, что сейчас нет времени',-4,'s','Понял{|а}. Сниму сам{|а}. На штатив. Как настоящий одиночка.']]],
+  ['h','Если фильм возьмут на фестиваль, в титрах будет твоё имя. Крупно.']],
+ [['bg','roof','night'],['n','Поздно ночью Чанмин тащит тебя на крышу общаги. Внизу светится Сеул, у вас два стаканчика рамёна и пакет мандаринов.'],['h','Слушай. Через месяц всех расселят заново. Я не хочу жить с незнакомцем. Давай снова в одну комнату?'],
+  ['c','Что ответишь?',[['«Комната 413 навсегда»',10,'b','Пакт заключён! Мандарин в знак договора. Не спорь, так положено.'],['«Только если ты наконец помоешь свою кружку»',9,'l','Это шантаж. ...Договорились. Помою. Наверное.'],['«Я пока не знаю, где буду»',2,'n','Понимаю. Но место у окна я тебе придержу.']]],
+  ['b','Знаешь, я боялся ехать в Сеул один. А потом в комнате оказался ты. Повезло.']]);
+FRIEND.kamila.arcs.push(
+ [['n','Суа врывается в аудиторию с листком: студсовет хочет закрыть журнал. «Нерентабельно».'],['a','Пять лет журналу! И всё из-за того, что мы смеялись над столовой.'],
+  ['c','Чем поможешь?',[['Собрать подписи за журнал',10,'b','Триста подписей за два дня! Студсовет в шоке. Я тоже.','charm'],['Посчитать бюджет и доказать, что журнал окупается',10,'l','Ты сделал{|а} таблицу, и они замолчали. Цифры сильнее крика!','study'],['Предложить смириться',-4,'s','Я думала, ты на моей стороне.']]],
+  ['h','Журнал остаётся. Следующий номер — про тех, кто его спас.']],
+ [['bg','river'],['n','В субботу Суа пишет: «Хочу уехать туда, где меня никто не знает. На час. Поедешь?» Через час вы на набережной.'],['s','Все думают, что я всегда всё знаю. А я иногда просто хочу, чтобы кто-то знал за меня.'],
+  ['c','Что делаешь?',[['Просто молча посидеть рядом',10,'b','Спасибо, что не стал{|а} давать советы. Мне это и было нужно.'],['Взять на себя часть её дел старосты',9,'h','Правда? Ты возьмёшь журнал посещаемости? Я тебя обниму. Уже обняла.'],['Сказать, что она сама взвалила всё это',-3,'s','Наверное. Но от этого не легче.']]],
+  ['b','Ты первый человек, с которым я могу не быть старостой.']],
+ [['n','Последняя неделя весны. Суа кладёт перед тобой свежий номер журнала. На обложке — фото вашей группы.'],['h','В следующем году мне нужен соредактор. Не самый грамотный. Самый честный. Это ты.'],
+  ['c','Что ответишь?',[['Согласиться',10,'b','Ура! Первая планёрка в сентябре. Кофе за мой счёт.','art'],['«Только если колонку про общагу оставим»',9,'l','Её никто бы и не отдал. Договорились.'],['Отказаться, но обещать помогать',3,'n','Ладно. Но я всё равно буду звонить тебе в два ночи.']]],
+  ['b','Знаешь, в начале весны ты был{|а} для меня строчкой в списке группы. Теперь — нет.']]);
+Object.assign(FR_EPI,{beka:'Комната 413 на следующий год снова ваша. Чанмин уже повесил над кроватью распечатку «Пакт о кружке» с двумя подписями.',kamila:'В сентябре выходит номер журнала с двумя фамилиями в выходных данных. Суа звонит в два ночи — обсудить запятую. Ты берёшь трубку.'});
+async function friendGift(id){const P=PROF[id]||ROM[id]||{};const keys=Object.keys(GIFTS).filter(k=>S.gifts[k]);
+  const i=await ask('Что подаришь?',keys.map(k=>({t:`${GIFTS[k].n} ×${S.gifts[k]}`})).concat([{t:'Передумать',cls:'back'}]),{who:id,exp:'n'});if(i===keys.length)return;const k=keys[i];S.gifts[k]--;S.fgift=S.fgift||{};
+  const again=S.fgift[id]&&S.day-S.fgift[id]<3;S.fgift[id]=S.day;
+  if(P.gLike===k){fr(id,again?3:8);await line(id,'l','Ты как угадал{|а}?! Это прям моё. Всё, ты официально лучший друг.'.replace('лучший друг',gx(id,'лучший друг','лучшая подруга')))}
+  else if(P.gDis===k){fr(id,1);await line(id,'n','Эм... спасибо. Передарю кому-нибудь. Шучу. Наверное.')}
+  else{fr(id,again?1:4);await line(id,'h','Мне? Просто так? Спасибо, приятно.')}}
+{const _ft=friendTalk;friendTalk=async function(id){const F=FRIEND[id];
+  if(!S.fmet[id]||!F)return _ft.apply(this,arguments);
+  const a=S.farc[id]||0;if(a<F.arcs.length&&S.fr[id]>=FR_AT[a]&&frArcReady(id))return _ft.apply(this,arguments);
+  const gifts=Object.keys(GIFTS).some(k=>S.gifts[k]);const canH=(S.fr[id]||0)>=30&&S.slot<=3&&S.energy>=2;
+  const i=await ask(`${CH[id].n} рядом. Что делаем?`,[{t:'Поболтать',h:'дружба, настроение'},{t:'Подарить подарок',h:gifts?'из сумки':'в сумке пусто',dis:!gifts,why:'Подарки продаются в торговом центре'},{t:'Позвать тусоваться',h:(S.fr[id]||0)>=30?'кино, кафе, набережная · займёт этот ход':'нужна дружба 30',dis:!canH,why:(S.fr[id]||0)<30?'Пока рано':'Не сейчас'},{t:'Попрощаться',cls:'back'}],{who:id,exp:'h'});
+  if(i===0)return _ft.apply(this,arguments);if(i===1)return friendGift(id);if(i===2){await hangout(id);return 'date'}}}
+{const _h=hangout;hangout=async function(id){markReal();if(ROM[id]||!PROF[id])return _h.apply(this,arguments);ROM[id]=Object.assign({g:S.pg},PROF[id]);let p;try{p=_h.apply(this,arguments)}finally{delete ROM[id]}return p}}
+{const _pm=phoneMenu;phoneMenu=async function(){const r=await _pm.apply(this,arguments);if(r)markReal();return r}}
+{const _ri=runInvite;runInvite=async function(){markReal();return _ri.apply(this,arguments)}}
+
+/* ---------- 13. rollback points ---------- */
+const bkKey=()=>slotKey(CUR_SLOT)+'-bk';
+function bkList(){try{return JSON.parse(localStorage.getItem(bkKey())||'[]')}catch(e){return []}}
+function bkPush(){try{if(!S||S.over||!S.uid)return;let L=bkList().filter(x=>x.u===S.uid&&x.day<S.day);L.push({u:S.uid,day:S.day,s:JSON.stringify(S)});L=L.slice(-3);
+  for(;;){try{localStorage.setItem(bkKey(),JSON.stringify(L));break}catch(e){if(L.length<=1){try{localStorage.removeItem(bkKey())}catch(_){}break}L.shift()}}}catch(e){}}
+function showRollback(){const L=bkList().filter(x=>S&&x.u===S.uid&&x.day<S.day).reverse();
+  const w=document.createElement('div');w.className='pnwrap';w.setAttribute('role','dialog');w.setAttribute('aria-label','Откат');
+  w.innerHTML=`<div class="pn"><div class="pnh"><div><small>Сохранения</small><b>Вернуться назад</b></div><button type="button" class="pnx" aria-label="Закрыть">✕</button></div><div class="pnb">
+   <p class="ptip" style="text-align:left">Игра сама запоминает утро трёх последних дней. Если выбор пошёл не туда, можно вернуться. Всё, что было после, пропадёт.</p>
+   <div class="trs">${L.map((x,i)=>`<button type="button" class="trb" data-bk="${i}">Утро ${esc(dateOf(x.day))}${x.day===S.day-1||S.day-x.day<=DSTEP()?' · вчера':''}</button>`).join('')||'<p class="pemp">Пока нечего откатывать: точки появятся с завтрашнего утра.</p>'}</div></div></div>`;
+  document.body.appendChild(w);const prev=window.appBack;const close=()=>{w.remove();window.appBack=prev};window.appBack=()=>{close();return true};
+  w.querySelector('.pnx').onclick=close;w.addEventListener('click',e=>{if(e.target===w)close()});
+  w.querySelectorAll('[data-bk]').forEach(b=>b.onclick=()=>{const x=L[+b.dataset.bk];if(b.dataset.sure!=='1'){b.dataset.sure='1';b.textContent=`Точно вернуться к утру ${dateOf(x.day)}? Нажми ещё раз`;return}
+    try{localStorage.setItem(slotKey(CUR_SLOT),x.s);localStorage.setItem(bkKey(),JSON.stringify(bkList().filter(y=>y.u!==x.u||y.day<x.day)));window.__trBlock=1;
+      b.textContent='Возвращаемся…';setTimeout(()=>location.reload(),600)}catch(e){toast('Не получилось откатиться',true)}})}
+{const _ss=showSettings;showSettings=function(){const p=_ss.apply(this,arguments);try{if(S&&!S.over){const ws=document.querySelectorAll('.pnwrap');const w=ws[ws.length-1];const b=w&&w.querySelector('.pnb');
+  if(b){const x=document.createElement('button');x.type='button';x.className='trb alt trset';x.textContent='⏪ Вернуться на пару дней назад';x.onclick=()=>{const c=w.querySelector('.pnx');if(c)c.click();setTimeout(()=>showRollback(),50)};b.appendChild(x)}}}catch(e){}return p}}
+
+/* ---------- 14. spring goals ---------- */
+const GOALS={
+ rich:{n:'Накопить 400 000 ₩',f:()=>[S.money,80000],v:x=>fmt(x)},
+ love:{n:'Начать с кем-то встречаться',f:()=>[S.partner?1:0,1],v:x=>x?'да':'пока нет'},
+ friends:{n:'Три близких друга (дружба 60+)',f:()=>[frIds().filter(id=>S.fmet[id]&&(S.fr[id]||0)>=60).length,3]},
+ study:{n:'Учёба 70',f:()=>[S.st.study,70]},
+ fit:{n:'Форма 70',f:()=>[S.st.fit,70]},
+ art:{n:'Творчество 70',f:()=>[S.st.art,70]},
+ cook:{n:'Кулинария 60',f:()=>[S.st.cook,60]},
+ words:{n:'Выучить 50 корейских слов',f:()=>[(S.words||[]).length,50]},
+ blog:{n:'10 000 подписчиков',f:()=>[S.subs,10000],v:x=>x.toLocaleString('ru-RU')},
+ family:{n:'Семья 90: звонить маме',f:()=>[S.family,90]}};
+const goalPct=g=>{const [c,t]=GOALS[g].f();return Math.max(0,Math.min(100,Math.round(c/t*100)))};
+async function pickGoals(){S.goalsAsked=1;S.goals=[];
+  const pickOne=async(first)=>{const ks=Object.keys(GOALS).filter(k=>!S.goals.includes(k));
+    const i=await ask(first?'Цели на весну. Это необязательно: выбери одну или две, и прогресс будет в телефоне, в приложении «Цели».':'Вторая цель?',[...ks.map(k=>({t:GOALS[k].n})),{t:first?'Без целей':'Хватит одной',cls:'back'}],{who:null});
+    if(i<ks.length){S.goals.push(ks[i]);return true}return false};
+  if(await pickOne(true))await pickOne(false);
+  if(S.goals.length)toast('🎯 Цели сохранены: телефон → «Цели»')}
+function goalCheck(){for(const g of S.goals||[]){if(S.goalDone[g]||!GOALS[g])continue;const [c,t]=GOALS[g].f();if(c>=t){S.goalDone[g]=S.day;mood(8);toast('🎯 Цель выполнена: '+GOALS[g].n)}}}
+function goalsHtml(){const G=S.goals||[];
+  if(!G.length)return `<div class="pdict"><p class="pemp">Ты не ставил{|а} целей на эту весну. И это нормально.</p>${S.day<=DAYS-7?'<button type="button" class="pbig" data-goalset>🎯 Выбрать цели</button>':''}</div>`.replace('{|а}',S.pg==='f'?'а':'');
+  return `<div class="pdict"><div class="pwords">${G.map(g=>{const [c,t]=GOALS[g].f(),p=goalPct(g),fv=GOALS[g].v||(x=>x);return `<div class="pword pgoal"><b>${S.goalDone[g]?'✅':'🎯'}</b><em>${esc(GOALS[g].n)}</em><small>${S.goalDone[g]?'выполнено '+esc(dateOf(S.goalDone[g])):esc(fv(c)+' из '+fv(t))}</small><span class="pgbar"><i style="width:${p}%"></i></span></div>`}).join('')}</div></div>`}
+
+/* ---------- 12. morning hint + 10. active days + rollback points + quarrels expire ---------- */
+function morningHint(){const t=[];const tom=typeof nextPlayed==='function'?nextPlayed(S.day):S.day+1;
+  for(const id of Object.keys(BDAY))if(BDAY[id]===S.day&&CH[id]&&bdKnown(id))t.push(`🎂 день рождения у ${id==='mom'?'мамы':CH[id].n}`);
+  if(S.invite)t.push(`💌 вечером встреча с ${INS[S.invite.id]||CH[S.invite.id].n}`);
+  if(CAL_N[tom]&&tom!==S.day&&tom<=DAYS)t.push(`📌 ${MODE()===90?'завтра':'дальше'}: ${CAL_N[tom]}`);
+  const ex=EXAM_DAYS[0]-S.day;if(ex>0&&ex<=10)t.push(`📚 до экзаменов ${ex} ${ex===1?'день':ex<5?'дня':'дней'}`);
+  const mt=40-S.day;if(mt>0&&mt<=5)t.push(`📝 до рубежного контроля ${mt} ${mt===1?'день':mt<5?'дня':'дней'}`);
+  if(S.club&&typeof CLUBS!=='undefined'&&CLUBS[S.club.id]&&S.clubW!==clubWeek()&&(S.day-1)%7>=4)t.push(`🎯 встреча клуба на этой неделе ещё не прошла`);
+  if(MODE()===90&&(S.day-1)%7===6)t.push('💳 сегодня платёж за неделю');
+  for(const id of Object.keys(S.qr||{}))if(qOn(id))t.push(`💢 ссора с ${INS[id]||CH[id].n}: стоит поговорить`);
+  return t}
+{const _sd=startDay;startDay=async function(){try{v132Init()}catch(e){}
+  let qp=null,qt=null;try{if(S.partner&&qOn(S.partner)){qp=S.partner;qt=ROM[qp].texts;ROM[qp].texts=['Доброе утро. Я всё ещё думаю о том, что было.']}
+    for(const id of Object.keys(S.qr||{}))if(qOn(id)){S.evd=S.evd||{};S.evd[id]=S.day}}catch(e){}
+  let r;try{r=await _sd.apply(this,arguments)}finally{if(qp)ROM[qp].texts=qt}
+  try{if(S.over||S.slot>=NSLOT)return r;
+    for(const id of Object.keys(S.qr||{})){const q=S.qr[id];if(!q.done&&S.day-q.d>=7*DSTEP()){q.done=1;aff(id,-8);await say(`Ссора с ${INS[id]||CH[id].n} так и не закончилась разговором. Вы здороваетесь, но между вами холодок.`)}}
+    if(S.jq&&S.day>S.jq.d&&S.slot<NSLOT)await jealousy();
+    if(!S.goalsAsked)await pickGoals();
+    goalCheck();
+    if(S.day>1){const h=morningHint();if(h.length){setWho(null);await say('Что сегодня важно: '+h.join(' · ')+'.')}}
+    bkPush()}catch(e){}
+  return r}}
+{const _ed=endDay;endDay=async function(){try{if(S.realD===S.day)S.aDays=(S.aDays||0)+1}catch(e){}return _ed.apply(this,arguments)}}
+const needDays=()=>Math.ceil(MODE()*2/3);
+
+/* ---------- 11. joke ending + 10. gallery gate ---------- */
+{const E={};for(const [k,v] of Object.entries(ENDINGS)){E[k]=v;if(k==='burnout')E.sleep={t:'Проспать весну',s:'Девяносто дней под одеялом'}}for(const k of Object.keys(ENDINGS))delete ENDINGS[k];Object.assign(ENDINGS,E)}
+END_TXT.sleep='Весна прошла мимо окна комнаты 413. Ты выспал{ся|ась} на год вперёд, выучил{|а} наизусть трещины на потолке и стал{|а} легендой общаги: {тот, кто ни разу не опоздал на пары, потому что ни разу на них не пришёл|та, кто ни разу не опоздала на пары, потому что ни разу на них не пришла}. Мама спрашивает, как Сеул. Ты честно отвечаешь: «Уютно».';
+END_HINT.sleep='Почти ничего не делай всю весну';
+{const _ce=computeEnding;computeEnding=function(){const r=_ce.apply(this,arguments);try{const all=Array.isArray(r)?r:[r];
+  if(all[0]!=='burnout'&&S.aDays!=null&&S.aDays<Math.ceil(MODE()*0.15)){const out=['sleep',...all.filter(x=>x!=='ordinary'&&x!=='expelled')];LAST_END=out;return out}}catch(e){}return r}}
+{const _sm=saveMeta;saveMeta=function(m){try{if(window.__gate&&m)m.endings=Object.assign({},window.__gate)}catch(e){}return _sm.apply(this,arguments)}}
+{const _ss=setScene;setScene=function(key,tod){try{if(window.__endSleep&&key==='river')key='home'}catch(e){}return _ss.call(this,key,tod)}}
+{const _en=ending;ending=async function(){let gate=false;try{if(S.realD===S.day&&S.aEnd!==S.day){S.aEnd=S.day;S.aDays=(S.aDays||0)+1}
+    const ids=computeEnding();const main=Array.isArray(ids)?ids[0]:ids;window.__endSleep=main==='sleep';
+    const need=needDays(),have=S.aDays||0;
+    if(main!=='sleep'&&have<need){gate=true;window.__gate=Object.assign({},loadMeta().endings||{})}
+    const G=S.goals||[];
+    const fix=()=>{const card=document.querySelector('#opts .card');if(!card)return false;
+      if(gate){const ch=[...card.querySelectorAll('.chips .chip')].find(c=>/Новых концовок/.test(c.textContent));const note=`Не в галерее: активных дней ${have} из ${need}`;if(ch)ch.textContent=note;else{const cs=card.querySelector('.chips');if(cs)cs.insertAdjacentHTML('beforeend',`<span class="chip neg">${esc(note)}</span>`)}
+        card.insertAdjacentHTML('beforeend',`<p class="ptip" style="text-align:left;margin-top:8px">Концовка попадает в галерею, если весна была живой: хотя бы ${need} дней, когда ты что-то делал{|а}. В этот раз — ${have}.</p>`.replace('{|а}',S.pg==='f'?'а':''))}
+      if(G.length)card.insertAdjacentHTML('beforeend',`<div class="kv">${G.map(g=>`<span>${S.goalDone[g]?'✅':'❌'} ${esc(GOALS[g].n)}</span>`).join('')}</div>`);
+      card.insertAdjacentHTML('beforeend',`<div class="kv"><span>Активных дней <b>${have}</b></span><span>Заработано <b>${esc(fmt(earned()))}</b></span><span>Чашек кофе <b>${coffeeN()}</b></span></div>`);return true};
+    let n=0;const iv=setInterval(()=>{if(fix()||++n>600)clearInterval(iv)},50);
+    try{goalCheck()}catch(e){}}catch(e){}
+  try{return await _en.apply(this,arguments)}finally{window.__gate=null;window.__endSleep=false}}}
+{const _g=showGallery;showGallery=function(){const r=_g.apply(this,arguments);try{const ws=document.querySelectorAll('.pnwrap');const w=ws[ws.length-1];const el=w&&w.querySelector('.gal .pnb');
+  if(el)el.insertAdjacentHTML('afterbegin',`<p class="ptip" style="text-align:left">Концовка засчитывается, если в весне было хотя бы ${needDays()} активных дней. Проспать весну тоже можно — для этого есть отдельная концовка.</p>`)}catch(e){}return r}}
+
+/* ---------- 15. spring summary card ---------- */
+const earned=()=>(S.wal||[]).filter(x=>x[1]>0).reduce((a,x)=>a+x[1],0);
+const coffeeN=()=>(S.cnt&&S.cnt.coffee)||0;
+const shortW=x=>{const w=Math.round(x*5);return w>=1e6?(w/1e6).toFixed(1).replace('.',',').replace(',0','')+' млн ₩':w>=1e3?Math.round(w/1e3)+' тыс ₩':w+' ₩'};
+{const st=document.createElement('style');st.textContent=`.pgoal{position:relative}.pgbar{display:block;grid-column:1/-1;height:6px;border-radius:4px;background:var(--line);overflow:hidden;margin-top:6px}.pgbar i{display:block;height:100%;background:var(--accent);border-radius:4px}`;document.head.appendChild(st)}
 
 async function main(){for(;;){const r=await title();await runGame(r==='resume')}}
 main();
