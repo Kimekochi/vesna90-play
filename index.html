@@ -2051,8 +2051,12 @@ async function title(){
   setWho(null);newState(pg,name,tr[ti]);
 }
 /* ================= v1.6: music, sfx, patch notes ================= */
-const VER='1.32';
+const VER='1.33';
 const PATCH=[
+ {v:'1.33',d:'15 октября',items:[
+  'Перенос сохранений стал удобнее: код теперь в 3–4 раза короче и помещается в одно сообщение Telegram',
+  'Если код пришёл несколькими сообщениями, можно вставить их все разом, вместе с датами и именами. Игра сама уберёт лишнее и восстановит символы, которые мессенджер потерял на стыках',
+  'Главная кнопка теперь «Отправить файлом»: это самый надёжный способ']},
  {v:'1.32',d:'15 октября',items:[
   'Ревность: если ходить на свидания сразу с двумя, они узнают друг о друге. Придётся объясниться, и у выбора будут последствия',
   'Ссоры: неудачное свидание может закончиться ссорой. Пока не помиритесь, человек не пойдёт гулять и не будет писать. Помириться можно извинением, разговором или подарком',
@@ -4469,6 +4473,62 @@ const earned=()=>(S.wal||[]).filter(x=>x[1]>0).reduce((a,x)=>a+x[1],0);
 const coffeeN=()=>(S.cnt&&S.cnt.coffee)||0;
 const shortW=x=>{const w=Math.round(x*5);return w>=1e6?(w/1e6).toFixed(1).replace('.',',').replace(',0','')+' млн ₩':w>=1e3?Math.round(w/1e3)+' тыс ₩':w+' ₩'};
 {const st=document.createElement('style');st.textContent=`.pgoal{position:relative}.pgbar{display:block;grid-column:1/-1;height:6px;border-radius:4px;background:var(--line);overflow:hidden;margin-top:6px}.pgbar i{display:block;height:100%;background:var(--accent);border-radius:4px}`;document.head.appendChild(st)}
+
+/* ================= v1.33: short transfer codes that fit in one message, tolerant import ================= */
+// The code is gzip packed into CJK characters (14 bits per character, U+4E00..U+8DFF): about 3.5 times shorter than base64,
+// so a whole spring fits into one Telegram message. On import every character outside that range is ignored,
+// so chat headers like "[15.10.2026 19:12] Имя:", spaces and line breaks do no harm.
+const H14=0x4E00;
+function enc14(u8){const n=u8.length;let out=String.fromCharCode(H14+(n>>>14&0x3FFF),H14+(n&0x3FFF)),acc=0,bits=0;
+  for(let i=0;i<n;i++){acc=(acc<<8|u8[i])&0x3FFFFF;bits+=8;if(bits>=14){bits-=14;out+=String.fromCharCode(H14+(acc>>>bits&0x3FFF))}}
+  if(bits>0)out+=String.fromCharCode(H14+(acc<<(14-bits)&0x3FFF));return out}
+function dec14(s){const v=[];for(const ch of s){const c=ch.charCodeAt(0)-H14;if(c>=0&&c<0x4000)v.push(c)}
+  if(v.length<3)throw new Error('short');const n=v[0]<<14|v[1];const u=new Uint8Array(n);let acc=0,bits=0,j=0;
+  for(let i=2;i<v.length&&j<n;i++){acc=(acc<<14|v[i])&0x3FFFFFF;bits+=14;while(bits>=8&&j<n){bits-=8;u[j++]=acc>>>bits&0xFF}}
+  if(j<n)throw new Error('cut');return u}
+async function gzipU8(u8,mode){const s=new Blob([u8]).stream().pipeThrough(mode==='d'?new DecompressionStream('gzip'):new CompressionStream('gzip'));return new Uint8Array(await new Response(s).arrayBuffer())}
+// Lighter save for transfer: weather is rebuilt from its seed, only recent chat and diary lines travel.
+const SLIM=[[5,20,20],[2,8,8],[1,3,3]];
+function slimSave(s,lv){if(!s)return s;const [m,d,w]=SLIM[lv||0];const o=JSON.parse(JSON.stringify(s));delete o.wx;delete o.pres;
+  if(o.msgs)for(const k of Object.keys(o.msgs))o.msgs[k]=o.msgs[k].slice(-m);
+  if(o.diary)o.diary=o.diary.slice(-d);if(o.wal)o.wal=o.wal.slice(-w);return o}
+{const _pc=packCode;packCode=async function(obj){try{if(window.CompressionStream&&window.DecompressionStream&&obj&&obj.s){let c='';for(let lv=0;lv<SLIM.length;lv++){const o=Object.assign({},obj,{s:slimSave(obj.s,lv)});
+  c='V90H:'+enc14(await gzipU8(new TextEncoder().encode(JSON.stringify(o))));if(c.length<=4000)break}return c}}catch(e){}return _pc.apply(this,arguments)}}
+
+// ---- old base64 codes: strip chat headers, and repair a character lost where a messenger split a long message ----
+const B64A='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
+const CHAT_HDR=/\[\s*\d{1,2}[./]\d{1,2}[./]\d{2,4}[ ,]+\d{1,2}:\d{2}(?::\d{2})?\s*\][^:\n]{0,60}:|\d{1,2}[./]\d{1,2}[./]\d{2,4},? \d{1,2}:\d{2}(?: [AP]M)? - [^:\n]{0,60}:/g;
+const b64u8=b=>{const t=atob(b);const u=new Uint8Array(t.length);for(let i=0;i<t.length;i++)u[i]=t.charCodeAt(i);return u};
+async function inflProgress(u8){// how many bytes inflate before the stream breaks
+  const ds=new DecompressionStream('gzip');const w=ds.writable.getWriter();const r=ds.readable.getReader();let n=0,ok=false;
+  const feed=(async()=>{try{for(let i=0;i<u8.length;i+=48)await w.write(u8.subarray(i,i+48));await w.close()}catch(e){}})();
+  try{for(;;){const {done,value}=await r.read();if(done){ok=true;break}n+=value.length}}catch(e){}
+  try{await feed}catch(e){}return [n,ok]}
+async function tryB64(b){try{const u=b64u8(b+'='.repeat((4-b.length%4)%4));const t=new TextDecoder().decode(await gzipU8(u,'d'));const d=JSON.parse(t);return d&&d.s?d:null}catch(e){return null}}
+async function repairB64(parts){// parts: pieces of base64 as separate messages; one char may be missing at each join
+  const joins=parts.length-1;if(joins<1||joins>3)return null;
+  async function rec(pre,k){const rest=parts.slice(k+1).join('');
+    if(k===joins-1){for(const c of ['',...B64A]){const d=await tryB64(pre+c+rest);if(d)return d}return null}
+    const sc=[];for(const c of ['',...B64A]){const s=pre+c+rest;const [n]=await inflProgress(b64u8(s.slice(0,s.length>>2<<2)));sc.push([n,c])}
+    sc.sort((x,y)=>y[0]-x[0]);for(const [,c] of sc.slice(0,10)){const d=await rec(pre+c+parts[k+1],k+1);if(d)return d}return null}
+  return rec(parts[0],0)}
+{const _uc=unpackCode;unpackCode=async function(code){code=String(code||'');
+  const cjk=(code.match(/[\u4E00-\u8DFF]/g)||[]).length;
+  if(code.includes('V90H')||cjk>20){const p=code.indexOf('V90H');const u=dec14(p>=0?code.slice(p+4):code);return JSON.parse(new TextDecoder().decode(await gzipU8(u,'d')))}
+  const i=code.indexOf('V90');if(i>0)code=code.slice(i);
+  const parts=code.split(CHAT_HDR).map(p=>p.replace(/\s+/g,'')).filter(Boolean);
+  const flat=parts.join('');
+  try{return await _uc.call(this,flat)}catch(e){
+    if(flat.startsWith('V90Z:')&&window.DecompressionStream){parts[0]=parts[0].replace(/^V90Z:/,'');const d=await repairB64(parts.map(p=>p.replace(/[^A-Za-z0-9+/]/g,'')));if(d)return d}
+    throw e}}}
+
+// ---- transfer window: clearer wording ----
+{const _st=showTransfer;showTransfer=function(){const r=_st.apply(this,arguments);try{const ws=document.querySelectorAll('.pnwrap');const w=ws[ws.length-1];if(!w)return r;
+  const tip=w.querySelector('.pnb .ptip');if(tip)tip.textContent='Играешь и на телефоне, и в браузере? Отправь сохранение себе, например в «Избранное» Telegram, а на другом устройстве загрузи его. Удобнее всего файлом. Код тоже подойдёт: он короткий и помещается в одно сообщение.';
+  const sh=w.querySelector('[data-act="share"]');if(sh)sh.textContent='Отправить файлом';const cp=w.querySelector('[data-act="copy"]');if(cp)cp.textContent='Скопировать код';const fl=w.querySelector('[data-act="file"]');if(fl)fl.textContent='Сохранить файл';
+  const row=sh&&sh.parentNode;if(row&&row.firstChild!==sh)row.insertBefore(sh,row.firstChild);
+  const pa=w.querySelector('[data-act="paste"]');if(pa)pa.textContent='Вставить код';
+  const inp=w.querySelector('#trIn');if(inp)inp.placeholder='…или вставь код сюда. Если он пришёл несколькими сообщениями, вставь их все подряд.'}catch(e){}return r}}
 
 async function main(){for(;;){const r=await title();await runGame(r==='resume')}}
 main();
