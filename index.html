@@ -2053,8 +2053,9 @@ async function title(){
   setWho(null);newState(pg,name,tr[ti]);
 }
 /* ================= v1.6: music, sfx, patch notes ================= */
-const VER='1.40';
+const VER='1.41';
 const PATCH=[
+ {v:'1.41',d:'20 октября',items:['Первые поцелуи Юны, Рин, Харин и Чэвон перерисованы: теперь это настоящие поцелуи, и у каждой своё место и ракурс','9 сцен объятий перерисованы в разных позах и ракурсах; у Минджи в «Вдвоём» теперь она едет у тебя на спине','Альбом: «Фото» стали «Альбомом», селфи из «Нежности» и «Дружеского» сохраняются настоящими фото и попадают в слайд-шоу весны','Ханыль и Ёнсу: связи с другими персонажами, дни рождения в календаре со своими сценами, две общие сцены с Суа и Джиху','Друзья замечают твою личную жизнь: поздравляют, когда появляется пара, и поддерживают после расставания','Новая концовка «Весна с друзьями»: прощальная вечеринка на крыше и слайд-шоу из фото весны','Темп: не больше одного большого утреннего события в день, после тихих дней друзья зовут на ритуал']},
  {v:'1.40',d:'19 октября',items:['Два новых друга: Ханыль — бариста-выпускница с «тетрадью выживания» (кофейня, днём) и Ёнсу — философ с ночной смены, пишет стихи на чеках (общага, вечером). У каждого 5 глав и финал','Путь к отношениям: у каждого из 14 романов три «искры» — на этапах «Приятели», «Друзья» и «Симпатия», последняя с CG','«Флиртовать» в разговоре: реакция зависит от того, насколько вы близки','Можно остаться друзьями с любым из 14: своя реакция, три дружеские главы и дружеский эпилог','Друзья: «Дружеское ›» — обнять, дать пять, селфи, подколоть; еженедельные ритуалы с Чанмином/Йерин, Суа, Ханыль и Ёнсу','Финалы «Лучший друг» с CG для соседа по комнате, Суа, Ханыль и Ёнсу']},
  {v:'1.39',d:'19 октября',items:['Сцены пар переписаны с нуля: у каждого из 14 персонажей своя история из четырёх сцен — без общих шаблонов','Выборы запоминаются: решения из ранних сцен меняют поздние (референс под дождём у Юны, сорванный дубль у Рин, бульон для бабушки Вэя, строчка в песне Чэвон и др.)','Мини-испытания: автомат с игрушками с Нари, один на один с Тэяном, шифр Джиху, языковая дуэль с Эммой, букет со смыслом для Джунсо','Прощание и «Нежность» — у каждого свой особый жест','6 CG «Вдвоём» перерисованы, чтобы не повторялись']},
  {v:'1.38',d:'19 октября',items:['Жизнь пары: у каждого из 14 романов 4 новые сцены — объятия под дождём, ночи над конспектами, знакомство с семьёй, разговоры о будущем','28 новых CG: «Объятия» и «Вдвоём» для каждого персонажа','После свидания с парой — прощание: поцелуй, объятия, проводить за руку или «останься ещё»','В меню пары появилась «Нежность»: взять за руку, поцеловать в щёку, положить голову на плечо, шепнуть, что скучаешь, селфи вдвоём','Сцены пары приходят чаще']},
@@ -3089,7 +3090,7 @@ function openPhone(o){return new Promise(res=>{
     const last=id=>{const L=S.msgs[id];return L&&L.length?L[L.length-1]:null};
     return all.sort((a,b)=>((S.unread[b]?1e6:0)+((last(b)||{}).d||0))-((S.unread[a]?1e6:0)+((last(a)||{}).d||0)))}
   const V={
-   home(){const n=unreadN();const apps=[['msgs','💬','Сообщения',n],['photo','📷','Фото'],['diary','📔','Дневник'],['wx','🌤️','Погода'],['cal','📅','Календарь'],['wallet','💳','Кошелёк'],['soc','🕸️','Связи'],['goals','🎯','Цели',0,(S.goals||[]).length?`${(S.goals||[]).filter(g=>S.goalDone&&S.goalDone[g]).length}/${S.goals.length}`:0],['dict','📖','Словарик',0,S.words.length],...(S.cat&&S.cat.st!=='yard'?[['cat','🐈',S.cat.st==='home'?S.cat.n:'Котик']]:[]),['gal','🖼️','Галерея'],['ach','🏆','Достижения'],['set','⚙️','Настройки']];
+   home(){const n=unreadN();const apps=[['msgs','💬','Сообщения',n],['photo','📷','Альбом',0,(S.photos||[]).length],['diary','📔','Дневник'],['wx','🌤️','Погода'],['cal','📅','Календарь'],['wallet','💳','Кошелёк'],['soc','🕸️','Связи'],['goals','🎯','Цели',0,(S.goals||[]).length?`${(S.goals||[]).filter(g=>S.goalDone&&S.goalDone[g]).length}/${S.goals.length}`:0],['dict','📖','Словарик',0,S.words.length],...(S.cat&&S.cat.st!=='yard'?[['cat','🐈',S.cat.st==='home'?S.cat.n:'Котик']]:[]),['gal','🖼️','Галерея'],['ach','🏆','Достижения'],['set','⚙️','Настройки']];
      const w=wxOf(S.day);
      return `<div class="phhome"><div class="phclock"><b>${PH_TIME[Math.min(S.slot,4)]}</b><span>${esc(dateOf(S.day))}, ${WD[(S.day-1)%7]}</span><span>${WX[w.k].i} ${tmp(w.t)} · ${WX[w.k].n}</span></div>
      <div class="phapps">${apps.map(([k,i,t,b,c])=>`<button type="button" class="papp" data-app="${k}"><span class="pai">${i}${b?`<i>${b>9?'9+':b}</i>`:''}</span><span>${esc(t)}${c?` · ${c}`:''}</span></button>`).join('')}</div>
@@ -3132,7 +3133,7 @@ function openPhone(o){return new Promise(res=>{
      return top('Кошелёк')+`<div class="pdict"><div class="pwal"><small>На карте</small><b>${esc(fmt(S.money))}</b><span>За 7 дней: <i style="color:var(--good)">+${esc(fmt(inc))}</i> · <i style="color:var(--bad)">−${esc(fmt(exp))}</i></span>${MODE()===90&&nb?`<span>Следующий платёж за жильё и еду: ${esc(dateOf(nb))}, около ${esc(fmt(est))}</span>`:''}</div>
      <h4 class="pwh">Куда ушло и откуда пришло</h4><div class="pwords">${cats.map(([t,v])=>row(t,v)).join('')||'<p class="pemp">За неделю денег не тратилось.</p>'}</div>
      <h4 class="pwh">Последние операции</h4><div class="pwords">${W.slice(-12).reverse().map(x=>row(x[2],x[1],dateOf(x[0]))).join('')||'<p class="pemp">Пока пусто.</p>'}</div></div>`},
-   photo(){const L=(S.photos||[]).slice().reverse();return top('Фото')+`<div class="pdict">${L.length?`<div class="pgrid">${L.map(p=>`<button type="button" class="pph" data-zoom="${p.k}"><img src="${SRC(BG[p.k])}" alt=""><span>${esc(dateOf(p.d))}</span></button>`).join('')}</div>`:'<p class="pemp">Здесь появятся фото с важных моментов весны.</p>'}</div>`},
+   photo(){const L=(S.photos||[]).filter(p=>p.k==='selfie'||BG[p.k]).slice().reverse();return top('Альбом')+`<div class="pdict">${L.length?`<div class="pgrid">${L.map(p=>p.k==='selfie'?`<div class="pph">${selfieHtml(p.w)}<span>${esc(dateOf(p.d))}</span></div>`:`<button type="button" class="pph" data-zoom="${p.k}"><img src="${SRC(BG[p.k])}" alt=""><span>${esc(dateOf(p.d))}</span></button>`).join('')}</div>`:'<p class="pemp">Здесь появятся фото с важных моментов весны.</p>'}</div>`},
    diary(){const L=(S.diary||[]).slice().reverse();return top('Дневник')+`<div class="pdict"><div class="pwords">${L.map(e=>`<div class="pword"><b style="font-size:13px">${esc(dateOf(e.d))}</b><span>${esc(e.w)}</span><small>${esc(e.t)}</small></div>`).join('')||'<p class="pemp">Первая запись появится вечером.</p>'}</div></div>`},
    dict(){const m=loadMeta();const tot=Object.keys(m.words||{}).length;const L=[...S.words].reverse();
      const can=S.words.length>=4&&S.dictQ!==S.day;
@@ -3168,7 +3169,7 @@ function openPhone(o){return new Promise(res=>{
     el.querySelectorAll('[data-hang]').forEach(b=>b.onclick=()=>{result={act:'hang',id:p.id};close()});
     el.querySelectorAll('[data-call]').forEach(b=>b.onclick=()=>{result={act:'call'};close()});
     el.querySelectorAll('[data-mask]').forEach(b=>b.onclick=()=>{if(S.money<3000)return;money(-3000);S.cons.mask+=5;learnWord('미세먼지');render()});
-    el.querySelectorAll('[data-zoom]').forEach(b=>b.onclick=()=>{const L=(S.photos||[]).map(p=>p.k);const i=Math.max(0,L.indexOf(b.dataset.zoom));try{zoomCG(L.length?L:[b.dataset.zoom],i)}catch(e){}});
+    el.querySelectorAll('[data-zoom]').forEach(b=>b.onclick=()=>{const L=(S.photos||[]).map(p=>p.k).filter(k=>BG[k]);const i=Math.max(0,L.indexOf(b.dataset.zoom));try{zoomCG(L.length?L:[b.dataset.zoom],i)}catch(e){}});
     el.querySelectorAll('[data-bd]').forEach(b=>b.onclick=()=>{typing0=typing;bdCongrats(p.id)});
     el.querySelectorAll('[data-quiz]').forEach(b=>b.onclick=()=>go('quiz'));
     el.querySelectorAll('[data-qa]').forEach(b=>b.onclick=()=>{const c=p.q[p.i];const right=c.o[+b.dataset.qa]===WMAP[c.k][2];
@@ -5906,11 +5907,11 @@ const DATE_SAY={
 /* ================= v1.37: first kiss — CG after the confession, kisses for couples ================= */
 // [narration before, line after] — new scenes, no voice-over
 const KISS={
- aigerim:['Ветер с реки путает ей волосы. Юна долго молчит, потом делает полшага ближе — и закрывает глаза первой.','...Я всё запомнила. Каждую секунду. Это тоже наблюдение.'],
- rin:['Мост, огни, ночь. Рин опускает камеру. Впервые за весну она не снимает — просто смотрит на тебя.','Без дублей. Этот кадр уже идеальный.'],
- mira:['Закат красит реку в её любимые цвета. Харин тянется к тебе, и пахнет от неё краской и весной.','Теперь у меня есть цвет, которого нет ни в одной палитре.'],
+ aigerim:['Ветер с реки путает ей волосы. Под фонарём Юна долго молчит, потом встаёт на цыпочки — очки съезжают набок — и закрывает глаза первой.','...Я всё запомнила. Каждую секунду. Это тоже наблюдение.'],
+ rin:['Фотолаборатория, красный свет, на верёвках сохнут снимки — и почти на всех ты. Рин откладывает пинцет, встаёт на цыпочки — и впервые за весну не тянется к камере.','Без дублей. Этот кадр уже идеальный.'],
+ mira:['Закат у реки точь-в-точь как на её холсте. Харин бросает кисть на мольберт, берёт твоё лицо в перепачканные краской ладони — и целует.','Теперь у меня есть цвет, которого нет ни в одной палитре.'],
  dana:['Пустой стадион, последние лучи на дорожке. Минджи, которая всегда бежит первой, вдруг замирает рядом.','...Финиш. Самый лучший в моей жизни. Не смейся.'],
- lilia:['Ступеньки кинотеатра, город гудит где-то далеко. Чэвон наклоняется, и весь шум уходит, как в паузе перед припевом.','Тихо. Вот эту тишину я и искала.'],
+ lilia:['Мокрые ступеньки кинотеатра, неон после дождя. Чэвон встаёт на ступеньку выше, чтобы быть вровень с тобой, — и весь шум уходит, как в паузе перед припевом.','Тихо. Вот эту тишину я и искала.'],
  emma:['Солнце садится над Ханганом. Эмма смеётся, перестаёт смеяться — и целует тебя, пока не передумала.','В Швеции так не делают на первом свидании. Хорошо, что мы в Сеуле.'],
  nari:['На крыше ветрено и темно, только город светится внизу. Нари, красная до ушей, зажмуривается и тянется к тебе.','...Я выиграла? Мне кажется, я выиграла.'],
  wei:['Ночной парк, фонари в листве. Вэй перестаёт болтать на полуслове — и это громче любых слов.','Всё, я молчу. ...Нет, не могу. Ещё раз?'],
@@ -5981,7 +5982,7 @@ async function tenderMenu(P){const T=TEND[P]||{};
   if(i>=TEND_OPTS.length)return false;const k=TEND_OPTS[i][0];S.tendD=S.day;mood(5);aff(P,1);
   if(k==='lean'&&Math.random()<.4)cgOn('cozy',P);
   await line(P,'b',T[k]||'...Ещё немного так.');
-  if(k==='selfie'){S.selfies=(S.selfies||0)+1;toast('📸 Селфи сохранено в телефон')}
+  if(k==='selfie'){(typeof addSelfie==='function'?addSelfie(P):S.selfies=(S.selfies||0)+1);toast('📸 Селфи сохранено в альбом')}
   return true}
 
 // ---------- new couple scenes play after the first three ----------
@@ -6028,7 +6029,7 @@ const TEND_SP={aigerim:['Поправить ей очки','...Ты поправ
   const i=await ask('Как проявишь нежность?',opts,{who:P,exp:'b'});if(i>TEND_OPTS.length)return false;S.tendD=S.day;mood(5);aff(P,1);
   if(i===TEND_OPTS.length){await line(P,'l',sp[1]);return true}
   const k=TEND_OPTS[i][0];if(k==='lean'&&Math.random()<.4)cgOn('cozy',P);await line(P,'b',T[k]||'...Ещё немного так.');
-  if(k==='selfie'){S.selfies=(S.selfies||0)+1;toast('📸 Селфи сохранено в телефон')}return true}}
+  if(k==='selfie'){(typeof addSelfie==='function'?addSelfie(P):S.selfies=(S.selfies||0)+1);toast('📸 Селфи сохранено в альбом')}return true}}
 
 /* v1.39 couple scenes, rewritten one by one — Юна, Рин, Харин, Минджи, Чэвон, Эмма, Нари
    each character has her own arc of 4 scenes; choices leave flags that later scenes remember */
@@ -6068,7 +6069,7 @@ LOVE.rin=[
  // 1. Stand-in actor on the bridge
  [['bg','river_night','night'],['n','Рин снимает короткий метр на фестиваль. Актёр не пришёл. Она смотрит на тебя так, что выбора у тебя нет.'],
   ['h','Сцена простая. Ночь, мост. Она обнимает его со спины. Он говорит одну реплику. Мотор!'],
-  ['fn',()=>cgOn('hug','rin')],['n','Рин обнимает тебя со спины — по сценарию. Только в сценарии не было, что у неё будут дрожать руки.'],
+  ['fn',()=>cgOn('hug','rin')],['n','Ты облокачиваешься на перила, и Рин обнимает тебя со спины — по сценарию. Щекой к твоей спине. Только в сценарии не было, что у неё будут дрожать руки.'],
   ['c','Реплика героя по сценарию — «Не отпускай». Что говоришь?',[{t:'«Не отпускай» — точно по тексту',d:3,set:{take:'script'},e:'h',r:'Снято. Чисто. ...Скучно. Нет, хорошо. Ладно, я хотела, чтобы ты сымпровизировал{|а}.'},
    {t:'Сымпровизировать: «Я и не собирался уходить»',d:4,set:{take:'improv'},e:'b',r:'...Стоп. Этого нет в сценарии. Это лучше сценария. Оставляем.'},
    {t:'Забыть реплику и рассмеяться',d:3,m:5,set:{take:'laugh'},e:'l',r:'Ты сорвал{|а} дубль! ...Камера всё ещё пишет. Я этот смех оставлю. Он настоящий.'}]]],
@@ -6154,7 +6155,7 @@ TEND.dana={hand:'У тебя ладони тёплые. Мои после тре
 LOVE.lilia=[
  // 1. Wrong note
  [['bg','stage','night'],['n','Сет закончен. Зал ещё хлопает, а Чэвон за кулисами смотрит в стену.'],['s','Вторая песня. Я ушла в другую тональность на полтакта. Все слышали.'],
-  ['c','Что делаешь?',[{t:'Молча обнять',d:5,set:{note:'hug'},then:[['fn',()=>cgOn('hug','lilia')],['n','Она держится за тебя, пока у неё не перестают дрожать пальцы.'],['b','Ты единственный звук, который сейчас нужен.']]},
+  ['c','Что делаешь?',[{t:'Молча обнять',d:5,set:{note:'hug'},then:[['fn',()=>cgOn('hug','lilia')],['n','Вы сидите на полу за кулисами среди проводов. Она сворачивается у тебя в руках и держится, пока не перестают дрожать пальцы.'],['b','Ты единственный звук, который сейчас нужен.']]},
    {t:'«Это была не ошибка. Это была модуляция»',d:4,set:{note:'joke'},e:'l',r:'Модуляция... Ты ничего не понимаешь в музыке. ...Я теперь всегда буду так её играть. Назло.'},
    {t:'Напеть ей ту самую фальшивую строчку',d:3,set:{note:'sing'},e:'l',r:'Ты поёшь ещё хуже! ...Спасибо. Теперь моя ошибка — не самая страшная в этом здании.'}]]],
  // 2. Backing vocals
@@ -6208,8 +6209,8 @@ TEND.emma={hand:'Тёплая. Как кружка в фику.',cheek:'В Шв�
 LOVE.nari=[
  // 1. Tournament
  [['bg','pcbang','night'],['n','Финал любительского турнира. Нари выигрывает на последней секунде и стягивает наушники. Камера стрима смотрит прямо на неё.'],
-  ['fn',()=>cgOn('hug','nari')],['n','Она бросается к тебе — и прячет лицо у тебя в плече. Чат взрывается.'],
-  ['c','Что делаешь?',[{t:'Помахать в камеру',d:4,set:{cam:'wave'},e:'l',r:'Ты помахал{|а} трём тысячам зрителей. Чат сломался. ...Теперь все знают. Хорошо.'},{t:'Закрыть её от камеры собой',d:4,m:4,set:{cam:'hide'},e:'b',r:'...Спасибо. Можно ещё постоять так? Я вся красная.'}]]],
+  ['fn',()=>cgOn('hug','nari')],['n','Она бросается к тебе и прячет лицо у тебя на груди. Ты распахиваешь куртку, закрывая её от камеры стрима. Чат взрывается.'],
+  ['c','Что делаешь?',[{t:'Помахать в камеру',d:4,set:{cam:'wave'},e:'l',r:'Ты помахал{|а} трём тысячам зрителей. Чат сломался. ...Теперь все знают. Хорошо.'},{t:'Так и стоять, пока чат не успокоится',d:4,m:4,set:{cam:'hide'},e:'b',r:'...Спасибо. Можно ещё постоять так? Я вся красная.'}]]],
  // 2. Claw machine
  [['bg','mall','eve'],['n','Аркада в торговом центре. Нари проходит любые игры с закрытыми глазами. Кроме одной.'],['s','Автомат с игрушками. Сорок попыток. Ноль котиков. Он меня ненавидит.'],
   ['c','Что делаешь?',[{t:'Попробовать самому — на удачу',d:3,then:[['if',()=>Math.random()<0.5||stOK('game',35),[['fn',()=>cgOn('cozy','nari')],['n','Лапа цепляет котика за ухо — и он падает в лоток. Нари визжит на весь этаж и обнимает игрушку, а потом тебя.'],['b','Ты читер! Лучший читер! Он будет жить на мониторе. Его зовут как тебя.']],[['n','Котик выскальзывает в последний момент. Нари смеётся так, что садится на пол.'],['l','Он и тебя ненавидит! Мы команда неудачников. Мне нравится наша команда.']]]]},
@@ -6262,7 +6263,7 @@ TEND.wei={hand:'Твоя рука! Наконец-то. Я весь день е�
 LOVE.arman=[
  // 1. Library, the program
  [['bg','uni','night'],['n','Библиотека закрывается. Джиху дописывает программу для твоего проекта — хотя ты не просила.'],['n','Он нажимает «запуск». На экране: «Тест пройден. Ты тоже».'],
-  ['c','Что делаешь?',[{t:'Обнять его прямо у монитора',d:4,then:[['fn',()=>cgOn('hug','arman')],['n','Джиху замирает, как компьютер посреди обновления.'],['b','Ошибка... нет. Не ошибка. Перезагрузка. Приятная.']]},
+  ['c','Что делаешь?',[{t:'Обнять его прямо у монитора',d:4,then:[['fn',()=>cgOn('hug','arman')],['n','Ты обнимаешь его со спины, прямо у монитора. Джиху замирает с руками над клавиатурой, как компьютер посреди обновления.'],['b','Ошибка... нет. Не ошибка. Перезагрузка. Приятная.']]},
    {t:'Найти в коде комментарий, который он забыл удалить',d:4,st:'study',set:{comment:1},e:'s',r:'«// для неё, проверить три раза». ...Не читай комментарии. Это личное. Ладно. Читай.'}]]],
  // 2. Stars and blanket
  [['bg','roof_night','night'],['n','Крыша, плед, телескоп. Джиху показывает созвездия и путает названия, потому что смотрит не в небо.'],
@@ -6353,7 +6354,7 @@ TEND.sanzhar={hand:'У тебя мука на пальцах. Моя. Значи
 LOVE.lucas=[
  // 1. Bukchon
  [['bg','garden','day'],['n','Букчон. Лукас рисует ханок на углу, ты держишь ему кофе. Туристы спрашивают, продаётся ли рисунок.'],['h','Не продаётся. Он подарок. Рисунок — обёртка. Подарок — вот.'],
-  ['fn',()=>cgOn('hug','lucas')],['n','Он обнимает тебя посреди узкой улочки. На рисунке в углу — две маленькие фигурки.'],
+  ['fn',()=>cgOn('hug','lucas')],['n','Он обнимает тебя посреди узкой улочки, и ветер подхватывает листы из его скетчбука. На том, что падает к вашим ногам, — две маленькие фигурки.'],
   ['c','Что делаешь?',[{t:'Попросить подписать рисунок',d:4,set:{sign:1},e:'b',r:'«Pour toi. Toujours». Перевести? ...Нет, догадайся.'},{t:'«Во Франции так обнимают на улице?»',d:3,e:'l',r:'Во Франции — да. В Корее — теперь тоже. Я ввёл традицию.'}]]],
  // 2. Waltz in the rain
  [['bg','river_night','night'],['n','Начинается дождь. Лукас не бежит под крышу, а протягивает тебе руку под фонарём.'],['h','Во французском кино в такой момент танцуют. Я видел сорок таких фильмов. Ты умеешь вальс?'],
@@ -6505,7 +6506,7 @@ async function friendlyMenu(id){const L=FRG[id];const f=S.fr[id]||0;
   const i=await ask('Что делаешь?',[{t:'Обнять по-дружески',h:f>=45?'':'вы пока не настолько близки',dis:f<45,why:'Нужна дружба 45'},{t:'Дать пять'},{t:'Селфи вдвоём'},{t:'Подколоть по-доброму'},{t:'Назад',cls:'back'}],{who:id,exp:'h'});
   if(i>=4)return false;const k=['hug','five','selfie','tease'][i];S.frD=S.frD||{};S.frD[id]=S.day;fr(id,k==='hug'?3:2);mood(k==='hug'?5:3);
   await line(id,k==='tease'?'l':k==='hug'?'b':'h',(L&&L[k])||pick(FRG_DEF[k]));
-  if(k==='selfie'){S.selfies=(S.selfies||0)+1;toast('📸 Селфи сохранено в телефон')}return true}
+  if(k==='selfie'){if(typeof addSelfie==='function')addSelfie(id);else S.selfies=(S.selfies||0)+1;toast('📸 Селфи сохранено в альбом')}return true}
 
 // ---------- weekly rituals (from friendship 45) ----------
 const RIT={
@@ -6533,9 +6534,9 @@ const RIT={
    ['c','Что ответишь?',[{t:'«Вот эти ночные разговоры»',d:5,e:'b',r:'Тогда не потеряешь. Я их никому не отдам.'},{t:'«Ключи. Каждое утро»',d:4,m:5,e:'l',r:'Самый честный ответ за неделю. Я запишу: «Ключи — тоже экзистенциальный страх».'}]]],
   [['bg','roof','night'],['n','Ёнсу приносит на крышу два банановых молока и вопрос: «Каким ты был{|а} в десять лет?»'],
    ['c','Что расскажешь?',[{t:'Смешную историю из детства',d:4,m:5,e:'l',r:'Ты прятал{ся|ась} в шкафу от гостей? Я тоже! Клуб шкафных детей.'},{t:'Что тогда было одиноко',d:5,e:'b',r:'...Мне тоже. Знаешь, хорошо, что мы выросли и нашли друг друга. Так бывает.'}]]]]}};
-async function ritualCheck(){if(!S||S.over||S.slot>=NSLOT)return false;S.rit=S.rit||{};
+async function ritualCheck(force){if(!S||S.over||S.slot>=NSLOT)return false;S.rit=S.rit||{};
   const ids=Object.keys(RIT).filter(id=>FRIEND[id]&&S.fmet&&S.fmet[id]&&(S.fr[id]||0)>=45&&S.day-((S.rit[id]&&S.rit[id].d)||-99)>=5*Math.max(1,Math.round(DSTEP()))&&id!==S.partner);
-  if(!ids.length||Math.random()>0.35)return false;const id=pick(ids);const R=RIT[id];const st=S.rit[id]=S.rit[id]||{n:0,d:-99};st.d=S.day;
+  if(!ids.length||(!force&&Math.random()>0.35))return false;const id=pick(ids);const R=RIT[id];const st=S.rit[id]=S.rit[id]||{n:0,d:-99};st.d=S.day;
   setWho(null);toast(`🔁 Ритуал дружбы: ${R.name}`);await runBeat(id,R.steps[st.n%R.steps.length]);st.n++;fr(id,2);return true}
 {const _sd=startDay;startDay=async function(){const r=await _sd.apply(this,arguments);try{if(S&&!S.over&&S.day>3&&!(S.cp&&S.partner&&S.cp[S.partner]&&S.cp[S.partner].d===S.day))await ritualCheck()}catch(e){console.error(e)}return r}}
 
@@ -6827,6 +6828,85 @@ async function fzStart(id){const r=S.rel[id];if(!r||r.fz)return;r.fz=S.day;S.fr=
   try{return await _h.apply(this,arguments)}finally{if(fz){if(keep)FR_HANG[id]=keep;else delete FR_HANG[id]}}}}
 {const _en=ending;ending=async function(){const bk=[];try{if(S&&S.rel)for(const id of Object.keys(S.rel)){const r=S.rel[id];if(r.fz&&(S.fr[id]||0)>=60&&r.aff<45){bk.push([id,r.aff]);r.aff=45+Math.round((S.fr[id]-60)/2)}}}catch(e){}
   try{return await _en.apply(this,arguments)}finally{for(const [id,a] of bk)S.rel[id].aff=a}}}
+
+/* ================= v1.41: selfies in the album, new friends in the world, friends' reactions, friends ending, event pacing ================= */
+
+// ---------- 1. selfies become real photos in the phone album ----------
+function addSelfie(id){try{S.photos=S.photos||[];S.photos.push({k:'selfie',w:id,d:S.day});S.selfies=(S.selfies||0)+1}catch(e){}}
+function selfieHtml(id,big){const me=PG()==='f'?'meF':'meM';const im=x=>CH[x]&&CH[x].imgs?`<img src="${SRC(CH[x].imgs[1])}" alt="">`:`<span class="sfsvg">${typeof mf==='function'?mf(x):''}</span>`;
+  return `<span class="selfie${big?' big':''}">${im(me)}${im(id)}<em>${esc(CH[id]?CH[id].n:'')}</em></span>`}
+(function(){const s=document.createElement('style');s.textContent=`.selfie{display:flex;gap:0;border-radius:10px;overflow:hidden;background:linear-gradient(135deg,#f9d7e3,#cfe3ff);position:relative;aspect-ratio:16/10;width:100%}
+.selfie img,.selfie .sfsvg{flex:1;min-width:0;object-fit:cover;object-position:50% 18%;height:100%;display:block}
+.selfie em{position:absolute;left:6px;bottom:4px;font-style:normal;font-size:11px;font-weight:700;color:#fff;text-shadow:0 1px 3px #0009}
+.selfie.big{max-width:min(92vw,720px)}`;document.head.appendChild(s)})();
+// photo grid and the end-of-spring slideshow understand selfies
+{const _sa=showAlbum;showAlbum=function(){const keep=S&&S.photos;if(!keep)return _sa.apply(this,arguments);
+  const sf=keep.filter(p=>p.k==='selfie');if(!sf.length)return _sa.apply(this,arguments);
+  // selfies are drawn into a small canvas once so the slideshow can use them like any other photo
+  return (async()=>{for(const p of sf){const key='selfie_'+p.w+'_'+p.d;if(!BG[key]){try{BG[key]=await selfieData(p.w)}catch(e){}}p.k2=key}
+    const saved=S.photos;S.photos=saved.map(p=>p.k==='selfie'?Object.assign({},p,{k:p.k2}):p);try{return await _sa.apply(this,arguments)}finally{S.photos=saved}})()}}
+async function selfieData(id){const me=PG()==='f'?'meF':'meM';const load=src=>new Promise((r,j)=>{const im=new Image();im.onload=()=>r(im);im.onerror=j;im.src=src});
+  const c=document.createElement('canvas');c.width=960;c.height=600;const g=c.getContext('2d');const gr=g.createLinearGradient(0,0,960,600);gr.addColorStop(0,'#f9d7e3');gr.addColorStop(1,'#cfe3ff');g.fillStyle=gr;g.fillRect(0,0,960,600);
+  const ids=[me,id];for(let k=0;k<2;k++){const x=ids[k];if(!CH[x]||!CH[x].imgs)continue;const im=await load(SRC(CH[x].imgs[1]));const w=480,h=600,s=Math.max(w/im.width,h/im.height);g.drawImage(im,k*480+(w-im.width*s)/2,0,im.width*s,im.height*s)}
+  g.fillStyle='rgba(255,255,255,.9)';g.font='bold 28px sans-serif';g.fillText('📸 '+(CH[id]?CH[id].n:''),24,570);return c.toDataURL('image/webp',.85).split(',')[1]}
+const cgNameSelfie=k=>{const m=/^selfie_(.+)_\d+$/.exec(k);return m?'Селфи · '+(CH[m[1]]?CH[m[1]].n:m[1]):null};
+{const _cn=cgName;cgName=function(k){return cgNameSelfie(k)||_cn.apply(this,arguments)}}
+
+// ---------- 2. new friends in the world: links, birthdays, crossovers ----------
+try{PAIRS.push(
+ {a:'haneul',b:'kamila',base:30,label:'тетрадь выживания и студенческий журнал',subj:'о том, чья методичка полезнее для первокурсников',warm:'обмениваются колонками: Суа печатает главу из тетради Ханыль, Ханыль варит Суа какао',qa:'Мою тетрадь хотя бы читают.',qb:'Мой журнал хотя бы выходит по расписанию.'},
+ {a:'haneul',b:'mira',base:20,label:'одна кофейня на двоих',subj:'о том, можно ли рисовать на пенке, пока очередь до двери',warm:'Харин рисует котов на стаканчиках, а Ханыль делает вид, что не видит',qa:'Очередь до двери, а ты рисуешь кота.',qb:'Очередь до двери, потому что я рисую кота.'},
+ {a:'yongsu',b:'arman',base:25,label:'ночные совы общаги',subj:'о том, что важнее — Кант или компилятор',warm:'в три ночи делят банановое молоко и спорят про свободу воли',qa:'Твой код — это детерминизм в чистом виде.',qb:'А твоя философия не компилируется.'},
+ {a:'yongsu',b:'lilia',base:15,label:'стихи и биты',subj:'о том, можно ли петь стихи с чеков',warm:'Чэвон кладёт строчку Ёнсу на бит, и он делает вид, что не слушает',qa:'Ты украла мой чек.',qb:'Я купила твой чек. За рамён.'})}catch(e){}
+Object.assign(BDAY,{haneul:49,yongsu:82});
+const BDF={
+ haneul:[['bg','cafe','eve'],['n','Кофейня закрыта. На стойке — один кекс со свечкой и табличка: «Сегодня бариста не варит. Сегодня бариста — гость».'],['h','Двадцать три. Я всё ещё не выспалась. Но сегодня можно.'],
+  ['c','Как поздравишь?',[{t:'Сварить ей кофе самому — впервые',d:6,st:'cook',e:'l',r:'Ты сварил{|а} мне кофе. Он ужасный. Это лучший кофе в моей жизни.'},{t:'Подарить тетрадь «Издание четвёртое» с пустыми страницами',d:6,e:'b',r:'Пустая... Чтобы я написала, как живу дальше. Ты понимаешь меня слишком хорошо.'}]]],
+ yongsu:[['bg','roof','night'],['n','Крыша, три часа ночи. Ёнсу принёс пирожное из магазина и одну свечку-цифру «2». Вторую потерял.'],['h','Двадцать два. Или два. Зависит от того, как посмотреть. Это философия.'],
+  ['c','Как поздравишь?',[{t:'Написать ему стих на чеке',d:6,st:'art',e:'b',r:'Ты написал{|а}... мне? На чеке? Я буду хранить его в самом лучшем месте. В кошельке.'},{t:'Встретить с ним рассвет и молчать',d:6,e:'b',r:'Это был лучший подарок. Тишина, которую с кем-то делишь.'}]]]};
+{const _bp=bdParty;bdParty=async function(id){if(BDF[id]&&FRIEND[id]&&!S.rel[id]){if((S.fr[id]||0)<25)return;S.bd[id].done=1;msgOut(id,'С днём рождения! 🎂🎉');await runBeat(id,BDF[id]);return}return _bp.apply(this,arguments)}}
+try{DUO.push(
+ {k:'haneul_kamila',ids:['haneul','kamila'],loc:'cafe',steps:[['bg','cafe'],['n','Суа берёт у Ханыль интервью для журнала: «Ветеран кампуса советует». Ханыль отвечает односложно.'],['say','kamila','h','Последний вопрос: что бы вы сказали себе-первокурснице?'],['say','haneul','n','...Спроси у {него|неё}. Он{|а} это сейчас проживает.'],
+  ['c','Что ответишь на камеру?',[['«Спи. И найди Ханыль»',9,'l','Суа: «Это заголовок». Ханыль: «Это клевета». Обе улыбаются.','charm',null,{b:{kamila:6}}],['«Не бойся спрашивать»',8,'h','Суа записывает. Ханыль кивает: «Хороший ответ. Мой был хуже».','study',null,{b:{kamila:6}}]]]]},
+ {k:'yongsu_arman',ids:['yongsu','arman'],loc:'home',steps:[['bg','market','night'],['n','Три ночи. В магазинчике у общаги Джиху и Ёнсу спорят у кассы, есть ли у программы свобода воли.'],['say','arman','n','Она делает ровно то, что я написал.'],['say','yongsu','h','Ты тоже делаешь ровно то, что тебе написала бабушка. Это не значит, что ты несвободен.'],
+  ['c','Чью сторону примешь?',[['Ёнсу: «Свобода — это выбрать рамён в три ночи»',8,'l','Джиху: «Это не аргумент». Ёнсу: «Это рамён». Ничья.','study',null,{b:{arman:4}}],['Джиху: «Свобода — это когда код компилируется»',8,'l','Ёнсу записывает это на чек. «Подарю тебе. Это почти стих».','study',null,{b:{arman:7}}]]]]})}catch(e){}
+
+// ---------- 3. friends notice your love life ----------
+const FR_LOVE={
+ beka:{c:['Так. Ты весь день улыбаешься. Это {P}? Я так и {знал|знала}.','Поздравляю! Я заказываю два новых рамёна: тебе и для счастья.'],b:['Эй. Я рядом. Вечером рамён и худший фильм. Без вопросов.','Хочешь — молчим, хочешь — ругаем всех. Я за оба варианта.']},
+ kamila:{c:['Поздравляю! Новость дня. В журнал не пойдёт. Почти.','Ты и {P}? Я знала раньше вас обоих.'],b:['Если хочешь поговорить — я в кофейне. Без блокнота.','Я рядом. Это не сплетня, это обещание.']},
+ haneul:{c:['Поздравляю. Глава «Любовь на первом курсе» в тетради теперь твоя.','{P}? Хороший выбор. Спи всё равно.'],b:['Приходи. Сварю самый сладкий латте. С сиропом. Сегодня можно.','Глава «Как пережить расставание»: прийти к Ханыль. Всё.']},
+ yongsu:{c:['Вопрос дня: каково это — быть счастливым? Ответь, мне для статистики.','Поздравляю. Вчера ты купил{|а} два банановых молока. Я догадался.'],b:['Приходи ночью. Ночью грусть легче. Проверено.','Чек дня: «Это пройдёт. А ты останешься». Вот, написал.']}};
+function frLoveNews(kind){const P=S.partner||(S.flags&&S.flags.broke);const pn=P&&CH[P]?CH[P].n:'';
+  const ids=Object.keys(FR_LOVE).filter(id=>FRIEND[id]&&(id==='beka'||(S.fmet&&S.fmet[id]))&&(S.fr[id]||0)>=25&&id!==P);
+  for(const id of ids.slice(0,3)){const t=fx(pick(FR_LOVE[id][kind])).replace('{P}',pn);msgIn(id,t,id,1)}}
+{const _sd=startDay;startDay=async function(){const r=await _sd.apply(this,arguments);try{if(S&&!S.over){S.loveN=S.loveN||{};
+  if(S.partner&&S.loveN.p!==S.partner){S.loveN.p=S.partner;frLoveNews('c')}
+  const br=S.flags&&S.flags.broke;if(br&&S.loveN.b!==br+':'+(S.rel[br]&&S.rel[br].aff)){S.loveN.b=br+':'+(S.rel[br]&&S.rel[br].aff);if(!S.partner)frLoveNews('b')}}}catch(e){console.error(e)}return r}}
+
+// ---------- 4. the friends ending ----------
+const FEND={beka:'Ты помнишь первую ночь? Мы ели рамён на полу, потому что не было стола. Стол так и не купили. И не надо.',kamila:'Я написала сто колонок за весну. Лучшая — та, которую мы не напечатали. Про нас.',
+ haneul:'Глава последняя: «Найди своих людей». Я нашла поздно. Ты — вовремя.',yongsu:'Ночь кончилась. А мы остались. Это лучший финал, который я видел.'};
+const FEND_DEF=['Это была лучшая весна. Из-за тебя. Ну и немного из-за рамёна.','Если бы я могла выбрать, с кем пройти первый курс заново, — выбрала бы тебя.','Спасибо, что был{|а} рядом. Это громче, чем звучит.'];
+async function friendsFinale(){const best=frIds().filter(id=>S.fmet&&(S.fmet[id]||id==='beka')&&(S.fr[id]||0)>=70).sort((a,b)=>S.fr[b]-S.fr[a]).slice(0,4);if(best.length<2)return false;
+  setScene('roof','night');setWho(null);
+  await narr(`Последний вечер весны. На крыше общаги гирлянды, пицца и музыка из чьего-то телефона. Пришли все, кто был рядом этой весной: ${best.map(id=>CH[id].n).join(', ')}.`);
+  for(const id of best){setWho(id,'h');await line(id,'h',fx(FEND[id]||pick(FEND_DEF)))}
+  await narr('Кто-то включает на телефоне слайд-шоу из фотографий весны. Все замолкают и смотрят.');
+  try{await showAlbum()}catch(e){}
+  const m=loadMeta();m.endings=m.endings||{};if(!m.endings.friends_spring){m.endings.friends_spring=1;saveMeta(m);toast('🏅 Новая концовка: «Весна с друзьями»')}
+  return true}
+{const _ce=catEnding;catEnding=async function(){const r=await _ce.apply(this,arguments);try{if(!S.partner)await friendsFinale()}catch(e){console.error(e)}return r}}
+
+// ---------- 5. pacing: at most one big morning event per day, and no long silences ----------
+function evMark(kind){S.ev=S.ev||{};S.ev[S.day]=S.ev[S.day]||[];S.ev[S.day].push(kind)}
+const evToday=()=>(S.ev&&S.ev[S.day]||[]).length;
+{const _cm=coupleMorning;coupleMorning=async function(){const n=(S.cp&&S.partner&&S.cp[S.partner]&&S.cp[S.partner].n)||0;const r=await _cm.apply(this,arguments);try{if(S.cp&&S.partner&&S.cp[S.partner]&&S.cp[S.partner].n>n)evMark('couple')}catch(e){}return r}}
+{const _rc=ritualCheck;ritualCheck=async function(){if(evToday())return false;
+  // after a quiet stretch a ritual becomes much more likely
+  const quiet=(()=>{let q=0;for(let d=S.day-1;d>S.day-5&&d>0;d--){if(S.ev&&S.ev[d]&&S.ev[d].length)break;q++}return q})();
+  const r=await _rc.call(this,quiet>=3);if(r)evMark('ritual');return r}}
+try{{const _mf=maybeFavor;maybeFavor=async function(){if(evToday()>=1&&Math.random()<.7)return false;const d0=S.favD;const r=await _mf.apply(this,arguments);if(S.favD!==d0)evMark('favor');return r}}}catch(e){}
 
 async function main(){for(;;){const r=await title();await runGame(r==='resume')}}
 main();
