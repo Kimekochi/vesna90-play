@@ -2053,8 +2053,9 @@ async function title(){
   setWho(null);newState(pg,name,tr[ti]);
 }
 /* ================= v1.6: music, sfx, patch notes ================= */
-const VER='1.42';
+const VER='1.43';
 const PATCH=[
+ {v:'1.43',d:'20 октября',items:['Когда у тебя появляется пара, те, кто был в тебя влюблён, реагируют: у каждого своя сцена, можно предложить остаться друзьями','Бывшие пишут, когда видят тебя с кем-то новым','Твоя пара знакомится с друзьями: Чанмин/Йерин, Суа, Ханыль и Ёнсу. Если они уже знакомы между собой, сцена учитывает их историю','На свидании можно встретить того, кому ты нравишься: своя реакция у каждого и своя ревность у твоей пары','Экспериментально: в телефоне можно написать персонажу своими словами, ответ пишет ИИ с учётом ваших отношений. Работает только в версии на claude.ai, до 6 сообщений в день каждому, можно скрыть','Джунсо: новые поцелуй (ночной Чхонгечхон) и «Вдвоём» (дерево на холме над городом)']},
  {v:'1.42',d:'20 октября',items:['Все первые поцелуи перерисованы: у каждого персонажа своё место — библиотека, мастерская, рассветный стадион, студия звукозаписи, кафе в дождь, аркада, караоке, планетарий, баскетбольная площадка, последний поезд метро, пекарня, галерея, теплица','Вэй: новые объятия (танцевальная поддержка) и новая искра на колесе обозрения','Хёну: новая картинка концерта в Хондэ','Тексты сцен поцелуя обновлены под новые картинки']},
  {v:'1.41',d:'20 октября',items:['Первые поцелуи Юны, Рин, Харин и Чэвон перерисованы: теперь это настоящие поцелуи, и у каждой своё место и ракурс','9 сцен объятий перерисованы в разных позах и ракурсах; у Минджи в «Вдвоём» теперь она едет у тебя на спине','Альбом: «Фото» стали «Альбомом», селфи из «Нежности» и «Дружеского» сохраняются настоящими фото и попадают в слайд-шоу весны','Ханыль и Ёнсу: связи с другими персонажами, дни рождения в календаре со своими сценами, две общие сцены с Суа и Джиху','Друзья замечают твою личную жизнь: поздравляют, когда появляется пара, и поддерживают после расставания','Новая концовка «Весна с друзьями»: прощальная вечеринка на крыше и слайд-шоу из фото весны','Темп: не больше одного большого утреннего события в день, после тихих дней друзья зовут на ритуал']},
  {v:'1.40',d:'19 октября',items:['Два новых друга: Ханыль — бариста-выпускница с «тетрадью выживания» (кофейня, днём) и Ёнсу — философ с ночной смены, пишет стихи на чеках (общага, вечером). У каждого 5 глав и финал','Путь к отношениям: у каждого из 14 романов три «искры» — на этапах «Приятели», «Друзья» и «Симпатия», последняя с CG','«Флиртовать» в разговоре: реакция зависит от того, насколько вы близки','Можно остаться друзьями с любым из 14: своя реакция, три дружеские главы и дружеский эпилог','Друзья: «Дружеское ›» — обнять, дать пять, селфи, подколоть; еженедельные ритуалы с Чанмином/Йерин, Суа, Ханыль и Ёнсу','Финалы «Лучший друг» с CG для соседа по комнате, Суа, Ханыль и Ёнсу']},
@@ -3113,6 +3114,7 @@ function openPhone(o){return new Promise(res=>{
        if(!rom&&FRIEND[id]&&(FRIEND[id].__dyn||(typeof PROF!=='undefined'&&PROF[id]))&&o.turn){const can=(S.fr[id]||0)>=30&&S.slot<=3;acts+=`<button type="button" class="pbig" data-hang ${can?'':'disabled'}>🚶 Позвать тусоваться${can?' · займёт этот ход':(S.fr[id]||0)<30?' · нужна дружба 30':' · уже поздно'}</button>`}
        if(rom){const can=S.rel[id].aff>=30&&S.slot<=3;acts+=o.turn?`<button type="button" class="pbig" data-date ${can?'':'disabled'}>🚶 Позвать гулять${can?' · займёт этот ход':S.rel[id].aff<30?' · нужна симпатия 30':' · уже поздно'}</button>`:`<p class="phint">Позвать гулять можно через «Телефон» в списке мест.</p>`}}
      {const b=S.bd&&S.bd[id];if(b&&!b.done&&b.d===S.day)acts=`<button type="button" class="pbig" data-bd>🎂 Поздравить с днём рождения</button>`+acts}
+     if(!grp&&id!=='mom'&&(S.rel[id]||FRIEND[id])&&typeof aiOn==='function'&&aiOn()){const left=aiLeft(id);acts+=left>0?`<form class="pai" data-aiform><input name="t" maxlength="200" placeholder="✨ Написать своими словами" autocomplete="off" aria-label="Своё сообщение"><button type="submit" aria-label="Отправить">➤</button></form><p class="phint">Ответ пишет ИИ · экспериментально · осталось ${left} · <button type="button" class="paix" data-aioff>скрыть</button></p>`:'<p class="phint">На сегодня хватит переписки своими словами.</p>'}
      return top(chatName(id))+`<div class="pthread">${bub||`<p class="pemp">${grp?'Тишина в чате.':'Сообщений пока нет. Напиши первым!'}</p>`}</div><div class="pacts">${fx(acts)}</div>`},
    wx(){const days=[S.day];let d=S.day;while(days.length<5){d=nextPlayed(d);if(d>DAYS)break;days.push(d)}const w=wxOf(S.day);
      return top('Погода')+`<div class="pwx"><div class="pwnow"><span>${WX[w.k].i}</span><b>${tmp(w.t)}</b><em>Сеул · ${WX[w.k].n}</em></div><p class="ptip">${esc(WX_TIP[w.k])}</p>
@@ -3173,6 +3175,11 @@ function openPhone(o){return new Promise(res=>{
     el.querySelectorAll('[data-zoom]').forEach(b=>b.onclick=()=>{const L=(S.photos||[]).map(p=>p.k).filter(k=>BG[k]);const i=Math.max(0,L.indexOf(b.dataset.zoom));try{zoomCG(L.length?L:[b.dataset.zoom],i)}catch(e){}});
     el.querySelectorAll('[data-bd]').forEach(b=>b.onclick=()=>{typing0=typing;bdCongrats(p.id)});
     el.querySelectorAll('[data-quiz]').forEach(b=>b.onclick=()=>go('quiz'));
+    el.querySelectorAll('[data-aiform]').forEach(f=>f.onsubmit=async e=>{e.preventDefault();const id=p.id;const t=f.elements.t.value.trim();if(!t||p.aiBusy)return;p.aiBusy=1;
+      const sp=aiSend(id,t);render();const th=w.querySelector('.pthread');if(th){th.insertAdjacentHTML('beforeend','<div class="pmsg typing"><i></i><i></i><i></i></div>');th.scrollTop=th.scrollHeight}
+      const fm=w.querySelector('[data-aiform]');if(fm)fm.querySelectorAll('input,button').forEach(x=>x.disabled=true);
+      try{await sp}catch(err){toast(err&&err.code==='not_granted'?'ИИ-чат не разрешён. Его можно разрешить в настройках страницы.':'Не получилось получить ответ. Попробуй позже.')}finally{p.aiBusy=0;if(PHONE){render();const i=w.querySelector('[data-aiform] input');if(i)i.focus()}}});
+    el.querySelectorAll('[data-aioff]').forEach(b=>b.onclick=()=>{aiHide();render()});
     el.querySelectorAll('[data-qa]').forEach(b=>b.onclick=()=>{const c=p.q[p.i];const right=c.o[+b.dataset.qa]===WMAP[c.k][2];
       el.querySelectorAll('[data-qa]').forEach(x=>{x.disabled=true;if(c.o[+x.dataset.qa]===WMAP[c.k][2])x.classList.add('ok')});if(!right)b.classList.add('bad');
       if(right){p.ok++;stat('lang',1)}setTimeout(()=>{p.i++;render()},850)});
@@ -3317,6 +3324,8 @@ ACH.push(
 .pbig{border:0;border-radius:14px;padding:11px 14px;background:var(--accent);color:var(--accent-ink);font:700 14px var(--f-body);cursor:pointer}
 .pbig[disabled]{opacity:.45;cursor:default}
 .phint{margin:0;color:var(--muted);font-size:13px;text-align:center}
+.pai{display:flex;gap:6px;width:100%;align-self:stretch;box-sizing:border-box;margin:0;padding:0;background:none;box-shadow:none;border:0}.pai input{flex:1 1 auto;min-width:0;width:100%;height:42px;margin:0;box-sizing:border-box;box-shadow:none;border:1px solid var(--line);background:var(--surface2);color:var(--ink);border-radius:999px;padding:9px 14px;font:500 14px var(--f-body)}.pai input:focus{outline:2px solid var(--accent);outline-offset:1px}.pai button{border:0;border-radius:999px;width:42px;height:42px;flex:0 0 42px;padding:0;margin:0;box-shadow:none;background:var(--accent);color:var(--accent-ink);font:700 15px var(--f-body);cursor:pointer}.pai [disabled]{opacity:.5}
+.paix{border:0;background:none;color:var(--muted);text-decoration:underline;font:inherit;cursor:pointer;padding:0}
 .pwx,.pdict,.pquiz,.pcat{flex:1;min-height:0;overflow-y:auto;padding:14px 16px 18px;display:flex;flex-direction:column;gap:12px;overscroll-behavior:contain}
 .pwnow{display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 0}
 .pwnow span{font-size:54px;line-height:1.1}.pwnow b{font:800 40px/1 var(--f-display)}.pwnow em{font-style:normal;color:var(--muted)}
@@ -5921,7 +5930,7 @@ const KISS={
  daniyar:['Последний поезд метро, пустой вагон, огни тоннеля летят за окном. Хёну отдаёт тебе один наушник, гитара в чехле стоит рядом — и на середине песни он перестаёт делать вид, что слушает музыку.','Вот этот такт. Я его оставлю себе навсегда.'],
  sanzhar:['Пекарня на рассвете, мука висит в золотом свете из печи. Ты сидишь на столе, а Доюн всё не решается — руки в муке, держит их на весу. Потом решается: неловко, бережно, по-настоящему.','Я пёк сто раз. А так волновался впервые.'],
  lucas:['Галерея после закрытия, пустые белые залы, на стене большой портрет. Твой. Лукас роняет скетчбук и улыбается, как будто давно рисовал этот момент — и наконец увидел его вживую.','Нет, не буду рисовать. Есть вещи, которые лучше просто помнить.'],
- junso:['Теплица под весенним дождём, капли стучат по стеклянной крыше, вокруг цветы. Джунсо ставит лейку и касается твоей щеки так осторожно, будто ты цветок.','...Распустилось. Внутри. Теперь точно.']};
+ junso:['Ночной Чхонгечхон, камни-переходы через ручей, в воде дрожат фонари. Джунсо держит тебя за руки, чтобы ты не поскользнул{ся|ась}, — и касается твоей щеки так осторожно, будто ты цветок.','...Распустилось. Внутри. Теперь точно.']};
 const KISS2={
  aigerim:['Не здесь же... Ладно. Здесь.','Ты опять делаешь это, когда я пытаюсь быть серьёзной.'],
  rin:['Стоп. Ещё дубль.','Ты целуешься, как будто это финальная сцена. А у нас всё только начинается.'],
@@ -6908,6 +6917,189 @@ const evToday=()=>(S.ev&&S.ev[S.day]||[]).length;
   const quiet=(()=>{let q=0;for(let d=S.day-1;d>S.day-5&&d>0;d--){if(S.ev&&S.ev[d]&&S.ev[d].length)break;q++}return q})();
   const r=await _rc.call(this,quiet>=3);if(r)evMark('ritual');return r}}
 try{{const _mf=maybeFavor;maybeFavor=async function(){if(evToday()>=1&&Math.random()<.7)return false;const d0=S.favD;const r=await _mf.apply(this,arguments);if(S.favD!==d0)evMark('favor');return r}}}catch(e){}
+
+/* ================= v1.43: characters react to each other through you + optional AI chat ================= */
+const nmC=id=>id==='beka'&&typeof roomTx==='function'?roomTx(CH.beka.n):(CH[id]?CH[id].n:id);
+const insC=id=>(typeof INS!=='undefined'&&INS[id])||nmC(id);
+const pairOf=(a,b)=>(typeof PAIRS!=='undefined'?PAIRS:[]).find(p=>(p.a===a&&p.b===b)||(p.a===b&&p.b===a));
+
+/* ---------- 1. «Опоздал(а)»: who else was in love with you, when you start dating someone ---------- */
+// [narration, line (with {PI} = partner in instrumental), reply to «stay friends», reply to «sorry»]
+const LATE={
+ aigerim:['Юна сидит в библиотеке над той же страницей, что и час назад.','Я видела тебя с {PI}. Я всё вычислила неправильно. Обычно я не ошибаюсь в наблюдениях.','Друзья... Хорошо. Я запишу это в план. В раздел «важное».','Не извиняйся. Ты не обязан{|а} был{|а} подходить под мой график.'],
+ rin:['Рин не поднимает глаз от сценария, когда ты подходишь.','Я дописала сцену, где героиня опаздывает на одну реплику. Не знала, что пишу про себя.','Друзья — тоже хороший жанр. Недооценённый.','Всё в порядке. Просто в моём черновике финал был другой.'],
+ mira:['Харин домывает кисти слишком долго и слишком тщательно.','Ты с {PI}... Красиво. Правда. Я бы нарисовала. Только не сейчас.','Ладно. Будешь моим другом-натурщиком. Это почётнее, чем кажется.','Не надо грустного лица. Это мой цвет сегодня, не твой.'],
+ dana:['Минджи наматывает пятый круг, хотя тренировка давно закончилась.','Видела тебя с {PI}. Не надо объяснять. Я просто стартовала позже. Со мной такое впервые.','Друзья. Окей. Тогда завтра в шесть на стадионе. Друзья бегают вместе.','Всё нормально. Это злость на себя. Пробегусь — пройдёт.'],
+ lilia:['Чэвон играет одну и ту же фразу на синтезаторе, раз за разом, без финала.','Видела тебя с {PI}. Ничего. Некоторые песни так и остаются демками.','Друзья... Ладно. Будешь первым слушателем. Это больше, чем кажется.','Не надо. Просто дай мне доиграть.'],
+ emma:['Эмма перебирает плёночные снимки и откладывает один в сторону. На нём ты.','Я видела тебя с {PI}. Lycka till — это значит «удачи». Я правда так думаю. Почти полностью.','Друзья — это тоже фика. Просто кофе без... ну, ты понял{|а}.','Всё хорошо. В Швеции мы грустим молча и красиво.'],
+ nari:['Нари выключает стрим посреди катки, когда видит тебя.','Я... видела вас с {PI}. Всё нормально! Просто, кажется, я проиграла этот раунд без реванша.','Друзья? Ладно! Кооп — тоже лучший режим. ...Иногда.','Не извиняйся. Я сама слишком долго жала «паузу».'],
+ wei:['Вэй впервые за весну не шутит. Это заметно сразу.','Ты с {PI}, да? Ха. Хорошо. Нет, правда хорошо. Я просто танцевал медленно, а надо было быстро.','Друзья! Отлично. Друзей я кормлю хого. Это не хуже. Почти.','Эй, не делай такое лицо. Я переживу. Я из Чэнду, у нас всё переживают с перцем.'],
+ arman:['Джиху смотрит в ноутбук, но экран давно погас.','Я видел тебя с {PI}. Я посчитал вероятность ещё в марте. Просто не решился проверить на практике.','Друзья. Принято. Эта переменная тоже ценная.','Не извиняйся. Ошибка в моих расчётах, не в твоих.'],
+ timur:['Тэян бросает мяч в кольцо и впервые за весну мажет три раза подряд.','Ты с {PI}, да? Ну, поздравляю. Я просто думал, у меня ещё есть таймаут.','Друзья — это норм. Будешь кричать за меня с трибуны? Друзья так делают.','Да ладно, я не в обиде. Ну, чуть-чуть. Пройдёт к матчу.'],
+ daniyar:['Хёну играет что-то тихое и минорное, когда ты заходишь.','Видел тебя с {PI}. Нормально. Из этого хотя бы выйдет хорошая песня.','Друзья. Ладно. Тогда ты услышишь эту песню первым. Без объяснений, о чём она.','Не надо. Это не твоя вина. Это просто аккорд, который я не взял вовремя.'],
+ sanzhar:['Доюн протягивает тебе булочку, как обычно. Только не улыбается.','Я видел тебя с {PI}. Я... пёк тебе кое-что на завтра. Неважно. Съешь сегодня.','Друзья. Хорошо. Друзей я тоже кормлю. Даже лучше кормлю.','Не извиняйся. Я сам так и не решился. Тесто не поднимается, если его не замесить.'],
+ lucas:['Лукас закрывает скетчбук, когда ты подходишь, — впервые за весну.','Ты с {PI}... C’est la vie, как говорят у нас. Красиво звучит. Неприятно чувствуется.','Друзья. Хорошо. Я всё равно буду тебя рисовать. Просто иначе.','Всё в порядке. Я художник, я умею грустить красиво.'],
+ junso:['Джунсо собирает букет и всё время откладывает один и тот же цветок.','Я видел тебя с {PI}. Это хорошо. Правда. Некоторые цветы просто распускаются не для тебя.','Друзья — это как многолетник. Держится дольше, чем кажется.','Не извиняйся. Я сам слишком долго ждал правильной погоды.']};
+// the ex writes when you start dating someone new
+const EX_TX={
+ aigerim:'Видела тебя с {PI}. Всё нормально. Просто странно наблюдать со стороны.',
+ rin:'Видела вас с {PI}. Хорошая пара в кадре. Я не язвлю. Почти.',
+ mira:'Ты с {PI} хорошо смотришься. Я проверила как художник. Только как художник.',
+ dana:'С {PI}, да? Ладно. Беги, не оглядывайся. Я так и делаю.',
+ lilia:'Видела тебя с {PI}. Не пиши мне пока, ладно? Это не злость. Просто пауза.',
+ emma:'Увидела тебя с {PI}. Надеюсь, тебе хорошо. Правда надеюсь.',
+ nari:'Видела вас с {PI}... Всё ок. Я просто сменила аватарку. Ничего не значит.',
+ wei:'Ты с {PI}? Ха. Быстро. Ладно, не моё дело. Танцуй.',
+ arman:'Заметил тебя с {PI}. Не отвечай, если не хочешь. Просто хотел сказать: я в порядке.',
+ timur:'С {PI}, значит. Ну... удачи. Без сарказма. Почти.',
+ daniyar:'Видел тебя с {PI}. Не бойся, песню про это писать не буду. Наверное.',
+ sanzhar:'Видел тебя с {PI}. Надеюсь, тебя там кормят. Шучу. Наполовину.',
+ lucas:'Ты с {PI}. Je comprends. Я понимаю. Надеюсь, ты счастлив{|а}.',
+ junso:'Видел тебя с {PI}. Пусть у тебя всё цветёт. Я серьёзно.'};
+const subP=(t,P)=>String(t).replace(/\{PI\}/g,insC(P));
+
+async function lateScene(R){const P=S.partner;const L=LATE[R];if(!L||!P)return false;S.lateQ=(S.lateQ||[]).filter(x=>x!==R);
+  S.talked[R]=true;S.seen[R]=S.day;evMark('late');setWho(R,'s');
+  await narr(L[0]);await line(R,'s',subP(L[1],P));
+  const os=[{t:'Предложить остаться друзьями',k:'fr'},{t:'Сказать, что тебе жаль',k:'sorry'},{t:'Промолчать и просто посидеть рядом',k:'sit'}];
+  const i=await ask('Что скажешь?',os.map(o=>({t:fx(o.t)})),{who:R,exp:'s'});const k=os[i].k;
+  if(k==='fr'){await line(R,'h',L[2]);if(typeof fzStart==='function'&&S.rel[R]&&!S.rel[R].fz){try{await fzStart(R)}catch(e){}}}
+  else if(k==='sorry'){aff(R,-3);await line(R,'n',L[3])}
+  else{mood(-2);await say(`Вы сидите молча. Это неловко, но честно. Уходя, ${nmC(R)} всё-таки ${GN(R,'кивнул','кивнула')} тебе.`)}
+  return true}
+
+/* ---------- 2. Your partner meets your friends ---------- */
+const PMEET={
+ aigerim:'Приятно познакомиться. Я Юна. Я о тебе много слышала. У меня даже есть заметки. Шучу. Не шучу.',
+ rin:'Привет. Я Рин. В моём сценарии ты второстепенный персонаж, но очень обаятельный.',
+ mira:'Привет-привет! Можно я тебя нарисую? Потом. Когда ты ко мне привыкнешь.',
+ dana:'Минджи. Бег, утро, шесть часов. Если ты друг — придёшь хоть раз.',
+ lilia:'...Привет. Я Чэвон. Я не грубая, я просто так здороваюсь.',
+ emma:'Hej! Я Эмма. В Швеции друзей того, кого любишь, угощают булочками. Держи.',
+ nari:'П-привет! Я Нари. Я обычно разговариваю через микрофон, так что дай мне секунду.',
+ wei:'Вэй! Ли Вэй! Ты друг? Значит, теперь и мой друг. Это так работает, я проверял.',
+ arman:'Джиху. Рад знакомству. Я обещал себе не говорить о коде первые десять минут.',
+ timur:'Тэян! Ты играешь в баскетбол? Нет? Научу. Это не вопрос.',
+ daniyar:'Хёну. ...Да, это я играю по ночам. Извини, если мешаю спать.',
+ sanzhar:'Доюн. Я испёк лишнее. Ну, не лишнее. Для тебя. Если ты не против.',
+ lucas:'Enchanté. Лукас. Я много о тебе слышал. Только хорошее и немного смешного.',
+ junso:'Джунсо. Рад знакомству. Держи веточку. Она ничего не значит, просто красивая.'};
+const FMEET={
+ beka:[P=>`Так это и есть ${nmC(P)}? Наконец-то. Я уже ${gx('beka','думал','думала')}, ты ${GN(P,'его','её')} выдумал{|а}.`,P=>GN(P,'Нормальный парень','Нормальная девушка')+'. Одобряю. Но если что — комната 413 всё знает.'],
+ kamila:[P=>`О, ${nmC(P)}. Видела тебя в списках потока. Теперь вижу лично. Неплохо.`,()=>'Одобряю. Но конспекты всё равно сдаёшь мне, а не тратишь на свидания.'],
+ haneul:[P=>`Значит, ${nmC(P)}. Садитесь, я сделаю вам двоим что-нибудь не по меню.`,()=>'Берегите друг друга. Весна короткая, я знаю, о чём говорю.'],
+ yongsu:[P=>`${nmC(P)}? Я напишу про вас стих на чеке. Короткий. Чеки короткие.`,()=>'Вы смешные вместе. Это комплимент. Самый высокий у философов.']};
+const FMEET_DEF=[P=>`О, ${nmC(P)}! Наконец-то познакомились.`,()=>'Хорошая пара. Говорю как друг.'];
+
+async function meetScene(F,P){S.meet=S.meet||{};S.meet[F+'+'+P]=S.day;evMark('meet');S.talked[F]=true;
+  const M=FMEET[F]||FMEET_DEF;setWho(F,'h');
+  await narr(`Вы с ${insC(F)} только садитесь, когда на телефон приходит сообщение. ${nmC(P)}: «Я рядом. Можно к вам?»`);
+  const i=await ask('Что ответишь?',[{t:'Ответить: «Конечно, приходи!»'},{t:'Написать, что сегодня вечер с другом'}],{who:F,exp:'h'});
+  if(i===0){setWho(P,'h');await narr(`Через десять минут ${nmC(P)} уже сидит рядом.`);await line(F,'h',M[0](P));await line(P,'h',PMEET[P]||'Привет! Очень рад{|а} познакомиться.');
+    const pr=pairOf(F,P);
+    if(pr&&pr.base>=0)await narr(`Оказывается, ${nmC(F)} и ${nmC(P)} уже знакомы — ${pr.label}. Через полчаса они ${pr.warm}, а ты только успеваешь смеяться.`);
+    else if(pr)await narr(`Оказывается, ${nmC(F)} и ${nmC(P)} уже знакомы — ${pr.label}. Сначала они спорят ${pr.subj}, но к концу вечера мирятся. Почти.`);
+    else await narr('Вечер проходит легко. Ты переводишь взгляд с одного на другого и думаешь, что весна, кажется, удалась.');
+    await line(F,'b',M[1](P));aff(P,3);fr(F,2);mood(3)}
+  else{await line(P,'n',GN(P,'Понял. Не скучайте там.','Поняла. Не скучайте там.'));await line(F,'b','Ценю. Серьёзно.');fr(F,3);aff(P,-1)}
+  return true}
+
+/* ---------- 3. Rivals: someone who likes you runs into you and your partner ---------- */
+const RIV_SEE={
+ aigerim:'О. Привет. Я шла в библиотеку. Мимо. Совсем мимо.',
+ rin:'Привет. Не обращайте внимания, я ищу натуру для съёмок. Нашла.',
+ mira:'Ой! Привет вам. Я тут рисую прохожих. Вы — прохожие. Да.',
+ dana:'Привет. Пробегала мимо. Буквально. Не останавливаюсь.',
+ lilia:'...Привет. Не смотрите так, я просто за кофе.',
+ emma:'Hej! Какая встреча. Можно я вас сфотографирую? Нет? Ладно, я пошла.',
+ nari:'А! П-привет! Я не следила, честно, у меня тут квест рядом.',
+ wei:'Эй! Привет-привет! Не помешаю. Наверное. Ладно, помешаю на минуту.',
+ arman:'Добрый вечер. Статистически мы должны были встретиться. Извините.',
+ timur:'О, кого я вижу! Привет! ...Ладно, вижу, вы заняты. Понял, понял.',
+ daniyar:'Привет. Не беспокойтесь, я просто репетирую по дороге.',
+ sanzhar:'Привет... Я несу заказ. Вот, возьмите по булочке. Раз уж встретились.',
+ lucas:'Bonsoir! Какая картина. Прошу прощения, рефлекс художника.',
+ junso:'Добрый вечер. Несу цветы клиенту. Этот — вам. Просто так.'};
+const JEAL={
+ aigerim:R=>`Я заметила, как ${nmC(R)} на тебя смотрит. Это не ревность, это наблюдение. Почти.`,
+ rin:()=>'Хорошая сцена. Только второстепенный персонаж появился слишком вовремя. Я бы вырезала.',
+ mira:()=>'Мне показалось, или в этой картине был лишний цвет?',
+ dana:R=>`Так. ${nmC(R)}. Я запомнила. Просто запомнила, ничего такого.`,
+ lilia:()=>'...Мне всё равно. Правда. Держи меня за руку, пожалуйста.',
+ emma:R=>`${nmC(R)} ${GN(R,'милый','милая')}. Хорошо, что ты со мной. Очень хорошо.`,
+ nari:()=>'Это... это был кто-то важный? Нет? Хорошо. Просто проверяю.',
+ wei:()=>'Ха! Конкуренция! Мне нравится. Я всё равно танцую лучше.',
+ arman:()=>'Вероятность, что встреча была случайной, — процентов тридцать. Я спокоен. Почти.',
+ timur:()=>'Я ревную? Нет. Ну, немножко. Возьми меня за руку, и пройдёт.',
+ daniyar:()=>'Не люблю, когда в песню лезет чужой голос. Ладно. Забыли.',
+ sanzhar:()=>'Ладно. Главное, что ты со мной. Остальное — крошки.',
+ lucas:()=>'Любая картина притягивает зрителей. Но автор у неё один, non?',
+ junso:()=>'Я не ревную. Цветы не ревнуют солнце. ...Но держись рядом.'};
+
+async function rivalScene(P,R){S.rival=S.rival||{};S.rival[R]=S.day;evMark('rival');
+  setWho(R,'h');await narr(`Вы с ${insC(P)} выходите на улицу, и навстречу — ${nmC(R)}.`);await line(R,'h',RIV_SEE[R]);
+  const pr=pairOf(P,R);if(pr)await narr(`${nmC(P)} и ${nmC(R)} знакомы — ${pr.label}. ${pr.base<0?'Воздух между ними можно резать ножом.':'Они кивают друг другу, но как-то натянуто.'}`);
+  setWho(P,'n');await line(P,'n',JEAL[P]?JEAL[P](R):'...');
+  const i=await ask('Что делаешь?',[{t:fx('Взять {её|его} за руку')},{t:fx(`Поболтать с ${insC(R)} пару минут`)}],{who:P,exp:'n'});
+  if(i===0){aff(P,3);aff(R,-2);await narr(`${nmC(R)} кивает и уходит. ${nmC(P)} не отпускает твою руку до самого дома.`)}
+  else{aff(R,1);aff(P,-2);await narr(`${nmC(P)} ждёт в стороне и делает вид, что изучает витрину. Вечер становится чуть холоднее.`)}
+  return true}
+
+/* ---------- hooks ---------- */
+{const _sd=startDay;startDay=async function(){const r=await _sd.apply(this,arguments);try{
+  if(!S.partner)S.lateP=null;
+  else if(S.partner!==S.lateP){const P=S.partner;S.lateP=P;
+    S.lateQ=romIds().filter(R=>R!==P&&S.rel[R]&&S.rel[R].met&&!S.rel[R].fz&&S.rel[R].aff>=40&&LATE[R]);
+    const ex=S.flags&&S.flags.broke;S.exTx=S.exTx||{};
+    if(ex&&ex!==P&&EX_TX[ex]&&!S.exTx[ex+'>'+P]){S.exTx[ex+'>'+P]=S.day;msgIn(ex,subP(EX_TX[ex],P),ex)}}
+  }catch(e){console.error(e)}return r}}
+{const _t=talkTo;talkTo=async function(id){try{
+  if(S.partner&&S.lateQ&&S.lateQ.includes(id)&&S.rel[id]&&!S.rel[id].fz&&evToday()<2&&!(typeof qOn==='function'&&qOn(id))){if(await lateScene(id))return}
+  }catch(e){console.error(e)}return _t.apply(this,arguments)}}
+{const _ft=friendTalk;friendTalk=async function(id){try{const P=S.partner;S.meet=S.meet||{};
+  if(P&&S.rel[P]&&!(typeof qOn==='function'&&qOn(P))&&!S.meet[id+'+'+P]&&S.fmet&&S.fmet[id]&&(S.fr[id]||0)>=25&&!S.rel[id]&&!evToday()&&Math.random()<.4){
+    if(await meetScene(id,P))return}}catch(e){console.error(e)}return _ft.apply(this,arguments)}}
+{const _d=date;date=async function(id){const r=await _d.apply(this,arguments);try{
+  if(id&&id===S.partner&&S.rel[id]&&!(typeof qOn==='function'&&qOn(id))&&!evToday()&&Math.random()<.22){S.rival=S.rival||{};
+    const c=romIds().filter(R=>R!==id&&S.rel[R]&&S.rel[R].met&&!S.rel[R].fz&&S.rel[R].aff>=30&&!S.rival[R]&&RIV_SEE[R]);
+    if(c.length)await rivalScene(id,pick(c))}}catch(e){console.error(e)}return r}}
+
+/* ---------- 4. Optional AI chat in the phone (only where Claude is available, e.g. the claude.ai version) ---------- */
+let AI_S=null;
+(async()=>{try{if(window.claude&&typeof window.claude.use==='function')AI_S=await window.claude.use('sample')}catch(e){AI_S=null}})();
+const AI_MAX=6;
+function aiOn(){try{return !!AI_S&&!loadMeta().aiOff}catch(e){return !!AI_S}}
+function aiLeft(id){S.aiN=S.aiN||{};const k=id+'@'+S.day;return AI_MAX-(S.aiN[k]||0)}
+function aiRel(id){const g=S.pg==='f';const P=S.partner;
+  if(S.rel[id]){const r=S.rel[id];const q=typeof qOn==='function'&&qOn(id);
+    if(P===id)return q?'вы встречаетесь, но сейчас поссорились — ты обижен(а), отвечаешь коротко и холодно':'вы встречаетесь, вы пара; ты тепло и нежно к собеседнику относишься';
+    let t=r.fz?'вы решили остаться друзьями; между вами тёплая дружба, немного неловкости осталось':r.aff<15?'вы едва знакомы':r.aff<35?'вы приятели, общаетесь легко':r.aff<60?'тебе нравится собеседник, есть симпатия, ты немного смущаешься':'ты влюблен(а) в собеседника, но вы ещё не пара';
+    if(P&&P!==id)t+=`; у собеседника есть пара — ${nmC(P)}, ты об этом знаешь`;return t}
+  const f=(S.fr&&S.fr[id])||0;return (f<20?'вы знакомые':f<50?'вы друзья':f<80?'вы близкие друзья':'вы лучшие друзья')+(P?`; у собеседника есть пара — ${nmC(P)}`:'')}
+function aiAbout(id){const R=ROM[id],F=FRIEND[id];let a=(R&&R.about)||(F&&F.about)||'';if(id==='beka'&&typeof roomTx==='function')a=roomTx(a);
+  const ex=[].concat((R&&R.greet)||[],(R&&R.texts)||[],(F&&F.greet)||[],(F&&F.texts)||[]).filter(x=>typeof x==='string').slice(0,6).map(x=>'— '+fx(x));
+  return {a,ex}}
+async function aiReply(id){const nm=nmC(id);const g=GN(id,'m','f')==='f';const {a,ex}=aiAbout(id);
+  const hero=(S.name||'собеседник')+(S.pg==='f'?' (девушка)':' (парень)');
+  const hist=(S.msgs[id]||[]).slice(-14).map(m=>(m.me?'Собеседник: ':nm+': ')+m.t).join('\n');
+  const prompt=`Ты пишешь реплику за персонажа в уютной визуальной новелле «90 дней весны» (первый курс в Сеуле, весна, ${S.day}-й день из ${typeof DAYS!=='undefined'?DAYS:90}).
+Персонаж: ${nm}, ${g?'девушка':'парень'}. ${a}
+Примеры того, как ${nm} говорит:
+${ex.join('\n')}
+Собеседник — главный герой: ${hero}.
+Отношения: ${aiRel(id)}.
+Это переписка в мессенджере. Последние сообщения:
+${hist}
+
+Напиши ОДНО следующее сообщение от лица ${nm} в ответ собеседнику. Правила: по-русски, как живое сообщение в телефоне, 1–3 коротких предложения, можно одно эмодзи; характер и манера ${nm}; учитывай отношения; ${g?'о себе в женском роде':'о себе в мужском роде'}, к собеседнику — ${S.pg==='f'?'в женском роде':'в мужском роде'}. Не выходи из роли, не упоминай, что ты ИИ или игра. Не назначай конкретных встреч и не придумывай крупных событий. Романтика — только мягкая и целомудренная; на грубость или неуместное отвечай так, как ответил бы персонаж, и меняй тему. Выведи только текст сообщения, без имени и кавычек.`;
+  const r=await AI_S(prompt,{modelTier:'quick',cache:false});
+  let t=String(r&&r.text||'').trim().replace(/^["«»]+|["«»]+$/g,'').replace(new RegExp('^'+nm+'\\s*:\\s*'),'').trim();
+  if(t.length>320)t=t.slice(0,320).replace(/\s+\S*$/,'')+'…';return t||'...'}
+async function aiSend(id,text){S.aiN=S.aiN||{};const k=id+'@'+S.day;S.aiN[k]=(S.aiN[k]||0)+1;msgOut(id,text);
+  const t=await aiReply(id);msgIn(id,t,id,1);S.unread[id]=0;
+  S.aiD=S.aiD||{};if(S.aiD[id]!==S.day){S.aiD[id]=S.day;if(S.rel[id])aff(id,1);else if(typeof fr==='function')fr(id,1)}
+  return t}
+function aiHide(){try{const m=loadMeta();m.aiOff=1;saveMeta(m)}catch(e){}}
 
 async function main(){for(;;){const r=await title();await runGame(r==='resume')}}
 main();
