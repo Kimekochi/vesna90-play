@@ -1891,7 +1891,7 @@ async function endDay(){
   for(const id of frIds())if(S.fmet[id]&&S.day-(S.seen[id]||S.day)>=3*DSTEP())S.fr[id]=Math.max(0,S.fr[id]-1);
   S.energy=enMax();
   if(S.debt){S.debt=0;S.energy=Math.max(1,S.energy-2);S.mood=clamp(S.mood-3,0,100);S.wake='Ночь была короткой. Ты встаёшь с трудом: −2 энергии и настроение ниже.'}
-  else if(S.early){S.energy=Math.min(enMax()+1,S.energy+1);S.wake='Ты лёг{|ла} пораньше и проснул{ся|ась} бодр{ым|ой}: +1 энергия.'}
+  else if(S.early){S.energy=Math.min(enMax()+1,S.energy+1);S.wake='Ты л{ёг|егла} пораньше и проснул{ся|ась} бодр{ым|ой}: +1 энергия.'}
   S.early=0;
   S.day=nextDay(S.day);if(S.day>DAYS)S.over='end';
 }
@@ -2053,8 +2053,9 @@ async function title(){
   setWho(null);newState(pg,name,tr[ti]);
 }
 /* ================= v1.6: music, sfx, patch notes ================= */
-const VER='1.44';
+const VER='1.45';
 const PATCH=[
+ {v:'1.45',d:'21 октября',items:['Судьбы: в конце весны показывается, что стало с каждым, кто был рядом, через год. Судьба складывается из того, кем вы стали друг другу (10 вариантов связи: от «Навсегда» до «Мимо»), куда повернула их собственная история после твоих советов, получилось ли у них, и ваших общих воспоминаний','У каждого из 14 персонажей от 46 до 100 судеб, всего больше тысячи','Книга судеб: в телефоне, на боковой панели и после финала. Видно, сколько открыто у каждого, какие связи и пути ещё не найдены, и можно перечитать каждую судьбу','Последствия теперь копятся: самая сильная симпатия за весну, бывшие, ссоры, дни рождения, выбор в сценах с соперниками и признаниями — всё это влияет на судьбу','ИИ-чат убран','Исправлены формы глаголов для героини: «нашла», «принесла», «унесла», «легла» вместо «нашёлла», «принёсла» и подобных']},
  {v:'1.44',d:'21 октября',items:['Ответ на «Скучаю. Увидимся?» в телефоне теперь зависит от близости: малознакомый человек удивится или притормозит, пара ответит нежно и по-своему, друг напомнит, что вы друзья, а в ссоре ответят холодно','Если у тебя есть пара, остальные на такое сообщение отвечают «Ты же с …», и симпатия падает','Друзья (Чанмин/Йерин, Суа, Ханыль, Ёнсу) здороваются по-разному в зависимости от того, насколько вы близки','ИИ-чат: учитывает точный этап отношений, ссору, свидания, поцелуи и сколько вы не общались; примеры речи берутся с текущего этапа; не соглашается на встречи вместо игры','ИИ-чат: при ошибке сообщение не пропадает и не тратит лимит','Исправлено: при «Давай останемся друзьями» после новости о твоей паре фраза про дружбу звучала дважды']},
  {v:'1.43',d:'20 октября',items:['Когда у тебя появляется пара, те, кто был в тебя влюблён, реагируют: у каждого своя сцена, можно предложить остаться друзьями','Бывшие пишут, когда видят тебя с кем-то новым','Твоя пара знакомится с друзьями: Чанмин/Йерин, Суа, Ханыль и Ёнсу. Если они уже знакомы между собой, сцена учитывает их историю','На свидании можно встретить того, кому ты нравишься: своя реакция у каждого и своя ревность у твоей пары','Экспериментально: в телефоне можно написать персонажу своими словами, ответ пишет ИИ с учётом ваших отношений. Работает только в версии на claude.ai, до 6 сообщений в день каждому, можно скрыть','Джунсо: новые поцелуй (ночной Чхонгечхон) и «Вдвоём» (дерево на холме над городом)']},
  {v:'1.42',d:'20 октября',items:['Все первые поцелуи перерисованы: у каждого персонажа своё место — библиотека, мастерская, рассветный стадион, студия звукозаписи, кафе в дождь, аркада, караоке, планетарий, баскетбольная площадка, последний поезд метро, пекарня, галерея, теплица','Вэй: новые объятия (танцевальная поддержка) и новая искра на колесе обозрения','Хёну: новая картинка концерта в Хондэ','Тексты сцен поцелуя обновлены под новые картинки']},
@@ -3093,7 +3094,7 @@ function openPhone(o){return new Promise(res=>{
     const last=id=>{const L=S.msgs[id];return L&&L.length?L[L.length-1]:null};
     return all.sort((a,b)=>((S.unread[b]?1e6:0)+((last(b)||{}).d||0))-((S.unread[a]?1e6:0)+((last(a)||{}).d||0)))}
   const V={
-   home(){const n=unreadN();const apps=[['msgs','💬','Сообщения',n],['photo','📷','Альбом',0,(S.photos||[]).length],['diary','📔','Дневник'],['wx','🌤️','Погода'],['cal','📅','Календарь'],['wallet','💳','Кошелёк'],['soc','🕸️','Связи'],['goals','🎯','Цели',0,(S.goals||[]).length?`${(S.goals||[]).filter(g=>S.goalDone&&S.goalDone[g]).length}/${S.goals.length}`:0],['dict','📖','Словарик',0,S.words.length],...(S.cat&&S.cat.st!=='yard'?[['cat','🐈',S.cat.st==='home'?S.cat.n:'Котик']]:[]),['gal','🖼️','Галерея'],['ach','🏆','Достижения'],['set','⚙️','Настройки']];
+   home(){const n=unreadN();const apps=[['msgs','💬','Сообщения',n],['photo','📷','Альбом',0,(S.photos||[]).length],['diary','📔','Дневник'],['wx','🌤️','Погода'],['cal','📅','Календарь'],['wallet','💳','Кошелёк'],['soc','🕸️','Связи'],['goals','🎯','Цели',0,(S.goals||[]).length?`${(S.goals||[]).filter(g=>S.goalDone&&S.goalDone[g]).length}/${S.goals.length}`:0],['dict','📖','Словарик',0,S.words.length],...(S.cat&&S.cat.st!=='yard'?[['cat','🐈',S.cat.st==='home'?S.cat.n:'Котик']]:[]),['gal','🖼️','Галерея'],['ach','🏆','Достижения'],['fates','📖','Судьбы'],['set','⚙️','Настройки']];
      const w=wxOf(S.day);
      return `<div class="phhome"><div class="phclock"><b>${PH_TIME[Math.min(S.slot,4)]}</b><span>${esc(dateOf(S.day))}, ${WD[(S.day-1)%7]}</span><span>${WX[w.k].i} ${tmp(w.t)} · ${WX[w.k].n}</span></div>
      <div class="phapps">${apps.map(([k,i,t,b,c])=>`<button type="button" class="papp" data-app="${k}"><span class="pai">${i}${b?`<i>${b>9?'9+':b}</i>`:''}</span><span>${esc(t)}${c?` · ${c}`:''}</span></button>`).join('')}</div>
@@ -3115,7 +3116,6 @@ function openPhone(o){return new Promise(res=>{
        if(!rom&&FRIEND[id]&&(FRIEND[id].__dyn||(typeof PROF!=='undefined'&&PROF[id]))&&o.turn){const can=(S.fr[id]||0)>=30&&S.slot<=3;acts+=`<button type="button" class="pbig" data-hang ${can?'':'disabled'}>🚶 Позвать тусоваться${can?' · займёт этот ход':(S.fr[id]||0)<30?' · нужна дружба 30':' · уже поздно'}</button>`}
        if(rom){const can=S.rel[id].aff>=30&&S.slot<=3;acts+=o.turn?`<button type="button" class="pbig" data-date ${can?'':'disabled'}>🚶 Позвать гулять${can?' · займёт этот ход':S.rel[id].aff<30?' · нужна симпатия 30':' · уже поздно'}</button>`:`<p class="phint">Позвать гулять можно через «Телефон» в списке мест.</p>`}}
      {const b=S.bd&&S.bd[id];if(b&&!b.done&&b.d===S.day)acts=`<button type="button" class="pbig" data-bd>🎂 Поздравить с днём рождения</button>`+acts}
-     if(!grp&&id!=='mom'&&(S.rel[id]||FRIEND[id])&&typeof aiOn==='function'&&aiOn()){const left=aiLeft(id);acts+=left>0?`<form class="pai" data-aiform><input name="t" maxlength="200" placeholder="✨ Написать своими словами" autocomplete="off" aria-label="Своё сообщение"><button type="submit" aria-label="Отправить">➤</button></form><p class="phint">Ответ пишет ИИ · экспериментально · осталось ${left} · <button type="button" class="paix" data-aioff>скрыть</button></p>`:'<p class="phint">На сегодня хватит переписки своими словами.</p>'}
      return top(chatName(id))+`<div class="pthread">${bub||`<p class="pemp">${grp?'Тишина в чате.':'Сообщений пока нет. Напиши первым!'}</p>`}</div><div class="pacts">${fx(acts)}</div>`},
    wx(){const days=[S.day];let d=S.day;while(days.length<5){d=nextPlayed(d);if(d>DAYS)break;days.push(d)}const w=wxOf(S.day);
      return top('Погода')+`<div class="pwx"><div class="pwnow"><span>${WX[w.k].i}</span><b>${tmp(w.t)}</b><em>Сеул · ${WX[w.k].n}</em></div><p class="ptip">${esc(WX_TIP[w.k])}</p>
@@ -3158,7 +3158,7 @@ function openPhone(o){return new Promise(res=>{
     const th=el.querySelector('.pthread');if(th)th.scrollTop=th.scrollHeight;
     el.querySelectorAll('[data-close]').forEach(b=>b.onclick=close);
     el.querySelectorAll('[data-back]').forEach(b=>b.onclick=back);
-    el.querySelectorAll('[data-app]').forEach(b=>b.onclick=()=>{const k=b.dataset.app;if(k==='gal'){try{showGallery()}catch(e){}return}if(k==='ach'){try{showAch()}catch(e){}return}if(k==='set'){try{showSettings()}catch(e){}return}go(k)});
+    el.querySelectorAll('[data-app]').forEach(b=>b.onclick=()=>{const k=b.dataset.app;if(k==='gal'){try{showGallery()}catch(e){}return}if(k==='ach'){try{showAch()}catch(e){}return}if(k==='fates'){try{showFatesBook()}catch(e){}return}if(k==='set'){try{showSettings()}catch(e){}return}go(k)});
     el.querySelectorAll('[data-chat]').forEach(b=>b.onclick=()=>go('chat',{id:b.dataset.chat}));
     el.querySelectorAll('[data-x]').forEach(b=>b.onclick=()=>{const id=p.id;const t=answerPend(id,+b.dataset.x);if(t)typing(()=>{msgIn(id,t,id,1);S.unread[id]=0})});
     el.querySelectorAll('[data-r]').forEach(b=>b.onclick=()=>{const id=p.id,x=p.o3[+b.dataset.r],R=ROM[id];S.texted[id]=true;if(S.pend)delete S.pend[id];msgOut(id,pick(TONE_TX[x[1]]));
@@ -3176,11 +3176,6 @@ function openPhone(o){return new Promise(res=>{
     el.querySelectorAll('[data-zoom]').forEach(b=>b.onclick=()=>{const L=(S.photos||[]).map(p=>p.k).filter(k=>BG[k]);const i=Math.max(0,L.indexOf(b.dataset.zoom));try{zoomCG(L.length?L:[b.dataset.zoom],i)}catch(e){}});
     el.querySelectorAll('[data-bd]').forEach(b=>b.onclick=()=>{typing0=typing;bdCongrats(p.id)});
     el.querySelectorAll('[data-quiz]').forEach(b=>b.onclick=()=>go('quiz'));
-    el.querySelectorAll('[data-aiform]').forEach(f=>f.onsubmit=async e=>{e.preventDefault();const id=p.id;const t=f.elements.t.value.trim();if(!t||p.aiBusy)return;p.aiBusy=1;
-      const sp=aiSend(id,t);render();const th=w.querySelector('.pthread');if(th){th.insertAdjacentHTML('beforeend','<div class="pmsg typing"><i></i><i></i><i></i></div>');th.scrollTop=th.scrollHeight}
-      const fm=w.querySelector('[data-aiform]');if(fm)fm.querySelectorAll('input,button').forEach(x=>x.disabled=true);
-      try{await sp}catch(err){toast(err&&err.code==='not_granted'?'ИИ-чат не разрешён. Его можно разрешить в настройках страницы.':'Не получилось получить ответ. Попробуй позже.')}finally{p.aiBusy=0;if(PHONE){render();const i=w.querySelector('[data-aiform] input');if(i)i.focus()}}});
-    el.querySelectorAll('[data-aioff]').forEach(b=>b.onclick=()=>{aiHide();render()});
     el.querySelectorAll('[data-qa]').forEach(b=>b.onclick=()=>{const c=p.q[p.i];const right=c.o[+b.dataset.qa]===WMAP[c.k][2];
       el.querySelectorAll('[data-qa]').forEach(x=>{x.disabled=true;if(c.o[+x.dataset.qa]===WMAP[c.k][2])x.classList.add('ok')});if(!right)b.classList.add('bad');
       if(right){p.ok++;stat('lang',1)}setTimeout(()=>{p.i++;render()},850)});
@@ -3296,37 +3291,6 @@ ACH.push(
 .phapps{display:grid;grid-template-columns:repeat(3,1fr);gap:18px 10px}
 .papp{all:unset;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px;font-size:12.5px;text-align:center}
 .papp:focus-visible .pai{outline:2px solid var(--accent);outline-offset:2px}
-.pai{position:relative;width:58px;height:58px;border-radius:17px;display:grid;place-items:center;font-size:28px;background:var(--surface2);border:1px solid var(--line);box-shadow:0 4px 12px rgba(30,10,40,.1)}
-.pai i{position:absolute;top:-5px;right:-5px;min-width:20px;height:20px;padding:0 5px;border-radius:10px;background:var(--accent);color:var(--accent-ink);font:700 11px/20px var(--f-body);font-style:normal}
-.phclose{margin-top:auto;border:0;border-radius:14px;padding:12px;background:var(--surface2);color:var(--ink);font:600 14px var(--f-body);cursor:pointer}
-.phl{overflow-y:auto;flex:1;overscroll-behavior:contain}
-.pch{all:unset;box-sizing:border-box;width:100%;cursor:pointer;display:flex;align-items:center;gap:12px;padding:10px 16px;border-bottom:1px solid var(--line)}
-.pch:focus-visible{background:var(--surface2)}
-.pav{flex:none;width:44px;height:44px;border-radius:50%;overflow:hidden;display:grid;place-items:center;font-size:22px;background:var(--surface2);color:#fff}
-.pav img,.pav svg{width:100%;height:100%;object-fit:cover;object-position:50% 12%}
-.pcn{flex:1;min-width:0;display:flex;flex-direction:column}
-.pcn b{font-size:14.5px}.pcn em{font-style:normal;color:var(--muted);font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.pch.un .pcn em{color:var(--ink);font-weight:600}
-.pch>i{flex:none;min-width:20px;height:20px;padding:0 6px;border-radius:10px;background:var(--accent);color:var(--accent-ink);font:700 11px/20px var(--f-body);font-style:normal;text-align:center}
-.pemp{color:var(--muted);text-align:center;padding:30px 20px;font-size:14px}
-.pthread{flex:1;min-height:0;overflow-y:auto;padding:12px 14px;display:flex;flex-direction:column;gap:6px;overscroll-behavior:contain;background:var(--surface2)}
-.pday{align-self:center;font-size:11.5px;color:var(--muted);background:var(--surface);border-radius:999px;padding:3px 10px;margin:6px 0}
-.pmsg{align-self:flex-start;max-width:80%;padding:8px 12px;border-radius:16px 16px 16px 4px;background:var(--surface);border:1px solid var(--line);font-size:14px;line-height:1.4;overflow-wrap:anywhere}
-.pmsg small{display:block;font-size:11.5px;font-weight:700;color:var(--accent);margin-bottom:1px}
-.pmsg.me{align-self:flex-end;border-radius:16px 16px 4px 16px;background:var(--accent);color:var(--accent-ink);border-color:transparent}
-.pmsg.typing{display:flex;gap:4px;padding:12px}
-.pmsg.typing i{width:6px;height:6px;border-radius:50%;background:var(--muted);animation:ptp 1s infinite}
-.pmsg.typing i:nth-child(2){animation-delay:.15s}.pmsg.typing i:nth-child(3){animation-delay:.3s}
-@keyframes ptp{0%,100%{opacity:.3}50%{opacity:1}}
-.pacts{padding:10px 12px 14px;display:flex;flex-direction:column;gap:8px;border-top:1px solid var(--line)}
-.pqr{display:flex;flex-wrap:wrap;gap:6px}
-.pqr button,.pqo button{border:1px solid var(--line);background:var(--surface2);color:var(--ink);border-radius:999px;padding:8px 12px;font:500 13px var(--f-body);cursor:pointer;text-align:left}
-.pqr button:hover,.pqo button:hover{border-color:var(--accent)}
-.pbig{border:0;border-radius:14px;padding:11px 14px;background:var(--accent);color:var(--accent-ink);font:700 14px var(--f-body);cursor:pointer}
-.pbig[disabled]{opacity:.45;cursor:default}
-.phint{margin:0;color:var(--muted);font-size:13px;text-align:center}
-.pai{display:flex;gap:6px;width:100%;align-self:stretch;box-sizing:border-box;margin:0;padding:0;background:none;box-shadow:none;border:0}.pai input{flex:1 1 auto;min-width:0;width:100%;height:42px;margin:0;box-sizing:border-box;box-shadow:none;border:1px solid var(--line);background:var(--surface2);color:var(--ink);border-radius:999px;padding:9px 14px;font:500 14px var(--f-body)}.pai input:focus{outline:2px solid var(--accent);outline-offset:1px}.pai button{border:0;border-radius:999px;width:42px;height:42px;flex:0 0 42px;padding:0;margin:0;box-shadow:none;background:var(--accent);color:var(--accent-ink);font:700 15px var(--f-body);cursor:pointer}.pai [disabled]{opacity:.5}
-.paix{border:0;background:none;color:var(--muted);text-decoration:underline;font:inherit;cursor:pointer;padding:0}
 .pwx,.pdict,.pquiz,.pcat{flex:1;min-height:0;overflow-y:auto;padding:14px 16px 18px;display:flex;flex-direction:column;gap:12px;overscroll-behavior:contain}
 .pwnow{display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 0}
 .pwnow span{font-size:54px;line-height:1.1}.pwnow b{font:800 40px/1 var(--f-display)}.pwnow em{font-style:normal;color:var(--muted)}
@@ -3388,7 +3352,7 @@ async function bdParty(id){
   const k=await ask('Как поздравишь?',opts,{who:id,exp:'h'});
   let g=4,ln;
   if(k===0){const gk=pick(gifts);S.gifts[gk]--;g=10;ln=`${GIFTS[gk].n}?! Ты правда угадал{|а}. Я это сохраню.`}
-  else if(k===1){if(roll('cook',40)){g=10;stat('cook',2);ln='Ты сам{|а} испёк{|ла}?! Это лучший торт в моей жизни. Серьёзно.'}else{g=5;ln='Торт немного осел... Но он самый честный торт на свете. Спасибо!'}}
+  else if(k===1){if(roll('cook',40)){g=10;stat('cook',2);ln='Ты сам{|а} исп{ёк|екла}?! Это лучший торт в моей жизни. Серьёзно.'}else{g=5;ln='Торт немного осел... Но он самый честный торт на свете. Спасибо!'}}
   else if(k===2){if(roll('charm',40)){g=11;ln='Вы все спрятались за дверью?! Я чуть не умер{|ла}... от счастья!'.replace('{|ла}',CH[id].p&&CH[id].p.g==='f'?'ла':'')}else{g=5;ln='Сюрприз раскрылся на минуту раньше, но я всё равно в восторге!'}}
   else ln=pick(['Спасибо... Я запомню этот тост.','Ты умеешь сказать именно то, что нужно.']);
   if(S.rel[id])aff(id,g);else fr(id,g);mood(6);S.energy=Math.max(0,S.energy-1);
@@ -5461,7 +5425,7 @@ const FAV_SIG={
  arman:{ask:'Вечером тестирую приложение в доме престарелых. Восемь бабушек, восемь телефонов. Мне нужен кто-то, кто умеет с людьми. Не со мной.',steps:[['bg','home','eve'],['n','Восемь бабушек, восемь телефонов и одна громкая госпожа Ким, которая спорит с приложением вслух.'],
   ['c','Что делаешь?',[{t:'Сесть с госпожой Ким и объяснить всё медленно',d:6,st:'charm',e:'b',r:'Она сказала, что ты лучше её внука. Я записал это как отзыв пользователя.'},{t:'Записывать баги, пока Джиху объясняет',d:5,st:'study',e:'h',r:'Тридцать два бага! Ты лучший тестировщик. Бабушки — тоже.'}]]]},
  timur:{ask:'Вечером разгружаем товар у мамы на рынке. Руки нужны любые. Даже твои. Шучу, особенно твои.',steps:[['bg','market','eve'],['n','Склад, мешки с рисом, коробки с хурмой. Мама Тэяна командует, как генерал.'],
-  ['c','Как помогаешь?',[{t:'Таскать коробки наравне с Тэяном',d:6,st:'fit',e:'l',r:'Ты унёс{|ла} больше меня. Мама сказала, что берёт тебя на работу. Я ревную.'},{t:'Разложить витрину красиво',d:5,st:'style',e:'b',r:'Хурму раскупили за час. Мама уже спрашивает, когда ты придёшь снова.'}]]]},
+  ['c','Как помогаешь?',[{t:'Таскать коробки наравне с Тэяном',d:6,st:'fit',e:'l',r:'Ты ун{ёс|есла} больше меня. Мама сказала, что берёт тебя на работу. Я ревную.'},{t:'Разложить витрину красиво',d:5,st:'style',e:'b',r:'Хурму раскупили за час. Мама уже спрашивает, когда ты придёшь снова.'}]]]},
  daniyar:{ask:'Вечером концерт, а наш басист опять потерял провод. Поможешь дотащить комбик до бара? Он тяжёлый. Я тоже.',steps:[['bg','stage','night'],['n','Сорок килограммов комбика, лестница в подвал и узкая дверь.'],
   ['c','Что делаешь?',[{t:'Тащить и считать ступеньки вслух',d:5,st:'fit',e:'l',r:'Тридцать две ступеньки. Я теперь их ненавижу. И люблю тебя. В смысле, спасибо.'},{t:'Договориться с барменом про грузовой лифт',d:6,st:'charm',e:'b',r:'Тут был лифт?! Три года мы таскали всё по лестнице. Ты гений.'}]]]},
  sanzhar:{ask:'На завтра заказ — двести пирожков для фестиваля. Помоги вечером, а? Тесто на мне, разговоры на тебе.',steps:[['bg','kitchen','night'],['n','Двести пирожков, мука до потолка, радио играет старые песни.'],
@@ -6184,7 +6148,7 @@ LOVE.lilia=[
   ['if',()=>SF('lilia','line')==='silence',[['n','Финальная строчка — про тёплую тишину. Зал замолкает так, что слышно, как гудит холодильник у бара.']],
    [['if',()=>SF('lilia','line')==='rhythm',[['n','На строчке про сбитый ритм она нарочно сбивается — и зал смеётся вместе с ней.']],[['n','«Останься до коды», — поёт она. И в коде делает паузу, длинную, как вдох.']]]]],
   ['if',()=>SF('lilia','laughtake'),[['n','В конце из колонок звучит запись: ваш смех со студийного дубля. Кто-то в зале говорит «аааа».']]],
-  ['c','Чэвон зовёт тебя на сцену. Что делаешь?',[{t:'Выйти и встать рядом',d:5,st:'charm',e:'b',r:'Ты вышел{|ла}. При всех. ...Теперь у этой песни есть клип. Он у всех в телефонах.'},
+  ['c','Чэвон зовёт тебя на сцену. Что делаешь?',[{t:'Выйти и встать рядом',d:5,st:'charm',e:'b',r:'Ты вышел{|а}. При всех. ...Теперь у этой песни есть клип. Он у всех в телефонах.'},
    {t:'Остаться у колонны и поднять бокал',d:4,e:'l',r:'Ты оставил{|а} сцену мне. Ты всегда оставляешь мне сцену. Это и есть любовь, да?'}]]]];
 BYE.lilia={kiss:'Тише. Это была кода. Красивая.',hug:'Не отпускай пару тактов. ...Ещё пару.',hand:'Иди в ритм. Раз, два... ты сбиваешься. Ничего, я подстроюсь.',stay:'Пять минут — это одна песня. Длинная.'};
 TEND.lilia={hand:'Тихо. Я слушаю твой пульс. Сто десять. Это из-за меня?',cheek:'...Ты всегда попадаешь в слабую долю.',lean:'Вот так. Это моя любимая тишина.',miss:'Я написала об этом три такта. Хочешь услышать?',selfie:'Без вспышки. И молча. ...Ты улыбаешься громко.'};
@@ -6760,7 +6724,7 @@ const FZ={
   [['bg','park','day'],['n','Пять утра. Минджи назначила тебя своим пейсмейкером: держать темп, не давать ей сорваться в спринт.'],['c','Как держишь темп?',[['Строго, как часы',9,'n','Ровно четыре сорок на километр! Ты машина. Хорошая.','fit'],['Рассказывать анекдоты на бегу',8,'l','Я задохнулась от смеха на третьем километре! Это был худший и лучший темп.']]]],
   [['bg','cafe'],['n','Минджи мнётся. Это странно: она никогда не мнётся.'],['a','В легкоатлетической команде есть один… прыгун. Как с ним разговаривают? Не про бег. Вообще.'],
    ['c','Что посоветуешь?',[['«Спроси, что он слушает перед стартом»',10,'l','Он слушает то же, что я! Мы проговорили час! ...Ты гений. Не говори ему, что это ты.'],['«Вызови его на спринт»',8,'h','Я обогнала его, и он сказал «вау». Это считается разговором?']]]],
-  [['bg','park','day'],['n','Финал сезона. На трибуне ты с плакатом «МИНДЖИ — РАКЕТА». Она видит его на прямой.'],['b','Ты принёс{|ла} плакат! Я пробежала на секунду быстрее. Секунда — это ты.'],
+  [['bg','park','day'],['n','Финал сезона. На трибуне ты с плакатом «МИНДЖИ — РАКЕТА». Она видит его на прямой.'],['b','Ты прин{ёс|есла} плакат! Я пробежала на секунду быстрее. Секунда — это ты.'],
    ['c','Что делаешь?',[['Сбежать с трибуны и дать ей пять',9,'l','Пять! И ещё пять! Ты мой талисман. Без шуток.'],['Обнять её с плакатом',10,'b','Ты помял{|а} плакат. Повесим так. Мятый — значит, настоящий.']]]]],
  lilia:[
   [['bg','studio'],['n','Чэвон назначает тебя «первым слушателем». Правило: оценка от одного до десяти, без слова «нормально».'],['c','Первый демо-трек. Твоя оценка?',[['«Семь. Припев проваливается»',10,'n','Семь. Честно. Переписываю припев. Спасибо.','art'],['«Десять, но я необъектив{ен|на}»',6,'l','Необъективные оценки не принимаются. ...Но приятно.']]]],
@@ -6963,7 +6927,7 @@ async function lateScene(R){const P=S.partner;const L=LATE[R];if(!L||!P)return f
   S.talked[R]=true;S.seen[R]=S.day;evMark('late');setWho(R,'s');
   await narr(L[0]);await line(R,'s',subP(L[1],P));
   const os=[{t:'Предложить остаться друзьями',k:'fr'},{t:'Сказать, что тебе жаль',k:'sorry'},{t:'Промолчать и просто посидеть рядом',k:'sit'}];
-  const i=await ask('Что скажешь?',os.map(o=>({t:fx(o.t)})),{who:R,exp:'s'});const k=os[i].k;
+  const i=await ask('Что скажешь?',os.map(o=>({t:fx(o.t)})),{who:R,exp:'s'});const k=os[i].k;S.lateC=S.lateC||{};S.lateC[R]=k;
   if(k==='fr'){if(typeof fzStart==='function'&&S.rel[R]&&!S.rel[R].fz){const keep=FZ_SAY[R];FZ_SAY[R]=['h',L[2]];try{await fzStart(R)}catch(e){console.error(e)}finally{if(keep)FZ_SAY[R]=keep;else delete FZ_SAY[R]}}else await line(R,'h',L[2])}
   else if(k==='sorry'){aff(R,-3);await line(R,'n',L[3])}
   else{mood(-2);await say(`Вы сидите молча. Это неловко, но честно. Уходя, ${nmC(R)} всё-таки ${GN(R,'кивнул','кивнула')} тебе.`)}
@@ -7042,6 +7006,7 @@ async function rivalScene(P,R){S.rival=S.rival||{};S.rival[R]=S.day;evMark('riva
   const pr=pairOf(P,R);if(pr)await narr(`${nmC(P)} и ${nmC(R)} знакомы — ${pr.label}. ${pr.base<0?'Воздух между ними можно резать ножом.':'Они кивают друг другу, но как-то натянуто.'}`);
   setWho(P,'n');await line(P,'n',JEAL[P]?JEAL[P](R):'...');
   const i=await ask('Что делаешь?',[{t:fx('Взять {её|его} за руку')},{t:fx(`Поболтать с ${insC(R)} пару минут`)}],{who:P,exp:'n'});
+  S.rivalC=S.rivalC||{};S.rivalC[P]=i===0?'hand':'chat';
   if(i===0){aff(P,3);aff(R,-2);await narr(`${nmC(R)} кивает и уходит. ${nmC(P)} не отпускает твою руку до самого дома.`)}
   else{aff(R,1);aff(P,-2);await narr(`${nmC(P)} ждёт в стороне и делает вид, что изучает витрину. Вечер становится чуть холоднее.`)}
   return true}
@@ -7064,62 +7029,6 @@ async function rivalScene(P,R){S.rival=S.rival||{};S.rival[R]=S.day;evMark('riva
   if(id&&id===S.partner&&S.rel[id]&&!(typeof qOn==='function'&&qOn(id))&&!evToday()&&Math.random()<.22){S.rival=S.rival||{};
     const c=romIds().filter(R=>R!==id&&S.rel[R]&&S.rel[R].met&&!S.rel[R].fz&&S.rel[R].aff>=30&&!S.rival[R]&&RIV_SEE[R]);
     if(c.length)await rivalScene(id,pick(c))}}catch(e){console.error(e)}return r}}
-
-/* ---------- 4. Optional AI chat in the phone (only where Claude is available, e.g. the claude.ai version) ---------- */
-let AI_S=null;
-(async()=>{try{if(window.claude&&typeof window.claude.use==='function')AI_S=await window.claude.use('sample')}catch(e){AI_S=null}})();
-const AI_MAX=6;
-function aiOn(){try{return !!AI_S&&!loadMeta().aiOff}catch(e){return !!AI_S}}
-function aiLeft(id){S.aiN=S.aiN||{};const k=id+'@'+S.day;return AI_MAX-(S.aiN[k]||0)}
-const AI_STYLE=[
- 'Вы почти не знакомы: вежливо, чуть сдержанно, без флирта. Если собеседник флиртует или признаётся — смутись и мягко притормози.',
- 'Вы приятели: дружелюбно, с шутками, без романтики. На флирт — удивление или лёгкая шутка, но не взаимность.',
- 'Между вами симпатия: тепло, немного смущения, на лёгкий флирт можно ответить так же легко.',
- 'Ты влюблён, но вы ещё не пара: тепло, заметно волнуешься, отвечаешь на флирт, но сам первым не признаёшься.',
- 'Вы пара: нежно и близко, можно «скучаю», ласковые слова, ваши общие шутки.'];
-function aiRel(id){const P=S.partner;const g=GN(id,'m','f')==='f';const W=t=>g?t.replace('влюблён','влюблена').replace('сам первым','сама первой').replace('обижен','обижена'):t;
-  const q=typeof qOn==='function'&&qOn(id);let t;
-  if(S.rel[id]){const r=S.rel[id];const st=stage(id);
-    if(r.fz)t='Вы решили остаться друзьями: тепло и по-дружески, без флирта; на флирт мягко напомни, что вы друзья.';
-    else{t=AI_STYLE[st];if(P&&P!==id)t+=` У собеседника есть пара — ${nmC(P)}, ты об этом знаешь: не флиртуй${st>=3?', тебе от этого немного грустно, но ты держишься':''}.`}
-    const f=[];const sd=S.seen&&S.seen[id]!=null?S.day-S.seen[id]:null;
-    if(sd!=null)f.push(sd<=0?'сегодня уже общались':sd===1?'последний раз общались вчера':`не общались ${sd} дн.`);
-    if(r.dates)f.push(`были на ${r.dates} ${r.dates===1?'свидании':'свиданиях'}`);if(S.kiss&&S.kiss[id])f.push('уже целовались');
-    if(f.length)t+=' Факты: '+f.join(', ')+'.'}
-  else{const v=(S.fr&&S.fr[id])||0;t=v<20?'Вы просто знакомые: вежливо и легко.':v<50?'Вы друзья: тепло, с шутками.':v<80?'Вы близкие друзья: откровенно, можно подколоть, вы много вместе пережили.':'Вы лучшие друзья: полное доверие, свои шутки, можешь сказать что-то важное.';
-    t+=' Никакой романтики, только дружба.';if(P)t+=` У собеседника есть пара — ${nmC(P)}.`}
-  if(q)t+=' Сейчас вы в ссоре: ты обижен, отвечаешь коротко и прохладно, но не грубо; оттаиваешь, только если собеседник искренне извиняется.';
-  return W(t)}
-function aiAbout(id){const R=ROM[id],F=FRIEND[id];let a=(R&&R.about)||(F&&F.about)||'';if(id==='beka'&&typeof roomTx==='function')a=roomTx(a);
-  let ex=[];
-  if(R&&S.rel[id]&&S.rel[id].fz){if(R.greet&&R.greet[1])ex.push(R.greet[1]);if(FZ_SAY&&FZ_SAY[id])ex.push(FZ_SAY[id][1]);if(R.react)ex.push(...(R.react.good||[]).slice(0,2))}
-  else if(R&&S.rel[id]){const st=stage(id);if(R.greet&&R.greet[st])ex.push(R.greet[st]);if(st>=2&&R.texts)ex.push(...R.texts.slice(0,3));if(R.react)ex.push(...(R.react.good||[]).slice(0,2))}
-  else{ex.push(...frGreet(id).slice(0,2));if(F&&F.texts&&!F.__fz)ex.push(...F.texts.slice(0,3));if(R&&R.react)ex.push(...(R.react.ok||[]).slice(0,2))}
-  ex=ex.filter(x=>typeof x==='string').slice(0,6).map(x=>'— '+(id==='beka'&&typeof roomTx==='function'?roomTx(fx(x)):fx(x)));
-  return {a,ex}}
-async function aiReply(id){const nm=nmC(id);const g=GN(id,'m','f')==='f';const {a,ex}=aiAbout(id);
-  const hero=(S.name||'собеседник')+(S.pg==='f'?' (девушка)':' (парень)');
-  const hist=(S.msgs[id]||[]).filter(m=>m.t).slice(-14).map(m=>(m.me?'Собеседник: ':nm+': ')+m.t).join('\n');
-  const prompt=`Ты пишешь реплику за персонажа в уютной визуальной новелле «90 дней весны» (первый курс в Сеуле, весна, ${S.day}-й день из ${typeof DAYS!=='undefined'?DAYS:90}).
-Персонаж: ${nm}, ${g?'девушка':'парень'}. ${a}
-Примеры того, как ${nm} говорит сейчас, на этом этапе отношений:
-${ex.join('\n')}
-Собеседник — главный герой: ${hero}.
-Отношения: ${aiRel(id)}
-Это переписка в мессенджере. Последние сообщения:
-${hist}
-
-Напиши ОДНО следующее сообщение от лица ${nm} в ответ собеседнику. Правила: по-русски, как живое сообщение в телефоне, 1–3 коротких предложения, можно одно эмодзи; характер и манера ${nm}; степень близости строго как в описании отношений — не теплее и не холоднее; ${g?'о себе в женском роде':'о себе в мужском роде'}, к собеседнику — ${S.pg==='f'?'в женском роде':'в мужском роде'}. Не выходи из роли, не упоминай, что ты ИИ или игра. Не назначай конкретных встреч, не соглашайся встречаться и не придумывай крупных событий — такие вещи решаются в самой игре. Романтика — только мягкая и целомудренная; на грубость или неуместное отвечай так, как ответил бы персонаж, и меняй тему. Выведи только текст сообщения, без имени и кавычек.`;
-  window.__aiLastPrompt=prompt;
-  const r=await AI_S(prompt,{modelTier:'quick',cache:false});
-  let t=String(r&&r.text||'').trim().replace(/^["«»]+|["«»]+$/g,'').replace(new RegExp('^'+nm+'\\s*:\\s*'),'').trim();
-  if(t.length>320)t=t.slice(0,320).replace(/\s+\S*$/,'')+'…';return t||'...'}
-async function aiSend(id,text){S.aiN=S.aiN||{};const k=id+'@'+S.day;S.aiN[k]=(S.aiN[k]||0)+1;msgOut(id,text);
-  let t;try{t=await aiReply(id)}catch(e){const L=S.msgs[id]||[];if(L.length&&L[L.length-1].me&&L[L.length-1].t===fx(text))L.pop();S.aiN[k]--;throw e}
-  const L=S.msgs[id]=S.msgs[id]||[];L.push({d:S.day,t:fx(t),w:id});if(L.length>60)L.splice(0,L.length-60);S.unread[id]=0;
-  S.aiD=S.aiD||{};const q=typeof qOn==='function'&&qOn(id);if(S.aiD[id]!==S.day&&!q){S.aiD[id]=S.day;if(S.rel[id])aff(id,1);else if(typeof fr==='function')fr(id,1)}
-  return t}
-function aiHide(){try{const m=loadMeta();m.aiOff=1;saveMeta(m)}catch(e){}}
 
 /* ---------- 5. Closeness shapes what friends say when you walk up ---------- */
 const FGREET={
@@ -7174,6 +7083,510 @@ function phoneReact(id,tone){const r=S.rel[id],R=ROM[id];if(!r||!R)return null;
   if(st<=1)return {d:st===0?(likes?1:-1):(likes?2:0),t:BOLD_EARLY[id]||'Мы ещё мало знакомы...'};
   if(S.partner&&S.partner!==id)return {d:-1,t:pick(['Ты же с '+insC(S.partner)+'. Не надо так.','Не пиши мне такое. Ты знаешь почему.'])};
   return null}
+
+/* ================= v1.45a: fates — what became of everyone (texts) ================= */
+// bond: who you are to each other at the end of spring
+// path: where their own story went (keyed by the branch you nudged), g = it worked out, h = it is hard
+// none: their story without you in it; mem: memories from your scenes together
+const arc5=id=>()=>S.rel[id]&&S.rel[id].arc>=5;
+const FATE={};
+
+FATE.aigerim={
+ bond:{strong:'Юна до сих пор ведёт план на пять лет. В каждом пункте теперь два имени.',
+  tender:'Юна всё так же считает всё на свете. Кроме минут, которые проводит с тобой: их она перестала считать.',
+  fragile:'Вы с Юной вместе, но иногда она надолго замолкает и что-то записывает. Ты не спрашиваешь что. Боишься ответа.',
+  far:'Юна и ты на разных концах карты. Она составила таблицу часовых поясов и звонит ровно в девять по твоему времени.',
+  exf:'Вы с Юной расстались, но она до сих пор присылает тебе конспекты перед сессией. «По привычке», — пишет она.',
+  exc:'Юна вычеркнула тебя из плана аккуратно, по линейке. Она всегда всё делает аккуратно.',
+  friends:'Юна называет тебя «единственным пунктом плана, который сработал лучше ожиданий». В дружбе это высшая оценка.',
+  unreq:'Юна так и не сказала тебе главного. В её скетчбуке есть страница, которую она никому не показывает.',
+  missed:'Иногда Юна думает, что ты был{|а} самым красивым непросчитанным риском этой весны. Она его не взяла.'},
+ path:{
+  plan:{m:b=>b==='plan',ok:()=>!!SF('aigerim','web'),tg:'Вебтун под ником',th:'Стажёр без лица',
+   g:'Днём она работает в министерстве, а ночью выпускает вебтун про стажёра с циферблатом вместо лица. У него сорок тысяч читателей.',
+   h:'Она работает в министерстве и рисует всё реже. Скетчбук лежит в ящике стола. Пока.'},
+  leap:{m:b=>b==='leap',ok:()=>!!SF('aigerim','own')||SF('aigerim','dist')==='follow',tg:'Токийское издательство',th:'Чужой город',
+   g:'В Токио её первый комикс берут в журнал. На обложке сиреневое небо.',
+   h:'Токио оказался громче, чем она думала. Первый месяц она ест одни онигири и плачет в метро. Но не возвращается.'}},
+ none:{t:'Строго по плану',x:'Юна прошла весну строго по плану: стажировка, отличные оценки, ни одной лишней минуты. В конце мая она впервые нарисовала что-то просто так.'},
+ mem:[['rain',()=>SF('aigerim','ref')==='rain','Рисунок с вами под одним зонтом висит у неё над столом. Капли она дорисовала потом, по памяти.'],
+  ['memory',()=>SF('aigerim','ref')==='memory','Она так и нарисовала вас по памяти, и ни одна деталь не перепутана. «Я всё помню», — говорит она. И это правда.'],
+  ['flaw',()=>!!SF('aigerim','flaw'),'Твои худшие привычки записаны у неё в отдельный список. Она называет его «Почему я всё равно».']]};
+
+FATE.rin={
+ bond:{strong:'Рин больше не пишет сцен про расставания. Говорит, разучилась, и ни капли не жалеет.',
+  tender:'Рин читает тебе каждый новый диалог вслух. Если ты смеёшься в нужном месте, она сохраняет файл.',
+  fragile:'Рин иногда переписывает ваши ссоры в сценарий. Ты узнаёшь себя в репликах и не знаешь, обижаться ли.',
+  far:'Рин присылает тебе раскадровки ваших будущих встреч. На каждой стоит дата, и все даты сбываются.',
+  exf:'Вы с Рин расстались по-доброму, как в её любимом фильме. Иногда вы вместе ходите в киноклуб и садитесь через кресло.',
+  exc:'В новом сценарии Рин есть второстепенный персонаж, который уходит, не попрощавшись. Ты узнаёшь себя.',
+  friends:'Рин написала тебе роль лучшего друга главной героини. «Это самая важная роль, — говорит она. — Без неё героиня не дошла бы до финала».',
+  unreq:'Рин так и не отдала тебе страницу, где была твоя реплика. Она лежит в папке «Неснятое».',
+  missed:'Иногда Рин пересматривает весну, как фильм, и останавливает кадр на одном вечере у кофейни.'},
+ path:{
+  allow:{m:b=>b==='allow',ok:arc5('rin'),tg:'Приз зрительских симпатий',th:'Фестиваль в Пусане',
+   g:'Её короткометражка получает приз зрителей в Пусане. Зал смеётся, а потом затихает — ровно там, где она хотела.',
+   h:'Фильм берут на фестиваль, но показывают в восемь утра в пустом зале. Рин всё равно стоит у выхода до конца сеанса.'},
+  cut:{m:b=>b==='cut',ok:()=>!!(SF('rin','gift')||SF('rin','self')),tg:'Фильм о себе',th:'Медленный сценарий',
+   g:'Рин пишет фильм о девушке из Киото, которая сбежала с собственной премьеры. На этот раз она остаётся в зале до титров.',
+   h:'Рин пишет медленнее, чем раньше: теперь она сначала спрашивает. Сценарий растёт по странице в неделю.'},
+  film:{m:b=>!b&&!!SF('rin','fin'),ok:()=>SF('rin','fin')!=='sad',tg:'Свой финал',th:'Грустный финал',
+   g:'Её фильм заканчивается так, что зал спорит до утра, что было дальше. Рин знает, но не скажет.',
+   h:'Её фильм заканчивается расставанием на вокзале. Он хороший. Просто Рин опять не смогла написать счастливый финал.'}},
+ none:{t:'Запасной выход',x:'Рин дописала сценарий этой весной, но так и не отправила его на фестиваль. Он лежит в папке рядом с билетом в Киото.'},
+ mem:[['script',()=>SF('rin','take')==='script','Реплику «Не отпускай» она так и не вычеркнула. Сказано было точно по тексту.'],
+  ['improv',()=>SF('rin','take')==='improv','Твою импровизацию «Я и не собирался уходить» она вписала в сценарий. Слово в слово.'],
+  ['laugh',()=>SF('rin','take')==='laugh','Тот дубль, где ты забыл{|а} реплику и рассмеял{ся|ась}, она пересматривает чаще, чем любой фильм.']]};
+
+FATE.mira={
+ bond:{strong:'Харин рисует тебя на каждой пенке, и за весну ни разу не повторилась.',
+  tender:'Харин называет тебя своим любимым цветом. Пока не придумала ему название.',
+  fragile:'Харин иногда рисует вас обоих в разных углах холста. Потом закрашивает и начинает заново.',
+  far:'Харин отправляет тебе открытки, нарисованные на салфетках из кофейни. Пахнут кофе даже через море.',
+  exf:'Вы с Харин расстались, но твой кот на пенке до сих пор в меню. Называется «Бывший, но хороший».',
+  exc:'Харин закрасила стену, на которой вы когда-то рисовали вдвоём. Белым. В три слоя.',
+  friends:'Харин зовёт тебя первым смотреть каждую новую работу. «Ты единственный, кто говорит честно», — говорит она.',
+  unreq:'В углу одной картины Харин есть крошечная фигурка, похожая на тебя. Она отворачивается, когда кто-то это замечает.',
+  missed:'Иногда Харин рисует на пенке лицо, которое уже никому не подаёт. Просто смотрит и выпивает сама.'},
+ path:{
+  duo:{m:b=>b==='duo',ok:()=>!!SF('mira','saved'),tg:'Своя выставка',th:'Тень Сохи',
+   g:'После выставки «Двое» журнал пишет о Харин отдельную статью. Осенью у неё первая собственная выставка.',
+   h:'На выставке «Двое» все говорили о Сохи. Харин вернулась в кофейню и рисует там, где её видят.'},
+  solo:{m:b=>b==='solo',ok:()=>!!SF('mira','peace'),tg:'Студия на двоих',th:'Своя дорога',
+   g:'Харин накопила на маленькую студию. Сохи прислала на открытие цветы — и они снова переписываются по ночам.',
+   h:'Выставка в Хондэ продержалась месяц. Пришли не толпы, а свои. Харин говорит, что этого достаточно.'},
+  talk:{m:b=>b==='talk',ok:()=>!!(SF('mira','wall')||SF('mira','peace')),tg:'Стена двух художниц',th:'Осторожный мир',
+   g:'Харин и Сохи расписали одну стену на двоих: весна, кошки и Сеул ночью.',
+   h:'Харин и Сохи снова дружат — осторожно, как после долгой болезни.'}},
+ none:{t:'Коты на пенке',x:'Харин так и рисует котов на пенке. Галереи подождут. Она пока не готова к тому, чтобы её видели.'},
+ mem:[['fight',()=>SF('mira','war')==='fight','Синюю краску с той войны в мастерской так и не отмыли. Харин запрещает её трогать.'],
+  ['save',()=>SF('mira','war')==='save','Картина, которую ты закрыл{|а} собой, висит у неё дома. На раме след твоей ладони, синий.'],
+  ['canvas',()=>SF('mira','war')==='canvas','Фото, где ты {весь|вся} разрисован{|а} её красками, стоит у Харин заставкой на телефоне.'],
+  ['expo',()=>!!SF('mira','expo'),'Выставку в коридоре общаги до сих пор вспоминают первокурсники. Харин говорит, что это была её первая настоящая выставка.']]};
+
+FATE.dana={
+ bond:{strong:'Минджи больше не бегает одна. По утрам она подстраивается под твой темп и делает вид, что так и надо.',
+  tender:'Минджи пишет тебе после каждой тренировки одно слово. Чаще всего это «целая». Иногда — «скучаю».',
+  fragile:'Минджи привыкла побеждать. С тобой она иногда не знает, как сделать так, чтобы не проиграть.',
+  far:'Минджи бегает по утрам в своё время, а ты в своё. Она сравнивает вашу статистику и всегда выигрывает. Говорит, что это честно.',
+  exf:'Вы с Минджи расстались, но по субботам она всё равно зовёт тебя на пробежку. «Друзья тоже бегают», — говорит она.',
+  exc:'Минджи меняет маршрут пробежки, чтобы не пробегать мимо твоего окна. Круг стал на километр длиннее.',
+  friends:'Минджи называет тебя своим лучшим пейсмейкером. В её мире это почти признание в любви, только дружеской.',
+  unreq:'Минджи пробежала эту весну быстрее всех. Только одну дистанцию так и не решилась начать.',
+  missed:'Иногда Минджи думает, что стартовала слишком поздно. Для неё это новое чувство.'},
+ path:{
+  hide:{m:b=>b==='hide',ok:arc5('dana'),tg:'Тренер у озера',th:'Пропущенный сезон',
+   g:'Минджи пропустила сезон, но осенью тренирует детей у озера и первым делом учит их не прятать боль.',
+   h:'Минджи пропустила сезон. Колено заживает медленно, а молчание, в котором она его прятала, ещё медленнее.'},
+  tell:{m:b=>b==='tell',ok:arc5('dana'),tg:'Сборная',th:'Сборы с обидой',
+   g:'Минджи едет на сборы со сборной. Первую победу она посвящает «человеку, который настучал тренеру».',
+   h:'Минджи на сборах, но долго не может простить, что о колене рассказали без неё.'},
+  honest:{m:b=>b==='honest',ok:arc5('dana'),tg:'Целая',th:'По плану врача',
+   g:'Минджи играет лето в сборной — аккуратно, по плану врача. После каждого матча: «Целая».',
+   h:'Врач разрешил только половину сезона. Минджи злится, но слушается. Впервые в жизни.'}},
+ none:{t:'Через боль',x:'Минджи пробежала весну через боль и никому не сказала. Летом колено напомнило о себе. Она снова никому не сказала.'},
+ mem:[['lace',()=>SF('dana','rit')==='lace','Двойной узел на её кроссовках так и не развязался. Минджи говорит, что это ваш талисман.'],
+  ['band',()=>SF('dana','rit')==='band','Твоя резинка для волос до сих пор на её запястье. Минджи выиграла в ней три забега.'],
+  ['carry',()=>SF('dana','inj')==='carry','Тот вечер, когда ты н{ёс|есла} её до общаги на спине, Минджи называет «самым медленным финишем в жизни». Самым лучшим.']]};
+
+FATE.lilia={
+ bond:{strong:'Чэвон написала тебе песню без слов. Говорит, что слова тут лишние.',
+  tender:'Чэвон оставляет тебе голосовые по ночам: три секунды тишины и её дыхание. Ты понимаешь каждое.',
+  fragile:'Чэвон иногда пропадает на неделю в студии. Возвращается с новой песней и без объяснений.',
+  far:'Чэвон присылает тебе демки в три часа ночи. Ты слушаешь их утром в автобусе и улыбаешься, как {дурак|дурочка}.',
+  exf:'Вы с Чэвон расстались, но на её концертах для тебя всегда есть место у сцены. Без билета.',
+  exc:'На альбоме Чэвон есть трек, после которого ты выключаешь музыку. Называется «Демо».',
+  friends:'Чэвон отдаёт тебе первые прослушивания. «Ты единственный, кто не врёт про мои песни», — пишет она.',
+  unreq:'У Чэвон есть песня, которую она никогда не играет на концертах. Ты знаешь, о ком она.',
+  missed:'Иногда Чэвон играет одну и ту же фразу без финала. Как будто ждёт, что кто-то допоёт.'},
+ path:{
+  stay:{m:b=>b==='stay',ok:()=>!!(SF('lilia','night')||SF('lilia','studio')),tg:'Рамён и неон',th:'Ассистентка звукорежиссёра',
+   g:'Ночные концерты Чэвон в круглосуточном магазине стали легендой. Её альбом называется «Рамён и неон».',
+   h:'Чэвон остаётся в Сеуле и сводит чужие песни. Свои — только по ночам и пока только для себя.'},
+  busan:{m:b=>b==='busan',ok:()=>!!SF('lilia','wait'),tg:'Концерт у моря',th:'Альбом про море',
+   g:'В Пусане её встречают двести человек из той трансляции. Первый концерт у моря — при полном зале.',
+   h:'Чэвон уезжает в Пусан. Первые концерты играет перед пятью людьми и чайками.'},
+  album:{m:b=>!b&&!!(SF('lilia','release')||SF('lilia','summer')),ok:()=>!!SF('lilia','summer'),tg:'Трек «413»',th:'Тысяча прослушиваний',
+   g:'Альбом, записанный за одно лето, слушают сорок тысяч человек. Последний трек называется «413».',
+   h:'Альбом набрал тысячу прослушиваний. Чэвон делает вид, что ей всё равно. Не всё равно.'}},
+ none:{t:'Демки в столе',x:'Чэвон так и не выпустила ни одной песни этой весной. Демки лежат в папке «потом». Папка растёт.'},
+ mem:[['laugh',()=>!!SF('lilia','laughtake'),'В одном её треке посреди куплета слышно, как вы смеётесь. Она так и не вырезала этот дубль.'],
+  ['coda',()=>SF('lilia','line')==='coda','«Останься до коды», — сказал{|а} ты тогда. Теперь каждая её песня заканчивается длинной кодой.'],
+  ['silence',()=>SF('lilia','line')==='silence','Строчку про тёплую тишину Чэвон поёт на каждом концерте последней.']]};
+
+FATE.emma={
+ bond:{strong:'Эмма учит шведский по вашим разговорам и говорит, что теперь у неё два родных языка: шведский и ты.',
+  tender:'Эмма снимает тебя на плёнку каждое воскресенье. Скоро понадобится второй альбом.',
+  fragile:'Эмма иногда смотрит на билеты в Стокгольм дольше, чем нужно. Потом закрывает вкладку и обнимает тебя крепче.',
+  far:'Эмма в Швеции, ты в Сеуле. Каждую фику она пьёт в восемь утра, чтобы совпасть с твоим вечерним кофе.',
+  exf:'Вы с Эммой расстались, но она до сих пор шлёт тебе снимки с подписью «Это тебе бы понравилось». Обычно она не ошибается.',
+  exc:'Эмма убрала из альбома все кадры, где есть ты. Осталось много пустых мест. Она их не заполняет.',
+  friends:'Эмма называет тебя своим «сеульским братом» по фике. Кофе по пятницам — это святое.',
+  unreq:'На одной плёнке у Эммы двадцать кадров с тобой. Проявила она её только летом. И никому не показала.',
+  missed:'Иногда Эмма думает, что весна в Сеуле была бы другой, если бы она спросила тебя первой. По-шведски это называется «если бы».'},
+ path:{
+  empty:{m:b=>b==='empty',ok:()=>!!SF('emma','back'),tg:'Портреты с разрешением',th:'Пустой Сеул',
+   g:'Эмма остаётся ещё на год. Её новая серия — портреты, на каждый она спросила разрешения по-корейски.',
+   h:'Эмма издаёт фотокнигу «Пустой Сеул»: город в пять утра, без людей. Людей снимать она пока боится.'},
+  faces:{m:b=>b==='ask'||b==='story',ok:()=>!!SF('emma','wall'),tg:'Стена лиц',th:'Пять портретов',
+   g:'Двадцать её портретов висят стеной в кофейне. Люди приходят искать себя и соседей.',
+   h:'Журнал печатает пять её портретов. Остальные пятнадцать Эмма хранит в коробке до лучших времён.'}},
+ none:{t:'Туристка',x:'Эмма уезжает в Стокгольм с тремя плёнками. На всех — красивые улицы и ни одного человека.'},
+ mem:[['now',()=>SF('emma','fut')==='now','«У нас есть два месяца, это очень много», — сказал{|а} ты. Эмма до сих пор считает дни именно так.'],
+  ['sweden',()=>SF('emma','fut')==='sweden','Ты обещал{|а} выучить шведский к лету. Эмма проверяет каждое воскресенье. Ты стараешься.'],
+  ['frog',()=>!!SF('emma','frog'),'Шведскую песню про лягушек вы теперь поёте на каждом празднике. Ты квакаешь громче всех.']]};
+
+FATE.nari={
+ bond:{strong:'Нари больше не говорит в эфире «тут никого нет». Чат знает, что есть. Она тоже.',
+  tender:'Нари называет тебя своим «лучшим апдейтом». В её мире это очень серьёзно.',
+  fragile:'Нари иногда прячется за стримом, когда вам надо поговорить. Ты ждёшь конца эфира. Он долгий.',
+  far:'Нари играет с тобой в кооп каждую ночь, несмотря на пинг. Говорит, что задержка в двести миллисекунд того стоит.',
+  exf:'Вы с Нари расстались, но в ваш кооп она всё ещё зовёт только тебя. «Ты лучше всех прикрываешь», — пишет она.',
+  exc:'Нари удалила тебя из друзей во всех играх. Достижение «Дуэт» осталось. Его удалить нельзя.',
+  friends:'Нари сделала тебя модератором своего канала. Это больше, чем лучший друг. Это доступ к бан-хаммеру.',
+  unreq:'У Нари есть сохранение игры, которое она никогда не загружает. В нём вы вдвоём в начале весны.',
+  missed:'Иногда Нари думает, что проиграла этот раунд, не нажав «старт». Реванша нет.'},
+ path:{
+  public:{m:b=>b==='public',ok:()=>!!SF('nari','safe'),tg:'Киберспорт',th:'Тихий чат',
+   g:'Нари проходит отбор и играет за киберспортивную команду. На первом турнире у неё худи «Мы против интернета».',
+   h:'После перерыва Нари возвращается на стрим. Чат стал тише и добрее, а модераторов теперь пятеро.'},
+  private:{m:b=>b==='private',ok:()=>!!SF('nari','talk'),tg:'Свой человек',th:'Тайна чата',
+   g:'Нари не показывает личное в кадре, но больше не врёт, что она одна.',
+   h:'Нари стримит одна. Чат не знает, с кем она иногда переглядывается за кадром.'},
+  rule:{m:b=>b==='rule',ok:arc5('nari'),tg:'Правило канала',th:'Новая граница',
+   g:'Правило «мой человек — не контент» висит в описании канала. Сто тысяч подписчиков приняли его.',
+   h:'Правило в описании канала стоило Нари трёх тысяч подписчиков. Она говорит, что это честная цена.'}},
+ none:{t:'Только эфир',x:'Нари стримит каждый вечер. Людей вокруг всё больше, и всё меньше тех, кто знает, какая она без камеры.'},
+ mem:[['wave',()=>SF('nari','cam')==='wave','Клип, где ты машешь в камеру, стал мемом её канала. Она ставит его в конце каждого стрима.'],
+  ['hide',()=>SF('nari','cam')==='hide','Тот вечер, когда ты закрыл{|а} её от камеры курткой, Нари помнит лучше любой победы.'],
+  ['self',()=>SF('nari','call')==='self','Тот звонок она сделала сама. Ты просто держал{|а} её за руку. Теперь она звонит сама каждый раз.']]};
+
+FATE.wei={
+ bond:{strong:'Вэй больше не держит людей слишком крепко. Тебя он держит ровно так, как надо.',
+  tender:'Вэй танцует для тебя каждый вечер на кухне общаги. Соседи привыкли и хлопают.',
+  fragile:'Вэй иногда шутит громче, чем нужно. Ты знаешь: так он прячет, что ему страшно тебя потерять.',
+  far:'Вэй звонит тебе по видео и танцует в кадре, пока не уронит телефон. Обычно на второй минуте.',
+  exf:'Вы с Вэем расстались, но он до сих пор зовёт тебя на хого. «Друзей я кормлю лучше», — говорит он.',
+  exc:'Вэй перестал здороваться первым. Для человека, который здоровается с охранниками по имени, это очень громко.',
+  friends:'Вэй называет тебя своим «первым зрителем». Ты видел{|а} все его новые связки раньше команды.',
+  unreq:'Вэй впервые за весну не шутит, когда говорит о тебе. Поэтому почти не говорит.',
+  missed:'Иногда Вэй думает, что танцевал слишком медленно. А надо было быстро.'},
+ path:{
+  hard:{m:b=>b==='hard',ok:()=>!!SF('wei','fixed'),tg:'Бережный капитан',th:'Письмо в Чэнду',
+   g:'Двое ушедших вернулись в его команду к осени. Он больше не кричит на тренировках.',
+   h:'Команда Вэя распалась. Он написал капитану из Чэнду и ждёт ответа уже месяц.'},
+  chengdu:{m:b=>b==='chengdu',ok:arc5('wei'),tg:'Две команды',th:'Старый долг',
+   g:'Вэй танцует в двух командах: летом в Чэнду, весь год в Сеуле. На толстовке два логотипа.',
+   h:'В Чэнду его встретили холодно. Он остался на всё лето — просить прощения танцем.'},
+  seoul:{m:b=>b==='seoul',ok:arc5('wei'),tg:'Национальный финал',th:'Тот, кто остался',
+   g:'Сеульская команда Вэя выходит в национальный финал. Капитан из Чэнду пишет ему перед каждым баттлом.',
+   h:'Вэй остался в Сеуле, но команде пока не хватает людей. Он тренирует троих и верит в пятерых.'},
+  both:{m:b=>b==='both',ok:arc5('wei'),tg:'Сеул × Чэнду',th:'Видео на два города',
+   g:'Каждое лето две его команды снимают видео «Сеул × Чэнду». Его смотрят в обоих городах.',
+   h:'Первое видео «Сеул × Чэнду» почти никто не посмотрел. Вэй снимает второе.'},
+  heal:{m:b=>b==='heal',ok:arc5('wei'),tg:'Не тот, кого обидели',th:'Медленное исцеление',
+   g:'Вэй учится не держать людей слишком крепко. Команда это чувствует первой.',
+   h:'Вэй всё ещё срывается на тренировках. Но потом приходит извиняться. Каждый раз.'}},
+ none:{t:'Вечный праздник',x:'Вэй знает всех охранников по имени и всех соседей по этажу. Мало кто знает, почему он уехал из Чэнду.'},
+ mem:[['own',()=>SF('wei','dance')==='own','Ваше смешное движение из связки теперь называется «413». Его повторяет вся команда.'],
+  ['pair',()=>SF('wei','knot')==='pair','Две одинаковые красные нити на запястьях вы так и не сняли. Вэй говорит, что это бабушкина магия.'],
+  ['broth',()=>!!SF('wei','broth'),'Семейный рецепт бульона ты знаешь наизусть. Бабушка из Чэнду передаёт тебе привет в каждом звонке.']]};
+
+FATE.arman={
+ bond:{strong:'Джиху вписал тебя в раздел «Команда» каждого своего проекта. Без указания должности.',
+  tender:'Джиху оставляет в коде комментарии для тебя. Ты их находишь. Он делает вид, что случайно.',
+  fragile:'Джиху иногда пропадает в коде на сутки. Возвращается, извиняется и снова пропадает.',
+  far:'Джиху написал приложение, которое показывает, который час у тебя. Пользователь у него один.',
+  exf:'Вы с Джиху расстались, но он до сих пор чинит тебе ноутбук. «Это не про нас, это про железо», — говорит он.',
+  exc:'Джиху удалил ваш общий репозиторий. Коммит назывался «cleanup». Без подробностей.',
+  friends:'Джиху называет тебя единственным человеком, которому доверяет пароль от сервера. Это больше, чем дружба. Почти.',
+  unreq:'В старом коде Джиху есть функция с твоим именем. Она ничего не возвращает. Он её так и не удалил.',
+  missed:'Иногда Джиху пересчитывает весну. Вероятность была выше, чем он тогда думал. Он ошибся.'},
+ path:{
+  grant:{m:b=>b==='prep'||b==='duo'||b==='gran',ok:()=>!!(SF('arman','won')||SF('arman','voice')),tg:'Грант для бабушек',th:'Второе место',
+   g:'Грант покрыл год работы. Его приложением пользуются три тысячи бабушек.',
+   h:'Грант ушёл другим. Джиху продолжает делать приложение по ночам — бесплатно.'},
+  loud:{m:b=>b==='loud',ok:arc5('arman'),tg:'Открытое письмо',th:'Громкая тишина',
+   g:'После открытого письма компания вернула бесплатную версию и извинилась.',
+   h:'Открытое письмо прочитали сто тысяч человек. Компания промолчала. Джиху тоже больше не пишет.'},
+  law:{m:b=>b==='law',ok:arc5('arman'),tg:'Выигранное дело',th:'Долгий суд',
+   g:'Юрист выиграл дело: бесплатная версия вернулась, а компенсацию Джиху вложил в новый проект.',
+   h:'Суд тянется уже полгода. Джиху читает каждый договор вслух и больше никому не верит на слово.'},
+  rebuild:{m:b=>b==='rebuild'||b==='buyback',ok:arc5('arman'),tg:'Приложение «Рядом»',th:'С нуля',
+   g:'Новое бесплатное приложение «Рядом» скачали сорок тысяч раз.',
+   h:'Джиху переписывает всё с нуля. Медленно, но теперь это только его код.'},
+  hands:{m:b=>b==='hands'||b==='keep',ok:arc5('arman'),tg:'Пятьдесят бабушек',th:'Вручную',
+   g:'Летом он обошёл пятьдесят бабушек района и настроил всё вручную. На рынке ему отдают лучшие яблоки.',
+   h:'Джиху ходит к соседкам по выходным и настраивает телефоны вручную. Их всё больше, а его — всё так же один.'}},
+ none:{t:'Код без голоса',x:'Джиху доделал приложение и выложил его без лишнего шума. Про бабушку, ради которой всё началось, он так никому и не рассказал.'},
+ mem:[['comment',()=>!!SF('arman','comment'),'Тот комментарий в коде, который он забыл удалить, ты сохранил{|а} скриншотом. Он знает. Краснеет до сих пор.'],
+  ['star',()=>!!SF('arman','star'),'У вас есть своя звезда. Джиху посчитал её координаты и записал на обороте фотографии.']]};
+
+FATE.timur={
+ bond:{strong:'Тэян наклоняется к тебе так часто, что у него, по его словам, теперь «правильная осанка для любви».',
+  tender:'Тэян кричит тебе с площадки после каждого трёхочкового. Все на трибунах уже знают, кому.',
+  fragile:'Тэян смеётся, даже когда ему больно. Ты учишься различать, когда этот смех настоящий.',
+  far:'Тэян присылает тебе видео бросков с подписью «посвящается». За лето их набралось триста.',
+  exf:'Вы с Тэяном расстались, но он до сих пор держит для тебя место на трибуне. «По старой дружбе».',
+  exc:'Тэян переходит на другую сторону улицы, когда видит тебя. Он очень высокий, поэтому это заметно.',
+  friends:'Тэян называет тебя своим «тренером по жизни». Ты не тренер. Но он слушается.',
+  unreq:'Тэян впервые за весну промахнулся три раза подряд. Он знает почему. Ты — нет.',
+  missed:'Иногда Тэян думает, что у него был ещё один таймаут. Не было.'},
+ path:{
+  match:{m:b=>b==='match',ok:arc5('timur'),tg:'«Наш сын»',th:'Мама на трибуне',
+   g:'Мама Тэяна не пропускает ни одного матча. На кассе магазина фото: Тэян в прыжке и подпись «Наш сын».',
+   h:'Мама пришла на один матч и ушла в перерыве. Но пришла.'},
+  mom:{m:b=>b==='mom',ok:()=>!!SF('timur','fixed'),tg:'Год на выбор',th:'Работа и мяч',
+   g:'Тэян и мама договорились: год на баскетбол и учёбу, потом решение. Он впервые выбирает сам.',
+   h:'Тэян играет и работает. Устаёт, но больше не прячется.'},
+  hide:{m:b=>b==='hide',ok:()=>!!SF('timur','redo'),tg:'Миллион просмотров',th:'Ночные смены',
+   g:'Ролик «Три очка мешком риса» набирает миллион просмотров, и магазин спасён.',
+   h:'Тэян вытянул весну на ночных сменах. Летом он наконец отсыпается.'},
+  own:{m:b=>b==='own'||b==='voice',ok:arc5('timur'),tg:'Магазин на весь Сеул',th:'Свой голос',
+   g:'Магазин на рынке знают по всему Сеулу. Тэян ведёт его страницу сам.',
+   h:'Тэян снимает видео про магазин сам. Их мало кто смотрит, но мама пересматривает каждое.'}},
+ none:{t:'Улыбка на людях',x:'Тэян улыбается всем и всегда. О рынке, маме и рисе он этой весной так никому и не рассказал.'},
+ mem:[['kiss',()=>SF('timur','court')==='kiss','Площадку, где вы поцеловались при всех, команда теперь называет «ваша половина поля».'],
+  ['shy',()=>SF('timur','court')==='shy','«Поставь, на нас все смотрят!» — эту фразу команда Тэяна кричит ему после каждой победы.']]};
+
+FATE.daniyar={
+ bond:{strong:'Хёну дописал песню, которую не мог закончить весь год. Последняя строчка — твоё имя.',
+  tender:'Хёну играет тебе каждую новую мелодию первой. Если ты молчишь после — значит, хорошая.',
+  fragile:'Хёну иногда замолкает на середине разговора, как на середине песни. Ты ждёшь, когда он продолжит.',
+  far:'Хёну записывает тебе голосовые с гитарой. Каждое заканчивается одним и тем же аккордом.',
+  exf:'Вы с Хёну расстались. Песню про вас он играет на концертах. Ты приходишь и подпеваешь.',
+  exc:'Хёну больше не играет при тебе. Даже на общих вечерах он просто убирает гитару в чехол.',
+  friends:'Хёну называет тебя первым слушателем. «Ты слышишь, когда я вру в песне», — говорит он.',
+  unreq:'У Хёну есть аккорд, который он никогда не берёт до конца. Он знает почему.',
+  missed:'Иногда Хёну играет песню, которая начинается как признание и обрывается на втором куплете.'},
+ path:{
+  dad:{m:()=>!!SF('daniyar','dad'),ok:arc5('daniyar'),tg:'Отец в последнем ряду',th:'Молчание отца',
+   g:'Хёну переводится в музыкальный колледж. Отец приходит на каждый концерт и садится в последний ряд.',
+   h:'Хёну перевёлся. Отец пока не пришёл ни на один концерт. Но билет каждый раз берёт.'},
+  work:{m:b=>b==='work',ok:arc5('daniyar'),tg:'Альбом из ПК-бана',th:'Ночной админ',
+   g:'Хёну записывает первый альбом в ПК-бане в три часа ночи. Его крутят на студенческом радио.',
+   h:'Хёну живёт на зарплату ночного админа. Денег мало, песен много.'},
+  price:{m:b=>b==='price',ok:arc5('daniyar'),tg:'Суббота в Хондэ',th:'Цена свободы',
+   g:'Его группа выступает в Хондэ каждую субботу и собирает полные залы.',
+   h:'Хёну заплатил за свободу и не жалеет. Но иногда считает эту цену по ночам.'},
+  choose:{m:b=>b==='choose',ok:arc5('daniyar'),tg:'«И выбрал»',th:'Недописанное',
+   g:'Хёну отправил заявление вместе с последним куплетом. Его приняли.',
+   h:'Заявление ушло, а ответ задерживается. Хёну пишет песню про ожидание.'},
+  avoid:{m:b=>b==='avoid'||b==='invite'||b==='right'||b==='call'||b==='wait',ok:arc5('daniyar'),tg:'Песни о дверях',th:'Юрфак',
+   g:'Хёну доучивается на юрфаке и играет по ночам. Летом он впервые выходит на улицу с гитарой.',
+   h:'Хёну доучивается на юрфаке. Все его песни этой весны — о дверях, которые так и не открылись.'}},
+ none:{t:'Гитара в чехле',x:'Хёну доучивается там, где решил отец. Гитару он достаёт только по ночам, когда все спят.'},
+ mem:[['play',()=>!!SF('daniyar','play'),'Тот вечер, когда ты протянул{|а} ему гитару и сказал{|а} «Сыграй мне», Хёну называет своим первым концертом.'],
+  ['own',()=>!!SF('daniyar','own'),'Его собственную песню ты выбрал{|а} тогда сам{|а}. С тех пор он играет только свои.']]};
+
+FATE.sanzhar={
+ bond:{strong:'Доюн печёт тебе один кривой круассан каждое утро. За весну он ни разу не испёк ровный. Специально.',
+  tender:'Доюн пахнет корицей и мукой. Ты теперь улыбаешься в каждой пекарне Сеула.',
+  fragile:'Доюн работает так много, что иногда засыпает посреди вашего ужина. Ты накрываешь его пледом и ешь одна. Пока.',
+  far:'Доюн шлёт тебе посылки с выпечкой. Через границу они доходят чёрствыми. Ты всё равно съедаешь всё.',
+  exf:'Вы с Доюном расстались, но он до сих пор оставляет тебе булочку у двери по пятницам. «По привычке».',
+  exc:'Доюн перестал печь коричные булочки. Говорит, рецепт потерялся.',
+  friends:'Доюн называет тебя своим главным дегустатором. Без твоего «да» в продажу не идёт ничего.',
+  unreq:'Доюн испёк кое-что для тебя к концу весны. Так и не отдал. Съел сам, ночью, на пустой кухне.',
+  missed:'Иногда Доюн думает, что тесто не поднимается, если его вовремя не замесить. Он опоздал.'},
+ path:{
+  shop:{m:b=>b==='street'||b==='mira',ok:arc5('sanzhar'),tg:'«Тетрадь бабушки»',th:'Второй месяц',
+   g:'Пекарня в Ыльчиро пережила первый месяц и второй. Над дверью вывеска «Тетрадь бабушки».',
+   h:'Пекарня в Ыльчиро держится на кредите и упрямстве. Доюн спит четыре часа в сутки.'},
+  online:{m:b=>b==='team'||b==='limit'||b==='grind',ok:()=>!!SF('sanzhar','fixed')||SF('sanzhar','br')!=='grind',tg:'Двадцать коробок',th:'Ночная печь',
+   g:'Онлайн-пекарня Доюна печёт двадцать коробок в день и ни одной больше. По воскресеньям он спит до обеда.',
+   h:'Доюн печёт ночами и устаёт. Заказов больше, чем сил.'},
+  retry:{m:b=>b==='retry'||!!SF('sanzhar','retry'),ok:arc5('sanzhar'),tg:'Второй шанс',th:'Снова с нуля',
+   g:'Доюн уходит из сетевой пекарни и снимает то самое помещение в Ыльчиро.',
+   h:'Доюн снова начинает с нуля. Бабушкина тетрадь всегда лежит рядом с печью.'},
+  home:{m:b=>b==='home',ok:arc5('sanzhar'),tg:'Два почерка',th:'Пекарня на кухне',
+   g:'По выходным кухня пахнет мёдом. Доюн копит на свою пекарню и уже знает, где она будет.',
+   h:'Доюн печёт по выходным на общей кухне. Мечта пока размером с противень.'},
+  stable:{m:b=>b==='stable'||b==='month',ok:arc5('sanzhar'),tg:'Как положено',th:'Сетевая пекарня',
+   g:'Доюн работает в сетевой пекарне, а по вечерам печёт по бабушкиной тетради. Для своих.',
+   h:'Доюн печёт «как положено». Криво и вкусно у него больше не получается.'}},
+ none:{t:'Чужие рецепты',x:'Доюн так и не открыл бабушкину тетрадь этой весной. Он печёт по чужим рецептам и говорит, что так проще.'},
+ mem:[['flour',()=>!!SF('sanzhar','flour'),'Мука на носу — это теперь ваш способ сказать «всё хорошо». Доюн пользуется им чаще, чем нужно.'],
+  ['dawn',()=>!!SF('sanzhar','dawn'),'«Давай так встречать каждое утро», — сказал{|а} ты. Доюн так и делает. Даже когда тебя нет рядом, он печёт на двоих.']]};
+
+FATE.lucas={
+ bond:{strong:'Лукас рисует тебя каждый день. Говорит, что ещё ни разу не попал. Будет пробовать всю жизнь.',
+  tender:'Лукас учит тебя французскому по одному слову в день. Все слова почему-то про любовь.',
+  fragile:'Лукас иногда смотрит на билеты в Лион. Ты делаешь вид, что не замечаешь. Он делает вид, что не смотрит.',
+  far:'Лукас присылает тебе рисунки крыш Лиона. На каждой крыше где-то спрятана маленькая ты.',
+  exf:'Вы с Лукасом расстались. Он подарил тебе твой портрет и сказал: «Он был твой с самого начала».',
+  exc:'Лукас закрасил твой портрет в скетчбуке. Сверху нарисовал пустую улицу.',
+  friends:'Лукас называет тебя своим «сеульским братом по кисти». Ты не рисуешь. Ему всё равно.',
+  unreq:'В скетчбуке Лукаса есть страница, которую он вырвал. Её нашёл ветер. Тебе она так и не досталась.',
+  missed:'Иногда Лукас рисует сюжет, который так и не случился. Говорит, что это его лучшая работа.'},
+ path:{
+  lyon:{m:b=>b==='gran'||b==='city',ok:arc5('lucas'),tg:'Крыши Лиона',th:'Бабушка в бусах',
+   g:'Летом Лукас везёт друзей в Лион. Бабушка первым делом показывает гостям крыши.',
+   h:'Бабушке Лукаса нездоровится. Он летит в Лион один и звонит оттуда каждый вечер.'},
+  school:{m:b=>b==='dean'||b==='catch',ok:arc5('lucas'),tg:'Защита на отлично',th:'Последний шанс',
+   g:'Лукас защитил проект библиотеки на отлично. У входа на макете две маленькие фигурки.',
+   h:'Лукас еле успел к защите. Оценка «удовлетворительно». Макет он всё равно считает лучшим.'},
+  stay:{m:()=>!!SF('lucas','stay'),ok:arc5('lucas'),tg:'Ещё год в Сеуле',th:'Остаться',
+   g:'Лукас остаётся в Сеуле ещё на год. Наконец-то ему не страшно.',
+   h:'Лукас остаётся, но каждый вечер звонит в Лион и подолгу молчит в трубку.'},
+  calls:{m:b=>b==='airport'||b==='sorry'||!!SF('lucas','calls'),ok:()=>!!SF('lucas','calls'),tg:'Воскресные звонки',th:'Между двух городов',
+   g:'Каждое воскресенье в девять вечера он звонит бабушке в Лион. Она учит французскому всех, кто рядом.',
+   h:'Лукас живёт между двумя городами и ни в одном не чувствует себя дома.'}},
+ none:{t:'Скетчбук туриста',x:'Лукас уезжает в Лион с полным скетчбуком. На каждой странице Сеул, и почти нигде — люди.'},
+ mem:[['learn',()=>SF('lucas','waltz')==='learn','Вальс под дождём вы так и не дотанцевали. Лукас говорит, что это лучшая незаконченная работа в его жизни.'],
+  ['lead',()=>SF('lucas','waltz')==='lead','Ты пов{ёл|ела} в том вальсе. Лукас до сих пор рассказывает об этом друзьям с восторгом.'],
+  ['sign',()=>!!SF('lucas','sign'),'Подписанный рисунок висит у тебя над кроватью. Лукас говорит, что это его первая проданная работа. Цена — улыбка.']]};
+
+FATE.junso={
+ bond:{strong:'Джунсо приносит тебе один цветок каждое утро. За весну он ни разу не повторился.',
+  tender:'Джунсо учит тебя языку цветов. Ты уже понимаешь, что он говорит, даже когда он молчит.',
+  fragile:'Джунсо иногда дарит тебе цветы, которые значат «прости». Ты ещё не знаешь, за что.',
+  far:'Джунсо засушивает цветы и отправляет тебе в письмах. Твоя тетрадь уже пахнет его лавкой.',
+  exf:'Вы с Джунсо расстались. Он всё равно оставляет у твоей двери незабудку раз в месяц. Без записки.',
+  exc:'Джунсо убрал с витрины тюльпаны. Говорит, сезон кончился.',
+  friends:'Джунсо назвал в твою честь сорт фиалок в своей лавке. «Друзьям тоже дарят цветы», — говорит он.',
+  unreq:'В лавке Джунсо есть букет, который никогда не продаётся. Он стоит у кассы и всегда свежий.',
+  missed:'Иногда Джунсо думает, что слишком долго ждал правильной погоды. Весна кончилась.'},
+ path:{
+  keep:{m:b=>b==='keep',ok:()=>!!SF('junso','saved'),tg:'Цветы, которые помнят',th:'Лавка пополам',
+   g:'Лавку отстояли всем двором. Над входом новая вывеска: «Цветы, которые помнят».',
+   h:'Половина лавки теперь кофейня. Бабушка ворчит, но приходит каждую неделю.'},
+  garden:{m:b=>b==='garden',ok:arc5('junso'),tg:'Сад деда',th:'Новая земля',
+   g:'Сад деда снова цветёт. В июне там открывается цветочный рынок под открытым небом.',
+   h:'Цветы плохо приживаются в саду деда. Джунсо пересаживает их снова и снова.'},
+  gran:{m:b=>b==='ask',ok:()=>!!SF('junso','gran'),tg:'Бабушка-хозяйка',th:'Честный разговор',
+   g:'Бабушка вернулась в лавку по воскресеньям, хозяйкой. Говорит, лавке наконец повезло.',
+   h:'Бабушка честно сказала, что устала. Лавку продают. Джунсо забрал с собой самые старые горшки.'}},
+ none:{t:'Тихая лавка',x:'Джунсо этой весной так никому и не сказал, что лавку собираются продать. Цветы продаются, а он молчит.'},
+ mem:[['name',()=>SF('junso','tree')==='name','Саженец, названный в честь Джунсо, вырос по пояс. Он ходит к нему по воскресеньям.'],
+  ['note',()=>SF('junso','tree')==='note','Записку, закопанную под корнями, вы так и не достали. Джунсо говорит, что дерево её уже прочитало.'],
+  ['forget',()=>!!SF('junso','q1'),'«Не забывай меня», — сказал{|а} ты тогда. Незабудки стоят у него на прилавке круглый год.']]};
+
+/* ================= v1.45: fates — consequence tracking, assembling each character's ending, the book of fates ================= */
+const BOND_T={strong:'Навсегда',tender:'Тёплое лето',fragile:'Хрупкое счастье',far:'На расстоянии',exf:'Друзья после',exc:'Закрытая дверь',friends:'Дружба',unreq:'Не взаимно',missed:'Почти',acq:'Мимо'};
+const BOND_HINT={strong:'Пара до конца весны: много нежности, поцелуй, ни одной серьёзной ссоры',tender:'Пара до конца весны',fragile:'Пара, но ссоры, ложь или сомнения',far:'Пара — и твой путь уводит из Сеула',exf:'Расстаться и сохранить тепло',exc:'Расстаться окончательно',friends:'Договориться остаться друзьями',unreq:'Был{|а} кому-то очень дорог{|а}, но выбрал{|а} другого',missed:'Почти дойти до признания',acq:'Просто познакомиться'};
+const LOVE_B=['strong','tender','fragile','far'],EX_B=['exf','exc'];
+const N_=id=>(typeof nmC==='function'?nmC(id):CH[id].n);
+
+/* ---------- consequence tracking ---------- */
+{const _a=aff;aff=function(id,n){const d=_a.apply(this,arguments);try{if(S&&S.rel&&S.rel[id]){S.peak=S.peak||{};S.peak[id]=Math.max(S.peak[id]||0,S.rel[id].aff)}}catch(e){}return d}}
+{const _b=breakUp;breakUp=async function(P){try{S.exes=S.exes||[];if(P&&!S.exes.includes(P))S.exes.push(P)}catch(e){}return _b.apply(this,arguments)}}
+{const _q=startQuarrel;startQuarrel=function(id){try{S.qc=S.qc||{};S.qc[id]=(S.qc[id]||0)+1}catch(e){}return _q.apply(this,arguments)}}
+
+/* ---------- what the spring adds up to ---------- */
+function heroGroup(main){return {seoul:'away',stage:'star',sport:'star',esports:'star',model:'star',blogger:'star',grant:'grind',polyglot:'grind',business:'grind',chef:'grind',burnout:'fall',expelled:'fall'}[main]||'calm'}
+function heroMain(){try{const e=computeEnding();return Array.isArray(e)?e[0]:e}catch(e){return 'ordinary'}}
+function fateBond(id,main){const r=S.rel&&S.rel[id];if(!r||!r.met||!FATE[id])return null;const pk=Math.max((S.peak&&S.peak[id])||0,r.aff);
+  if(S.partner===id){if(main==='seoul')return 'far';
+    const frag=((S.qc&&S.qc[id])||0)>=2||(S.flags&&S.flags.lie)>0||r.aff<60||(S.rivalC&&S.rivalC[id]==='chat');
+    if(frag)return 'fragile';if(r.aff>=85&&S.kiss&&S.kiss[id])return 'strong';return 'tender'}
+  if(S.exes&&S.exes.includes(id))return (r.fz||r.aff>=25||((S.fr&&S.fr[id])||0)>=40)?'exf':'exc';
+  if(r.fz)return 'friends';
+  if(S.partner&&pk>=40)return 'unreq';
+  if(pk>=45)return 'missed';
+  if(pk>=15)return 'acq';return null}
+function fatePath(id,bond){const F=FATE[id];if(bond==='acq')return ['none',''];const b=SF(id,'br');
+  for(const [k,p] of Object.entries(F.path)){try{if(p.m(b))return [k,p.ok()?'g':'h']}catch(e){}}return ['none','']}
+const FMEM_G={
+ hand:id=>`${N_(id)} до сих пор вспоминает, как ты взял{|а} ${GN(id,'его','её')} за руку при всех, когда навстречу вышел кто-то третий.`,
+ late_fr:id=>`«Давай останемся друзьями», — сказал{|а} ты в тот вечер. ${N_(id)} говорит, что это были самые честные слова той весны.`,
+ late_sorry:id=>`«Мне жаль», — сказал{|а} ты тогда. ${N_(id)} не держит зла. Почти.`,
+ late_sit:id=>`В тот вечер вы просто молча посидели рядом. ${N_(id)} считает, что это было честнее любых слов.`,
+ bd:id=>`Открытку с твоим поздравлением ${N_(id)} до сих пор хранит. В самом надёжном месте — между страниц любимой книги.`,
+ bdmiss:id=>`${N_(id)} так и не сказал${GN(id,'','а')}, что ждал${GN(id,'','а')} твоего поздравления в свой день рождения. Телефон в тот день ${GN(id,'он','она')} не выпускал${GN(id,'','а')} из рук.`,
+ sp_lean:id=>`${N_(id)} до сих пор помнит тот момент, когда вы вдруг оказались слишком близко.`,
+ sp_slow:id=>`${N_(id)} иногда думает, что было бы, если бы вы тогда не решили подождать.`,
+ sp_friend:id=>`«Как друг», — сказал{|а} ты тогда. ${N_(id)} запомнил${GN(id,'','а')} эти слова лучше, чем хотел${GN(id,'','а')} бы.`};
+function fateMem(id,bond){if(bond==='acq')return null;const F=FATE[id];const out=k=>[k,FMEM_G[k](id)];
+  const bd=S.bd&&S.bd[id],bdk=bd&&bd.d<S.day?(bd.done?'bd':'bdmiss'):null;const sp=SF(id,'spark');const lc=S.lateC&&S.lateC[id];
+  if(LOVE_B.includes(bond)||EX_B.includes(bond)){for(const m of F.mem){try{if(m[1]())return [m[0],m[2]]}catch(e){}}
+    if(S.rivalC&&S.rivalC[id]==='hand')return out('hand');if(bdk)return out(bdk);if(EX_B.includes(bond)&&sp&&FMEM_G['sp_'+sp])return out('sp_'+sp);return null}
+  if(lc&&FMEM_G['late_'+lc])return out('late_'+lc);if(sp&&FMEM_G['sp_'+sp])return out('sp_'+sp);if(bdk)return out(bdk);return null}
+const HERO_T={
+ love:{away:id=>`Между Сеулом и Токио два часа лёта. ${N_(id)} знает расписание всех рейсов наизусть.`,
+  star:id=>`Когда тебя впервые узнают на улице, ${N_(id)} делает вид, что не знаком${GN(id,'','а')} с тобой, и громко просит автограф.`,
+  grind:id=>`Этим летом ты много работаешь. ${N_(id)} приносит тебе ужин в два часа ночи и ни о чём не спрашивает.`,
+  calm:id=>`Лето у вас тихое: общага, рамён, ночные прогулки вдоль Хангана. ${N_(id)} говорит, что это лучшее лето в жизни.`,
+  fall:id=>`Когда тебе совсем плохо, ${N_(id)} не уходит. Просто сидит рядом, пока не станет легче.`},
+ ex:{away:id=>`Ты уезжаешь в Токио, и расстояние делает прошлое мягче. ${N_(id)} ставит лайк твоей первой фотографии оттуда.`,
+  star:id=>`Иногда ${N_(id)} видит тебя в новостях и ставит лайк. Один. Без комментариев.`,
+  grind:id=>`Вы иногда сталкиваетесь в библиотеке и киваете друг другу, как старые знакомые.`,
+  calm:id=>`Сеул большой, а общага маленькая. Вы научились здороваться.`,
+  fall:id=>`Когда ты уезжаешь домой раньше времени, ${N_(id)} присылает одно сообщение: «Береги себя».`},
+ friend:{away:id=>`В Токио тебе приходят посылки из Сеула. Отправитель — ${N_(id)}.`,
+  star:id=>`${N_(id)} первым репостит каждую твою новость. С тремя восклицательными знаками.`,
+  grind:id=>`${N_(id)} каждый день проверяет, ел{|а} ли ты. Без исключений.`,
+  calm:id=>`По пятницам у вас рамён и разговоры до утра. Это традиция, и её никто не отменял.`,
+  fall:id=>`${N_(id)} первым приезжает, когда тебе плохо. С едой и без лишних слов.`},
+ far:{away:id=>`Ты улетаешь в Токио, и ${N_(id)} узнаёт об этом из чужих сторис.`,
+  star:id=>`${N_(id)} видит тебя по телевизору и долго не переключает канал.`,
+  grind:id=>`Иногда вы пересекаетесь в кампусе. Каждый раз ${N_(id)} хочет что-то сказать — и не говорит.`,
+  calm:id=>`Весна закончилась. ${N_(id)} иногда проходит мимо твоего окна чуть медленнее, чем нужно.`,
+  fall:id=>`Когда ты уезжаешь, ${N_(id)} узнаёт об этом ${GN(id,'последним','последней')} и долго смотрит на твоё окно.`}};
+const famOf=b=>LOVE_B.includes(b)?'love':EX_B.includes(b)?'ex':b==='friends'?'friend':'far';
+function fateOf(id,main){main=main||heroMain();const bond=fateBond(id,main);if(!bond)return null;const F=FATE[id];
+  const [pk,q]=fatePath(id,bond);const P=pk==='none'?null:F.path[pk];const mem=fateMem(id,bond);const hg=heroGroup(main);
+  const b1=bond==='acq'?`${N_(id)} и ты так и остались хорошими знакомыми. Иногда вы киваете друг другу в кампусе.`:F.bond[bond];
+  const p1=P?P[q]:F.none.x;const title=(P?(q==='g'?P.tg:P.th):F.none.t)+' · '+BOND_T[bond];
+  return {id,bond,path:pk,q,mem:mem&&mem[0],hero:hg,key:`${bond}.${pk}.${q||'-'}`,title,bt:fx(b1),
+    a:fx(b1+' '+p1),b:fx((mem?mem[1]+' ':'')+HERO_T[famOf(bond)][hg](id))}}
+function fateTotal(id){const n=Object.keys(FATE[id].path).length;return 1+9*(2*n+1)}
+function fateList(){const main=heroMain();const L=Object.keys(FATE).map(id=>fateOf(id,main)).filter(Boolean);
+  const rank={strong:0,tender:0,fragile:0,far:0,exf:1,exc:1,friends:2,unreq:3,missed:4,acq:9};
+  return L.sort((x,y)=>(rank[x.bond]-rank[y.bond])||(((S.peak&&S.peak[y.id])||0)-((S.peak&&S.peak[x.id])||0)))}
+function fateSave(L){const m=loadMeta();m.fates=m.fates||{};let fresh=0;
+  for(const f of L){const o=m.fates[f.id]=m.fates[f.id]||{};if(!o[f.key])fresh++;o[f.key]={t:f.title,x:f.a+' '+f.b,n:((o[f.key]&&o[f.key].n)||0)+1}}
+  saveMeta(m);return fresh}
+
+/* ---------- the epilogue: «Что стало с ними» ---------- */
+async function showFates(){if(!S||!S.rel)return;const L=fateList();if(!L.length)return;const fresh=fateSave(L);window.__fateFresh=fresh;
+  const show=L.filter(f=>f.bond!=='acq').slice(0,4);if(!show.length)return;
+  setScene('river','night');setWho(null);await say('Год спустя. Что стало с теми, кто был рядом этой весной.');
+  for(const f of show){const cg=LOVE_B.includes(f.bond)?['cg_cozy_','cg_hug_','cg_kiss_']:f.bond==='friends'||EX_B.includes(f.bond)?['cg_hug_','cg_spark_']:['cg_spark_'];
+    const k=cg.map(p=>p+f.id).find(x=>BG[x]);if(k&&!EX_B.includes(f.bond))setScene(k);else setScene(f.bond==='exc'?'uni':'river',f.bond==='exc'?'day':'eve');
+    const e=LOVE_B.includes(f.bond)||f.bond==='friends'||f.bond==='exf'?'h':'s';setWho(f.id,e);
+    await say(f.id===S.partner?f.bt:f.a,f.id,e);await say(f.b,f.id,e);toast('📖 '+f.title)}
+  const more=L.length-show.length;if(more>0)await say(`Ещё ${more} — в книге судеб.`)}
+{const _c=catEnding;catEnding=async function(){const r=await _c.apply(this,arguments);try{await showFates()}catch(e){console.error(e)}
+  setTimeout(()=>{try{const c=document.querySelector('#opts .card .chips');if(c&&window.__fateFresh)c.insertAdjacentHTML('beforeend',`<span class="chip love">Новых судеб: ${window.__fateFresh}</span>`);
+    const box=document.querySelector('#opts');const nx=box&&box.querySelector('.opt.next');if(nx&&!box.querySelector('[data-fatebtn]')){const b=document.createElement('button');b.type='button';b.className='opt';b.dataset.fatebtn='1';
+      b.innerHTML='<span class="t">📖 Книга судеб</span><span class="h">что стало с каждым — и что ещё можно открыть</span>';b.onclick=()=>showFatesBook();box.insertBefore(b,nx)}}catch(e){}},0);return r}}
+
+/* ---------- the book of fates ---------- */
+function showFatesBook(){const m=loadMeta();const got=m.fates||{};const ids=Object.keys(FATE);
+  const tot=ids.reduce((a,id)=>a+fateTotal(id),0),have=ids.reduce((a,id)=>a+Object.keys(got[id]||{}).length,0);
+  const w=document.createElement('div');w.className='pnwrap';w.setAttribute('role','dialog');w.setAttribute('aria-label','Книга судеб');
+  const row=id=>{const g=got[id]||{};const n=Object.keys(g).length,t=fateTotal(id);const bs=new Set(Object.keys(g).map(k=>k.split('.')[0]));
+    const ps=Object.keys(FATE[id].path);const pg=new Set(Object.keys(g).map(k=>k.split('.')[1]+'.'+k.split('.')[2]));
+    return `<li class="fb${n?'':' lock'}"><button type="button" class="fbh" aria-expanded="false"><span class="fbn">${esc(CH[id].n)}</span><span class="fbc">${n} из ${t}</span><span class="fbbar"><i style="width:${Math.max(n?3:0,Math.round(n/t*100))}%"></i></span></button>
+     <div class="fbd" hidden>
+      ${n?`<ul class="fbl">${Object.entries(g).map(([k,v])=>`<li><b>${esc(v.t)}</b><em>${esc(v.x)}</em></li>`).join('')}</ul>`:'<p class="fbe">Ещё ни одной судьбы. Познакомься поближе.</p>'}
+      <div class="fbk"><small>Связь</small>${Object.keys(BOND_T).map(b=>`<span class="${bs.has(b)?'on':''}" title="${esc(fx(BOND_HINT[b]))}">${bs.has(b)?esc(BOND_T[b]):'???'}</span>`).join('')}</div>
+      <div class="fbk"><small>Путь</small>${ps.map(p=>['g','h'].map(q=>{const on=pg.has(p+'.'+q);const P=FATE[id].path[p];return `<span class="${on?'on':''}">${on?esc(q==='g'?P.tg:P.th):'???'}</span>`}).join('')).join('')}<span class="${pg.has('none.-')?'on':''}">${pg.has('none.-')?esc(FATE[id].none.t):'???'}</span></div>
+     </div></li>`};
+  w.innerHTML=`<div class="pn"><div class="pnh"><div><small>Открыто ${have} из ${tot}</small><b>Книга судеб</b></div><button type="button" class="pnx" aria-label="Закрыть">✕</button></div>
+   <div class="pnb"><p class="fbi">Судьба каждого складывается из того, кем вы стали друг другу, куда повернула их собственная история и чем всё обернулось. Нажми на имя, чтобы прочитать.</p><ul class="fbs">${ids.map(row).join('')}</ul></div></div>`;
+  document.body.appendChild(w);const prev=window.appBack;const close=()=>{w.remove();window.appBack=prev};window.appBack=()=>{close();return true};
+  w.querySelector('.pnx').onclick=close;w.addEventListener('click',e=>{if(e.target===w)close()});
+  w.querySelectorAll('.fbh').forEach(b=>b.onclick=()=>{const d=b.nextElementSibling;const o=d.hidden;d.hidden=!o;b.setAttribute('aria-expanded',String(o))})}
+(function(){const s=document.createElement('style');s.textContent=`.fbi{margin:0 0 12px;color:var(--muted);font-size:14px;line-height:1.5}
+.fbs{list-style:none;margin:0!important;padding:0!important;display:flex;flex-direction:column;gap:8px}
+.fb{border:1px solid var(--line);border-radius:14px;background:var(--surface2);overflow:hidden}
+.fbh{all:unset;box-sizing:border-box;width:100%;display:grid;grid-template-columns:1fr auto;gap:4px 10px;padding:12px 14px;cursor:pointer}
+.fbh:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+.fbn{font-weight:700}.fbc{color:var(--muted);font-size:13px;font-variant-numeric:tabular-nums}
+.fbbar{grid-column:1/-1;height:6px;border-radius:99px;background:var(--line);overflow:hidden}.fbbar i{display:block;height:100%;background:var(--accent);border-radius:99px}
+.fb.lock .fbn{color:var(--muted)}
+.fbd{padding:0 14px 14px;display:flex;flex-direction:column;gap:10px}
+.fbl{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+.fbl li{display:flex;flex-direction:column;gap:3px}.fbl b{font-size:14px}.fbl em{font-style:normal;color:var(--muted);font-size:13px;line-height:1.5}
+.fbe{margin:0;color:var(--muted);font-size:13px}
+.fbk{display:flex;flex-wrap:wrap;gap:6px;align-items:center}.fbk small{width:100%;color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.06em}
+.fbk span{font-size:12px;padding:4px 9px;border-radius:99px;border:1px dashed var(--line);color:var(--muted)}
+.fbk span.on{border-style:solid;border-color:var(--accent);color:var(--ink)}`;document.head.appendChild(s)})();
+{const _r=renderSide;renderSide=function(){_r.apply(this,arguments);try{const d=$('#side').querySelector('.sidex');if(d&&!d.querySelector('[data-open="fates"]')){const m=loadMeta();const n=Object.values(m.fates||{}).reduce((a,o)=>a+Object.keys(o).length,0);
+  d.insertAdjacentHTML('beforeend',`<button type="button" data-open="fates">Судьбы <em>${n}</em></button>`)}}catch(e){}}}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-open="fates"]');if(b)showFatesBook()});
 
 async function main(){for(;;){const r=await title();await runGame(r==='resume')}}
 main();
